@@ -546,9 +546,67 @@ const goals = [
   ["Jeonse safe-contract", "전세 위험 case 100%에 권리관계/보증보험/은행 연계 체크리스트 연결", 86],
 ];
 
+const jeonseFeatures = [
+  {
+    id: "price-ratio",
+    title: "전세가율 탐지",
+    description: "매매 추정가 대비 전세보증금 비율과 주변 시세 대비 보증금 과다 여부를 묶어 전세가율 위험 점수를 만든다.",
+    skills: ["jeonse-price-ratio", "local-market-compare"],
+  },
+  {
+    id: "registry-risk",
+    title: "권리관계 위험",
+    description: "근저당, 압류, 가압류, 신탁등기, 단기 소유권 이전 신호를 등기부 기준으로 추출하고 보증보험 가입 가능성을 분류한다.",
+    skills: ["registry-rights-scan", "ownership-transfer-delta", "guarantee-feasibility"],
+  },
+  {
+    id: "asset-risk",
+    title: "자산 리스크",
+    description: "고객 총자산 대비 보증금 비중, 월 소득 대비 주거비 부담, 전세대출 상환 가능성과 계약 실패 시 손실 민감도를 분석한다.",
+    skills: ["tenant-asset-exposure", "housing-cost-burden"],
+  },
+  {
+    id: "contract-checklist",
+    title: "계약 체크리스트",
+    description: "계약 전 확인 서류, 임대인·중개사 확인 항목, 특약 문구 초안, 보증보험 가입 전 확인사항을 승인 대기 카드로 만든다.",
+    skills: ["pre-contract-checklist", "special-clause-drafter", "compliance-guard"],
+  },
+  {
+    id: "bank-linkage",
+    title: "은행 연계",
+    description: "전세대출 상담 연결, 보증보험 안내, 위험 매물 경고, 안전 계약 가이드를 RM 승인 후 고객에게 안내한다.",
+    skills: ["bank-linkage-brief", "notification-brief", "approval-gate"],
+  },
+];
+
 let cases = JSON.parse(JSON.stringify(initialCases));
 let selectedCaseId = "jeonju-cafe";
+let selectedAgentId = null;
+let selectedSkillId = null;
+let selectedFeatureId = null;
+let selectedEvidenceId = null;
+let activeDetailType = "case";
 let activeView = "dashboard";
+let boardMode = "kanban";
+let railFilter = "all";
+let caseSequence = 201;
+let runSequence = 1;
+let agentRuns = [
+  {
+    id: "run-001",
+    caseId: "seoul-jeonse-villa",
+    caseCode: "JBG-201",
+    agentName: "Jeonse Shield Lead",
+    startedAt: "14:04",
+    status: "approval_pending",
+    command: "전세가율, 권리관계, 자산 노출, 보증보험 가능성을 종합 진단해줘.",
+    log: [
+      ["14:04", "Run started. Mounted skills: jeonse-price-ratio, registry-rights-scan, tenant-asset-exposure."],
+      ["14:06", "Deposit Ratio Agent: 주변 시세 대비 보증금이 높아 전세가율 과다 후보로 분류."],
+      ["14:08", "Approval Gate: 안전 계약 가이드 초안을 승인 큐에 등록."],
+    ],
+  },
+];
 let activity = [
   ["14:08", "Jeonse Shield Lead", "created approval", "JBG-201"],
   ["14:04", "Registry Rights Agent", "requested source document", "JBG-201"],
@@ -571,6 +629,63 @@ function currentCase() {
   return cases.find((item) => item.id === selectedCaseId) || cases[0];
 }
 
+function currentAgent() {
+  return agents.find((agent) => agent.id === selectedAgentId) || null;
+}
+
+function currentSkill() {
+  return skillRack.find((skill) => skill.slug === selectedSkillId) || null;
+}
+
+function currentFeature() {
+  return jeonseFeatures.find((feature) => feature.id === selectedFeatureId) || null;
+}
+
+function visibleCases() {
+  if (railFilter === "all") return cases;
+  return cases.filter((item) => item.affiliate === railFilter);
+}
+
+function casesByAgent(agentId) {
+  const agent = agents.find((entry) => entry.id === agentId);
+  if (!agent) return [];
+  return cases.filter((item) => item.agents.includes(agentId) || item.owner === agent.name);
+}
+
+function agentsBySkill(slug) {
+  return agents.filter((agent) => agent.skills.includes(slug));
+}
+
+function casesBySkill(slug) {
+  const agentIds = agentsBySkill(slug).map((agent) => agent.id);
+  return cases.filter((item) => item.agents.some((id) => agentIds.includes(id)));
+}
+
+function skillsByCase(item) {
+  const mounted = new Set();
+  item.agents.forEach((agentId) => {
+    const agent = agents.find((entry) => entry.id === agentId);
+    if (agent) agent.skills.forEach((slug) => mounted.add(slug));
+  });
+  return Array.from(mounted);
+}
+
+function caseAgents(item) {
+  return item.agents.map((agentId) => agents.find((agent) => agent.id === agentId)).filter(Boolean);
+}
+
+function agentsByFeature(feature) {
+  const related = new Set();
+  feature.skills.forEach((slug) => {
+    agentsBySkill(slug).forEach((agent) => related.add(agent.id));
+  });
+  return agents.filter((agent) => related.has(agent.id));
+}
+
+function casesByEvidence(entryId) {
+  return cases.filter((item) => item.evidenceIds.includes(entryId));
+}
+
 function statusClass(status) {
   if (status === "Agent Running") return "status-running";
   if (status === "Approval Pending") return "status-pending";
@@ -589,13 +704,14 @@ function statusToColumn(status) {
 }
 
 function counts() {
+  const scoped = visibleCases();
   return {
-    dashboard: cases.length,
-    inbox: cases.filter((item) => item.status === "Escalated" || item.status === "Approval Pending").length,
-    cases: cases.length,
-    approvals: cases.filter((item) => item.status === "Approval Pending").length,
-    runs: cases.filter((item) => item.status === "Agent Running").length,
-    jeonse: cases.filter((item) => item.pains.includes("jeonse-fraud")).length,
+    dashboard: scoped.length,
+    inbox: scoped.filter((item) => item.status === "Escalated" || item.status === "Approval Pending").length,
+    cases: scoped.length,
+    approvals: scoped.filter((item) => item.status === "Approval Pending").length,
+    runs: agentRuns.filter((run) => run.status === "running").length || agentRuns.length,
+    jeonse: scoped.filter((item) => item.pains.includes("jeonse-fraud")).length,
     agents: agents.length,
     orgchart: agents.length,
     skills: skillRack.length,
@@ -635,10 +751,20 @@ function renderNavigation() {
   document.querySelectorAll("[data-view]").forEach((button) => {
     button.addEventListener("click", () => {
       activeView = button.dataset.view;
+      activeDetailType = defaultDetailForView(activeView);
       selectDefaultCaseForView(activeView);
       render();
     });
   });
+}
+
+function defaultDetailForView(view) {
+  if ((view === "agents" || view === "orgchart") && selectedAgentId) return "agent";
+  if (view === "skills" && selectedSkillId) return "skill";
+  if (view === "jeonse" && selectedFeatureId) return "feature";
+  const summaryViews = ["agents", "orgchart", "skills", "routines", "goals", "activity", "budget", "settings"];
+  if (summaryViews.includes(view)) return "view";
+  return "case";
 }
 
 function selectDefaultCaseForView(view) {
@@ -651,16 +777,17 @@ function selectDefaultCaseForView(view) {
   };
   const matcher = matchers[view];
   if (!matcher || matcher(selected)) return;
-  const next = cases.find(matcher);
+  const next = visibleCases().find(matcher) || cases.find(matcher);
   if (next) selectedCaseId = next.id;
 }
 
 function renderMetrics() {
   const metricGrid = document.getElementById("metric-grid");
   if (!metricGrid) return;
-  const highRisk = cases.filter((item) => item.riskScore >= 85).length;
-  const pending = cases.filter((item) => item.status === "Approval Pending").length;
-  const running = cases.filter((item) => item.status === "Agent Running").length;
+  const scoped = visibleCases();
+  const highRisk = scoped.filter((item) => item.riskScore >= 85).length;
+  const pending = scoped.filter((item) => item.status === "Approval Pending").length;
+  const running = scoped.filter((item) => item.status === "Agent Running").length;
   const spend = agents.reduce((sum, agent) => sum + agent.spent, 0);
   const total = agents.reduce((sum, agent) => sum + agent.budget, 0);
   const cards = [
@@ -685,6 +812,20 @@ function renderMetrics() {
 function renderBoard() {
   const caseBoard = document.getElementById("case-board");
   if (!caseBoard) return;
+  const scoped = visibleCases();
+
+  if (boardMode === "queue") {
+    caseBoard.classList.add("is-queue");
+    const queued = scoped.slice().sort((a, b) => b.riskScore - a.riskScore);
+    caseBoard.innerHTML = `
+      <div class="queue-list">
+        ${queued.length ? queued.map(renderCaseCard).join("") : '<div class="empty-state">대기 case 없음</div>'}
+      </div>
+    `;
+    return;
+  }
+
+  caseBoard.classList.remove("is-queue");
   const columns = [
     ["todo", "TODO"],
     ["running", "IN PROGRESS"],
@@ -695,7 +836,7 @@ function renderBoard() {
 
   caseBoard.innerHTML = columns
     .map(([key, label]) => {
-      const items = cases.filter((item) => statusToColumn(item.status) === key);
+      const items = scoped.filter((item) => statusToColumn(item.status) === key);
       return `
         <section class="board-column">
           <h4><span>${label}</span><span>${items.length}</span></h4>
@@ -708,13 +849,6 @@ function renderBoard() {
       `;
     })
     .join("");
-
-  document.querySelectorAll("[data-case-id]").forEach((button) => {
-    button.addEventListener("click", () => {
-      selectedCaseId = button.dataset.caseId;
-      render();
-    });
-  });
 }
 
 function renderCaseCard(item) {
@@ -741,13 +875,13 @@ function renderLiveRuns() {
   const liveRuns = document.getElementById("live-runs");
   const liveCount = document.getElementById("live-count");
   if (!liveRuns || !liveCount) return;
-  const live = cases.filter((item) => item.status === "Agent Running" || item.status === "Approval Pending");
+  const live = visibleCases().filter((item) => item.status === "Agent Running" || item.status === "Approval Pending");
   liveCount.textContent = live.length;
   liveRuns.innerHTML = live
     .map((item) => {
       const progress = item.status === "Approval Pending" ? 86 : 52;
       return `
-        <article class="run-card">
+        <article class="run-card is-clickable" data-case-id="${escapeHtml(item.id)}" role="button" tabindex="0">
           <div class="run-head">
             <strong><span class="pulse"></span>${escapeHtml(item.owner)}</strong>
             <span class="status-pill ${statusClass(item.status)}">${escapeHtml(item.status)}</span>
@@ -789,6 +923,12 @@ function renderWorkbench() {
 function bindPageActions() {
   const dispatchButton = document.getElementById("dispatch-command");
   if (dispatchButton) dispatchButton.addEventListener("click", dispatchCommand);
+  document.querySelectorAll("[data-board-mode]").forEach((button) => {
+    button.addEventListener("click", () => {
+      boardMode = button.dataset.boardMode;
+      render();
+    });
+  });
 }
 
 function heroMarkup() {
@@ -876,7 +1016,7 @@ function casesPage() {
     ${panelMarkup(
       "Case Board",
       "위험 케이스 칸반",
-      '<div class="view-switch board-switch" aria-label="board mode"><button class="is-active" type="button">Kanban</button><button type="button">Queue</button></div><div id="case-board" class="case-board"></div>',
+      `<div class="view-switch board-switch" aria-label="board mode"><button class="${boardMode === "kanban" ? "is-active" : ""}" type="button" data-board-mode="kanban">Kanban</button><button class="${boardMode === "queue" ? "is-active" : ""}" type="button" data-board-mode="queue">Queue</button></div><div id="case-board" class="case-board"></div>`,
       "board-panel",
     )}
   `;
@@ -891,8 +1031,11 @@ function approvalsPage() {
 
 function runsPage() {
   return `
-    ${pageHeader("AgentRun", "실시간 실행", "현재 실행 중이거나 승인 대기 중인 AgentRun transcript를 확인합니다.")}
-    ${panelMarkup("Live Agent Runs", "실시간 실행", '<div id="live-runs" class="live-runs run-page-list"></div><span id="live-count" class="count-pill ghost-count">0</span>')}
+    ${pageHeader("AgentRun", "실시간 실행", "Dispatch와 Run으로 생성된 AgentRun 실행 로그와 라이브 상태를 확인합니다.")}
+    <section class="page-two-col">
+      ${panelMarkup("Run Log", "AgentRun 실행 로그", runsView())}
+      ${panelMarkup("Live Agent Runs", "실시간 실행", '<div id="live-runs" class="live-runs run-page-list"></div><span id="live-count" class="count-pill ghost-count">0</span>')}
+    </section>
   `;
 }
 
@@ -999,11 +1142,50 @@ function approvalsView() {
     : '<div class="empty-state">승인 대기 항목 없음</div>';
 }
 
+function runStatusLabel(status) {
+  const labels = {
+    running: "Agent Running",
+    approval_pending: "Approval Pending",
+    escalated: "Escalated",
+    completed: "Approved",
+    rejected: "Rejected",
+  };
+  return labels[status] || status;
+}
+
 function runsView() {
+  if (!agentRuns.length) return '<div class="empty-state">실행된 AgentRun 없음</div>';
   return `
-    <div class="two-col">
-      ${cases
-        .map((item) => workItem(`${item.owner} on ${item.code}`, item.transcript.join(" / "), `${item.status} · ${item.sla}`))
+    <div class="run-log-list">
+      ${agentRuns
+        .map((run) => {
+          const target = cases.find((item) => item.id === run.caseId);
+          const label = runStatusLabel(run.status);
+          return `
+            <article class="run-card run-log-card ${run.status === "running" ? "is-live" : ""}">
+              <div class="run-head">
+                <strong>${run.status === "running" ? '<span class="pulse"></span>' : ""}${escapeHtml(run.id)} · ${escapeHtml(run.agentName)}</strong>
+                <span class="status-pill ${statusClass(label)}">${escapeHtml(label)}</span>
+              </div>
+              <button class="link-button" type="button" data-case-id="${escapeHtml(run.caseId)}">
+                ${escapeHtml(run.caseCode)} · ${escapeHtml(target ? target.customerName : "unknown case")}
+              </button>
+              <p class="run-command">“${escapeHtml(run.command)}”</p>
+              <div class="run-log">
+                ${run.log
+                  .map(
+                    ([time, text]) => `
+                      <div class="audit-item">
+                        <span class="audit-time">${escapeHtml(time)}</span>
+                        <p>${escapeHtml(text)}</p>
+                      </div>
+                    `,
+                  )
+                  .join("")}
+              </div>
+            </article>
+          `;
+        })
         .join("")}
     </div>
   `;
@@ -1011,32 +1193,9 @@ function runsView() {
 
 function jeonseView() {
   const jeonseCase = cases.find((item) => item.pains.includes("jeonse-fraud"));
-  const features = [
-    [
-      "전세 위험 신호 탐지",
-      "전세가율 과다, 주변 시세 대비 보증금 과다, 근저당·압류·신탁등기, 단기 소유권 이전, 보증보험 가입 불가 가능성을 묶어 위험 점수를 만든다.",
-      ["jeonse-price-ratio", "local-market-compare", "registry-rights-scan", "ownership-transfer-delta", "guarantee-feasibility"],
-    ],
-    [
-      "고객 맞춤형 자산 리스크 분석",
-      "고객 총자산 대비 전세보증금 비중, 월 소득 대비 주거비 부담, 전세대출 상환 가능성, 계약 실패 시 손실 민감도를 분석한다.",
-      ["tenant-asset-exposure", "housing-cost-burden"],
-    ],
-    [
-      "AI 계약 전 체크리스트",
-      "계약 전 확인 서류, 임대인 확인 항목, 중개사 확인 항목, 특약 문구 초안, 보증보험 가입 전 확인사항을 승인 대기 카드로 만든다.",
-      ["pre-contract-checklist", "special-clause-drafter", "compliance-guard"],
-    ],
-    [
-      "은행 서비스 연계",
-      "전세대출 상담 연결, 보증보험 안내, 위험 매물 경고, 안전 계약 가이드를 RM 승인 후 고객에게 안내한다.",
-      ["bank-linkage-brief", "notification-brief", "approval-gate"],
-    ],
-  ];
-
   return `
     <div class="jeonse-summary">
-      <article class="work-item featured">
+      <article class="work-item featured is-clickable ${jeonseCase.id === selectedCaseId && activeDetailType === "case" ? "is-selected" : ""}" data-case-id="${escapeHtml(jeonseCase.id)}" role="button" tabindex="0">
         <div class="item-head">
           <strong>${escapeHtml(jeonseCase.code)} · ${escapeHtml(jeonseCase.customerName)}</strong>
           <span class="status-pill ${statusClass(jeonseCase.status)}">${escapeHtml(jeonseCase.status)}</span>
@@ -1045,19 +1204,20 @@ function jeonseView() {
         <div class="tag-row">${jeonseCase.rootCauses.map((cause) => `<span class="tag">${escapeHtml(cause)}</span>`).join("")}</div>
       </article>
       <div class="feature-grid">
-        ${features
-          .map(
-            ([title, description, skills]) => `
-              <article class="work-item">
+        ${jeonseFeatures
+          .map((feature) => {
+            const featureAgents = agentsByFeature(feature);
+            return `
+              <article class="work-item is-clickable ${feature.id === selectedFeatureId && activeDetailType === "feature" ? "is-selected" : ""}" data-feature-id="${escapeHtml(feature.id)}" role="button" tabindex="0">
                 <div class="item-head">
-                  <strong>${escapeHtml(title)}</strong>
-                  <span class="source-badge">AI Agent Skill</span>
+                  <strong>${escapeHtml(feature.title)}</strong>
+                  <span class="source-badge">${featureAgents.length} agents · ${feature.skills.length} skills</span>
                 </div>
-                <p>${escapeHtml(description)}</p>
-                <div class="tag-row">${skills.map((skill) => `<span class="tag">${escapeHtml(skill)}</span>`).join("")}</div>
+                <p>${escapeHtml(feature.description)}</p>
+                <div class="tag-row">${feature.skills.map((skill) => `<span class="tag">${escapeHtml(skill)}</span>`).join("")}</div>
               </article>
-            `,
-          )
+            `;
+          })
           .join("")}
       </div>
     </div>
@@ -1070,7 +1230,7 @@ function agentsView() {
       ${agents
         .map(
           (agent) => `
-            <article class="agent-card">
+            <article class="agent-card is-clickable ${agent.id === selectedAgentId && activeDetailType === "agent" ? "is-selected" : ""}" data-agent-id="${escapeHtml(agent.id)}" role="button" tabindex="0">
               <div class="item-head">
                 <strong>${escapeHtml(agent.name)}</strong>
                 <span class="status-pill ${agent.status === "running" ? "status-running" : agent.status === "pending_approval" ? "status-pending" : "status-new"}">${escapeHtml(agent.status)}</span>
@@ -1163,8 +1323,9 @@ function orgBranch(branch, agentById) {
 function orgNode(agent, variant = "") {
   if (!agent) return "";
   const status = agent.status === "running" ? "status-running" : agent.status === "pending_approval" ? "status-pending" : "status-new";
+  const selected = agent.id === selectedAgentId && activeDetailType === "agent" ? "is-selected" : "";
   return `
-    <article class="org-node ${variant}">
+    <article class="org-node is-clickable ${variant} ${selected}" data-agent-id="${escapeHtml(agent.id)}" role="button" tabindex="0">
       <div class="node-topline">
         <span class="node-kicker">${escapeHtml(agent.type)}</span>
         <span class="status-pill ${status}">${escapeHtml(agent.status)}</span>
@@ -1186,7 +1347,7 @@ function skillsView() {
       ${skillRack
         .map(
           (skill) => `
-            <article class="skill-card">
+            <article class="skill-card is-clickable ${skill.slug === selectedSkillId && activeDetailType === "skill" ? "is-selected" : ""}" data-skill-id="${escapeHtml(skill.slug)}" role="button" tabindex="0">
               <div class="item-head">
                 <strong>${escapeHtml(skill.slug)}</strong>
                 <span class="source-badge">${escapeHtml(skill.type)}</span>
@@ -1297,9 +1458,178 @@ function renderProperties() {
     settings: settingsContextMarkup,
   };
 
-  const renderContext = contextPages[activeView] || caseContextMarkup;
-  contextPanel.innerHTML = renderContext();
+  let markup;
+  if (activeDetailType === "agent" && currentAgent()) {
+    markup = agentDetailMarkup();
+  } else if (activeDetailType === "skill" && currentSkill()) {
+    markup = skillDetailMarkup();
+  } else if (activeDetailType === "feature" && currentFeature()) {
+    markup = featureDetailMarkup();
+  } else if (activeDetailType === "view" && contextPages[activeView]) {
+    markup = contextPages[activeView]();
+  } else {
+    markup = caseContextMarkup();
+  }
+
+  contextPanel.innerHTML = markup;
   bindContextActions();
+}
+
+function caseLinkButton(item) {
+  return `
+    <button class="work-item link-card" type="button" data-case-id="${escapeHtml(item.id)}">
+      <div class="item-head">
+        <strong>${escapeHtml(item.code)} · ${escapeHtml(item.customerName)}</strong>
+        <span class="status-pill ${statusClass(item.status)}">${escapeHtml(item.status)}</span>
+      </div>
+      <p>${escapeHtml(item.primaryPain)}</p>
+    </button>
+  `;
+}
+
+function agentLinkButton(agent) {
+  const status = agent.status === "running" ? "status-running" : agent.status === "pending_approval" ? "status-pending" : "status-new";
+  return `
+    <button class="work-item link-card" type="button" data-agent-id="${escapeHtml(agent.id)}">
+      <div class="item-head">
+        <strong>${escapeHtml(agent.name)}</strong>
+        <span class="status-pill ${status}">${escapeHtml(agent.status)}</span>
+      </div>
+      <p>${escapeHtml(agent.role)}</p>
+    </button>
+  `;
+}
+
+function skillTagButton(slug) {
+  return `<button class="tag tag-button" type="button" data-skill-id="${escapeHtml(slug)}">${escapeHtml(slug)}</button>`;
+}
+
+function agentDetailMarkup() {
+  const agent = currentAgent();
+  const linked = casesByAgent(agent.id);
+  const percent = Math.round((agent.spent / agent.budget) * 100);
+  const statusPill = agent.status === "running" ? "status-running" : agent.status === "pending_approval" ? "status-pending" : "status-new";
+  const firstCase = linked[0];
+  return `
+    <section class="panel selected-case-panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Selected Agent</p>
+          <h3>${escapeHtml(agent.name)}</h3>
+        </div>
+        <span class="status-pill ${statusPill}">${escapeHtml(agent.status)}</span>
+      </div>
+      <div class="case-properties">
+        <div class="property-list">
+          ${propertyRow("담당 업무", agent.role)}
+          ${propertyRow("Type", agent.type)}
+          ${propertyRow("Reports To", agent.reportsTo)}
+          ${propertyRow("Heartbeat", agent.heartbeat)}
+          ${propertyRow("Queue", agent.queue)}
+          ${propertyRow("Budget", `₩${agent.spent.toLocaleString()} / ₩${agent.budget.toLocaleString()} · ${percent}%`)}
+          ${propertyRow("Current", agent.currentCase)}
+        </div>
+        <p class="eyebrow">Mounted Skills</p>
+        <div class="tag-row">${agent.skills.map(skillTagButton).join("")}</div>
+      </div>
+    </section>
+    ${compactPanel(
+      "Assigned Cases",
+      "담당 케이스",
+      linked.length
+        ? `<div class="context-list">${linked.map(caseLinkButton).join("")}</div>`
+        : '<div class="empty-state">연결된 케이스 없음</div>',
+    )}
+    ${compactPanel(
+      "Agent Actions",
+      "실행 가능 action",
+      `<div class="action-row action-stack">
+        <button id="agent-run-case" class="primary-button" type="button" ${firstCase && firstCase.status !== "Agent Running" ? "" : "disabled"}>
+          <span aria-hidden="true">▶</span>
+          ${escapeHtml(firstCase ? `${firstCase.code} 실행` : "실행할 케이스 없음")}
+        </button>
+        <button id="agent-open-cases" class="secondary-button" type="button" ${firstCase ? "" : "disabled"}>케이스 화면으로 이동</button>
+        <button id="back-to-case" class="ghost-button" type="button">Selected Case로 돌아가기</button>
+      </div>`,
+    )}
+  `;
+}
+
+function skillDetailMarkup() {
+  const skill = currentSkill();
+  const users = agentsBySkill(skill.slug);
+  const linked = casesBySkill(skill.slug);
+  const riskPill = skill.risk === "high" ? "status-escalated" : skill.risk === "medium" ? "status-pending" : "status-approved";
+  return `
+    <section class="panel selected-case-panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Selected Skill</p>
+          <h3>${escapeHtml(skill.slug)}</h3>
+        </div>
+        <span class="status-pill ${riskPill}">${escapeHtml(skill.risk)}</span>
+      </div>
+      <div class="case-properties">
+        <div class="property-list">
+          ${propertyRow("Type", skill.type)}
+          ${propertyRow("Purpose", skill.purpose)}
+          ${propertyRow("위험도", skill.risk)}
+          ${propertyRow("승인 정책", skill.approval)}
+          ${propertyRow("Enabled", skill.enabled ? "yes" : "no")}
+        </div>
+      </div>
+    </section>
+    ${compactPanel(
+      "Mounted Agents",
+      "이 Skill을 사용하는 Agent",
+      users.length
+        ? `<div class="context-list">${users.map(agentLinkButton).join("")}</div>`
+        : '<div class="empty-state">장착한 Agent 없음</div>',
+    )}
+    ${compactPanel(
+      "Applied Cases",
+      "이 Skill이 적용된 Case",
+      linked.length
+        ? `<div class="context-list">${linked.map(caseLinkButton).join("")}</div>`
+        : '<div class="empty-state">적용된 케이스 없음</div>',
+    )}
+    ${compactPanel("Navigate", "이동", '<div class="action-row action-stack"><button id="back-to-case" class="ghost-button" type="button">Selected Case로 돌아가기</button></div>')}
+  `;
+}
+
+function featureDetailMarkup() {
+  const feature = currentFeature();
+  const featureAgents = agentsByFeature(feature);
+  const jeonseCase = cases.find((item) => item.pains.includes("jeonse-fraud"));
+  return `
+    <section class="panel selected-case-panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Jeonse Shield Feature</p>
+          <h3>${escapeHtml(feature.title)}</h3>
+        </div>
+        <span class="status-pill status-running">active</span>
+      </div>
+      <div class="case-properties">
+        <p>${escapeHtml(feature.description)}</p>
+        <p class="eyebrow">Linked Skills</p>
+        <div class="tag-row">${feature.skills.map(skillTagButton).join("")}</div>
+      </div>
+    </section>
+    ${compactPanel(
+      "Linked Agents",
+      "이 기능을 수행하는 Agent",
+      featureAgents.length
+        ? `<div class="context-list">${featureAgents.map(agentLinkButton).join("")}</div>`
+        : '<div class="empty-state">연결된 Agent 없음</div>',
+    )}
+    ${compactPanel(
+      "Target Case",
+      "적용 대상 케이스",
+      jeonseCase ? `<div class="context-list">${caseLinkButton(jeonseCase)}</div>` : '<div class="empty-state">전세 케이스 없음</div>',
+    )}
+    ${compactPanel("Navigate", "이동", '<div class="action-row action-stack"><button id="back-to-case" class="ghost-button" type="button">Selected Case로 돌아가기</button></div>')}
+  `;
 }
 
 function caseContextMarkup() {
@@ -1340,7 +1670,19 @@ function caseContextMarkup() {
           ${propertyRow("Due", item.due)}
         </div>
         <div class="tag-row">${item.rootCauses.map((cause) => `<span class="tag">${escapeHtml(cause)}</span>`).join("")}</div>
+        <p class="eyebrow">Mounted Skills</p>
+        <div class="tag-row">${skillsByCase(item).map(skillTagButton).join("")}</div>
       </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Case Agents</p>
+          <h3>담당 Agent</h3>
+        </div>
+      </div>
+      <div class="context-list">${caseAgents(item).map(agentLinkButton).join("") || '<div class="empty-state">배정된 Agent 없음</div>'}</div>
     </section>
 
     <section class="panel">
@@ -1513,15 +1855,28 @@ function renderEvidence() {
   if (!evidenceFeed) return;
   evidenceFeed.innerHTML = evidence
     .filter((entry) => item.evidenceIds.includes(entry.id))
-    .map(
-      (entry) => `
-        <article class="evidence-card">
+    .map((entry) => {
+      const selected = entry.id === selectedEvidenceId;
+      const linkedCases = casesByEvidence(entry.id);
+      const judgment = selected
+        ? `
+          <div class="evidence-judgment">
+            <p class="eyebrow">이 Evidence가 연결된 판단</p>
+            <p><strong>${escapeHtml(item.code)}</strong> · ${escapeHtml(item.approvalTitle)}</p>
+            <p>다음 행동: ${escapeHtml(item.nextAction)}</p>
+            <p>사용 케이스: ${linkedCases.map((linked) => escapeHtml(linked.code)).join(", ") || "없음"}</p>
+          </div>
+        `
+        : "";
+      return `
+        <article class="evidence-card is-clickable ${selected ? "is-selected" : ""}" data-evidence-id="${escapeHtml(entry.id)}" role="button" tabindex="0">
           <span class="source-badge">${escapeHtml(entry.type)} · ${escapeHtml(entry.source)}</span>
           <a href="${escapeHtml(entry.url)}" target="_blank" rel="noreferrer">${escapeHtml(entry.title)}</a>
           <p>${escapeHtml(entry.implication)}</p>
+          ${judgment}
         </article>
-      `,
-    )
+      `;
+    })
     .join("");
 }
 
@@ -1551,28 +1906,80 @@ function timestamp() {
   }).format(new Date());
 }
 
-function runAgents() {
-  const item = currentCase();
+function startAgentRun(item, command) {
+  runSequence += 1;
+  const run = {
+    id: `run-${String(runSequence).padStart(3, "0")}`,
+    caseId: item.id,
+    caseCode: item.code,
+    agentName: item.owner,
+    startedAt: timestamp(),
+    status: "running",
+    command,
+    log: [[timestamp(), `Run started by ${item.owner}. Mounted skills and injected case context.`]],
+  };
+  agentRuns.unshift(run);
+
   item.status = "Agent Running";
   item.stage = "in_progress";
-  item.audit.push([timestamp(), "AgentRun started. Mounted skills and injected case context."]);
+  item.audit.push([timestamp(), `AgentRun ${run.id} started: ${command}`]);
   activity.unshift([timestamp(), item.owner, "checked out", item.code]);
-  render();
 
   window.setTimeout(() => {
-    const selected = currentCase();
-    if (selected.status !== "Agent Running") return;
-    selected.status = selected.id === "gunsan-manufacturing" ? "Escalated" : "Approval Pending";
-    selected.stage = selected.status === "Escalated" ? "blocked" : "pending_approval";
-    selected.transcript.push(
-      selected.status === "Escalated"
+    if (run.status !== "running") return;
+    const target = cases.find((entry) => entry.id === run.caseId);
+    run.log.push([
+      timestamp(),
+      target && target.pains.includes("jeonse-fraud")
+        ? "Registry Rights Agent: 등기부 권리관계와 전세가율 신호를 교차 확인 중."
+        : "Evidence Harvest: 근거 소스와 상담 메모를 case context에 연결 중.",
+    ]);
+    render();
+  }, 700);
+
+  window.setTimeout(() => {
+    if (run.status !== "running") return;
+    const target = cases.find((entry) => entry.id === run.caseId);
+    if (!target) return;
+    const escalate = target.id === "gunsan-manufacturing";
+    run.status = escalate ? "escalated" : "approval_pending";
+    run.log.push([
+      timestamp(),
+      escalate
         ? "Fraud Shield: Customer-facing action remains blocked. Internal escalation only."
         : "Approval Gate: Draft action is ready for human review.",
-    );
-    selected.audit.push([timestamp(), "AgentRun completed and approval policy evaluated."]);
-    activity.unshift([timestamp(), "Approval Gate", "created approval", selected.code]);
+    ]);
+    if (target.status === "Agent Running") {
+      target.status = escalate ? "Escalated" : "Approval Pending";
+      target.stage = escalate ? "blocked" : "pending_approval";
+      target.transcript.push(
+        escalate
+          ? "Fraud Shield: Customer-facing action remains blocked. Internal escalation only."
+          : "Approval Gate: Draft action is ready for human review.",
+      );
+      target.audit.push([timestamp(), `AgentRun ${run.id} completed and approval policy evaluated.`]);
+      activity.unshift([timestamp(), "Approval Gate", escalate ? "escalated case" : "created approval", target.code]);
+    }
     render();
-  }, 480);
+  }, 1600);
+
+  return run;
+}
+
+function runAgents() {
+  const item = currentCase();
+  if (item.status === "Agent Running") return;
+  startAgentRun(item, item.nextAction);
+  render();
+}
+
+function closeRunsForCase(item, status, logText) {
+  agentRuns
+    .filter((run) => run.caseId === item.id && (run.status === "approval_pending" || run.status === "running"))
+    .forEach((run) => {
+      run.status = status;
+      run.log.push([timestamp(), logText]);
+    });
 }
 
 function approveAction() {
@@ -1582,6 +1989,7 @@ function approveAction() {
   item.stage = "done";
   item.audit.push([timestamp(), "Human RM approved the proposed action. Demo outbound task recorded."]);
   activity.unshift([timestamp(), "Human RM", "approved action", item.code]);
+  closeRunsForCase(item, "completed", "Human RM approved the action. Run closed.");
   render();
 }
 
@@ -1592,37 +2000,162 @@ function rejectAction() {
   item.stage = "blocked";
   item.audit.push([timestamp(), "Human reviewer rejected the draft and requested revision."]);
   activity.unshift([timestamp(), "Human reviewer", "rejected draft", item.code]);
+  closeRunsForCase(item, "rejected", "Human reviewer rejected the draft. Run closed.");
   render();
 }
 
 function dispatchCommand() {
   const item = currentCase();
   const commandInput = document.getElementById("command-input");
-  const command = commandInput ? commandInput.value.trim() : "";
-  item.audit.push([timestamp(), `Orchestrator command received: ${command || "empty command"}`]);
-  item.status = "Agent Running";
-  item.stage = "in_progress";
+  const command = (commandInput ? commandInput.value.trim() : "") || "empty command";
+  item.audit.push([timestamp(), `Orchestrator command received: ${command}`]);
   activity.unshift([timestamp(), "LocalGuard Orchestrator", "dispatched command", item.code]);
+  startAgentRun(item, command);
   activeView = "runs";
+  activeDetailType = "case";
   render();
 }
 
 function newCaseDemo() {
-  selectedCaseId = "gwangju-wholesale";
+  caseSequence += 1;
+  const code = `JBG-${caseSequence}`;
+  const affiliate = railFilter === "all" ? "전북은행" : railFilter;
+  const fresh = {
+    id: `manual-${caseSequence}`,
+    code,
+    customerName: `신규 위험 상담 ${code}`,
+    affiliate,
+    segment: "개인사업자",
+    region: "전북 전주",
+    industry: "상담 접수",
+    riskScore: 55,
+    status: "New",
+    priority: "medium",
+    zeroHuman: "L1 초안 + 원클릭 승인",
+    sla: "1d",
+    owner: "LocalGuard Orchestrator",
+    stage: "todo",
+    due: "내일 18:00",
+    exposure: "상담 접수 · 분류 대기",
+    primaryPain: "분류 대기",
+    nextAction: "Pain 분류와 담당 Agent 배정",
+    approvalTitle: "초기 분류 결과 확인",
+    pains: ["triage"],
+    rootCauses: ["신규 접수"],
+    evidenceIds: ["jb-network"],
+    gates: [["RM 승인 후 고객 접촉", "pending"]],
+    agents: ["orchestrator", "pain-radar"],
+    transcript: [],
+    audit: [[timestamp(), "Case registered from console New Case button."]],
+  };
+  cases.push(fresh);
+  activity.unshift([timestamp(), "LocalGuard Orchestrator", "registered case", code]);
+  selectedCaseId = fresh.id;
   activeView = "cases";
-  currentCase().audit.push([timestamp(), "Opened from New Case button demo."]);
+  activeDetailType = "case";
   render();
+}
+
+function selectCase(caseId) {
+  selectedCaseId = caseId;
+  selectedEvidenceId = null;
+  activeDetailType = "case";
+  render();
+}
+
+function selectAgent(agentId) {
+  selectedAgentId = agentId;
+  activeDetailType = "agent";
+  render();
+}
+
+function selectSkill(slug) {
+  selectedSkillId = slug;
+  activeDetailType = "skill";
+  render();
+}
+
+function selectFeature(featureId) {
+  selectedFeatureId = featureId;
+  activeDetailType = "feature";
+  render();
+}
+
+function selectEvidence(entryId) {
+  selectedEvidenceId = selectedEvidenceId === entryId ? null : entryId;
+  render();
+}
+
+function bindPress(element, handler) {
+  element.addEventListener("click", handler);
+  element.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    if (element.tagName === "BUTTON" || element.tagName === "A") return;
+    event.preventDefault();
+    handler();
+  });
+}
+
+function bindSelectionTargets() {
+  document.querySelectorAll("[data-case-id]").forEach((element) => {
+    bindPress(element, () => selectCase(element.dataset.caseId));
+  });
+  document.querySelectorAll("[data-agent-id]").forEach((element) => {
+    bindPress(element, () => selectAgent(element.dataset.agentId));
+  });
+  document.querySelectorAll("[data-skill-id]").forEach((element) => {
+    bindPress(element, () => selectSkill(element.dataset.skillId));
+  });
+  document.querySelectorAll("[data-feature-id]").forEach((element) => {
+    bindPress(element, () => selectFeature(element.dataset.featureId));
+  });
+  document.querySelectorAll("[data-evidence-id]").forEach((element) => {
+    bindPress(element, () => selectEvidence(element.dataset.evidenceId));
+  });
 }
 
 function bindActions() {
   document.getElementById("new-case-button").addEventListener("click", newCaseDemo);
   document.getElementById("sidebar-search").addEventListener("input", (event) => {
-    const query = event.target.value.toLowerCase();
-    const found = cases.find((item) => `${item.customerName} ${item.code} ${item.affiliate}`.toLowerCase().includes(query));
-    if (found) {
-      selectedCaseId = found.id;
+    const query = event.target.value.trim().toLowerCase();
+    if (!query) return;
+    const foundCase = cases.find((item) => `${item.customerName} ${item.code} ${item.affiliate}`.toLowerCase().includes(query));
+    if (foundCase) {
+      selectedCaseId = foundCase.id;
+      activeDetailType = "case";
+      render();
+      return;
+    }
+    const foundAgent = agents.find((agent) => `${agent.name} ${agent.role}`.toLowerCase().includes(query));
+    if (foundAgent) {
+      selectedAgentId = foundAgent.id;
+      activeDetailType = "agent";
+      if (activeView !== "orgchart") activeView = "agents";
+      render();
+      return;
+    }
+    const foundSkill = skillRack.find((skill) => `${skill.slug} ${skill.type} ${skill.purpose}`.toLowerCase().includes(query));
+    if (foundSkill) {
+      selectedSkillId = foundSkill.slug;
+      activeDetailType = "skill";
+      activeView = "skills";
       render();
     }
+  });
+
+  document.querySelectorAll("[data-affiliate]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const next = button.dataset.affiliate;
+      railFilter = railFilter === next ? "all" : next;
+      document.querySelectorAll("[data-affiliate]").forEach((entry) => {
+        entry.classList.toggle("is-active", entry.dataset.affiliate === railFilter);
+      });
+      const scoped = visibleCases();
+      if (!scoped.some((item) => item.id === selectedCaseId) && scoped.length) {
+        selectedCaseId = scoped[0].id;
+      }
+      render();
+    });
   });
 }
 
@@ -1633,6 +2166,41 @@ function bindContextActions() {
   if (runButton) runButton.addEventListener("click", runAgents);
   if (approveButton) approveButton.addEventListener("click", approveAction);
   if (rejectButton) rejectButton.addEventListener("click", rejectAction);
+
+  const backButton = document.getElementById("back-to-case");
+  if (backButton) {
+    backButton.addEventListener("click", () => {
+      activeDetailType = "case";
+      render();
+    });
+  }
+
+  const agentRunButton = document.getElementById("agent-run-case");
+  if (agentRunButton) {
+    agentRunButton.addEventListener("click", () => {
+      const agent = currentAgent();
+      if (!agent) return;
+      const linked = casesByAgent(agent.id);
+      const target = linked.find((item) => item.status !== "Agent Running");
+      if (!target) return;
+      selectedCaseId = target.id;
+      startAgentRun(target, `${agent.name} 단독 실행: ${target.nextAction}`);
+      render();
+    });
+  }
+
+  const agentCasesButton = document.getElementById("agent-open-cases");
+  if (agentCasesButton) {
+    agentCasesButton.addEventListener("click", () => {
+      const agent = currentAgent();
+      if (!agent) return;
+      const linked = casesByAgent(agent.id);
+      if (linked.length) selectedCaseId = linked[0].id;
+      activeView = "cases";
+      activeDetailType = "case";
+      render();
+    });
+  }
 }
 
 function render() {
@@ -1644,6 +2212,7 @@ function render() {
   renderLiveRuns();
   renderEvidence();
   renderAudit();
+  bindSelectionTargets();
 }
 
 bindActions();

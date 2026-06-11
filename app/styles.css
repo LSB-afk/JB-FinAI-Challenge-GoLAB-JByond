@@ -1425,3 +1425,146 @@ button:disabled {
     font-size: 36px;
   }
 }
+
+/* Interaction layer: clickable cards, selected states, run logs */
+.is-clickable {
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.is-clickable:hover,
+.is-clickable:focus-visible {
+  border-color: var(--cyan-500);
+  box-shadow: 0 0 0 3px rgba(28, 169, 214, 0.13);
+  outline: none;
+}
+
+.org-node.is-selected,
+.agent-card.is-selected,
+.skill-card.is-selected,
+.work-item.is-selected,
+.evidence-card.is-selected {
+  border-color: var(--blue-600);
+  box-shadow: 0 0 0 3px rgba(11, 111, 179, 0.18);
+}
+
+.link-card {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+}
+
+.link-card:hover {
+  border-color: var(--cyan-500);
+  box-shadow: 0 0 0 3px rgba(28, 169, 214, 0.13);
+}
+
+.tag-button {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.tag-button:hover {
+  color: #fff;
+  background: var(--blue-600);
+}
+
+.link-button {
+  width: max-content;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blue-700);
+  font-size: 13px;
+  font-weight: 900;
+  text-align: left;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+}
+
+.run-log-list {
+  display: grid;
+  gap: 10px;
+}
+
+.run-log-card {
+  display: grid;
+  gap: 8px;
+}
+
+.run-log-card.is-live {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px rgba(96, 70, 182, 0.12);
+}
+
+.run-command {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.run-log {
+  display: grid;
+  gap: 6px;
+}
+
+.run-log .audit-item {
+  padding: 8px;
+  background: var(--surface-soft);
+}
+
+.evidence-judgment {
+  display: grid;
+  gap: 4px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-blue);
+}
+
+.evidence-judgment p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.action-stack {
+  grid-template-columns: 1fr;
+  margin-top: 0;
+}
+
+.case-board.is-queue {
+  display: block;
+}
+
+.queue-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.queue-list .case-card {
+  margin-bottom: 0;
+}
+
+@media (max-width: 1180px) {
+  .queue-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .queue-list {
+    grid-template-columns: 1fr;
+  }
+}
