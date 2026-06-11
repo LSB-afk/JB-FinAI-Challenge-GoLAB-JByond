@@ -35,6 +35,11 @@
   --hero-height: 220px;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -42,6 +47,8 @@
 body {
   margin: 0;
   min-width: 320px;
+  height: 100vh;
+  overflow: hidden;
   background:
     linear-gradient(180deg, rgba(14, 82, 151, 0.08), transparent 360px),
     var(--bg);
@@ -67,9 +74,11 @@ button {
   grid-template-columns:
     var(--rail-width)
     var(--sidebar-width)
-    minmax(720px, 1fr)
+    minmax(0, 1fr)
     var(--properties-width);
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 .org-rail {
@@ -327,8 +336,51 @@ button {
 
 .main-surface {
   min-width: 0;
+  height: 100vh;
   padding: var(--page-pad);
-  overflow: hidden;
+  overflow-y: auto;
+}
+
+.page-content {
+  display: grid;
+  gap: var(--page-gap);
+  min-width: 0;
+  min-height: calc(100vh - (var(--page-pad) * 2));
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  min-height: 116px;
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(28, 169, 214, 0.13), transparent 54%),
+    #ffffff;
+  box-shadow: var(--shadow-soft);
+}
+
+.page-header h2 {
+  margin: 0;
+  color: var(--navy-950);
+  font-size: 32px;
+  line-height: 1.15;
+}
+
+.page-header p:last-child {
+  max-width: 780px;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.page-two-col {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+  gap: var(--page-gap);
+  min-width: 0;
 }
 
 .jb-hero {
@@ -592,17 +644,31 @@ button:disabled {
 
 .case-board {
   display: grid;
-  grid-template-columns: repeat(5, minmax(132px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 10px;
   min-width: 0;
 }
 
 .board-column {
   min-width: 0;
+  overflow: hidden;
   padding: 10px;
   border: 1px solid #dce9f5;
   border-radius: 8px;
   background: var(--surface-soft);
+}
+
+.board-panel {
+  overflow: hidden;
+}
+
+.board-panel .case-board {
+  min-height: calc(100vh - 236px);
+}
+
+.board-switch {
+  justify-content: flex-end;
+  margin-bottom: 12px;
 }
 
 .board-column h4 {
@@ -633,7 +699,9 @@ button:disabled {
   display: grid;
   gap: 8px;
   width: 100%;
+  min-width: 0;
   margin-bottom: 8px;
+  overflow: hidden;
   padding: 11px;
   text-align: left;
   color: var(--ink);
@@ -647,8 +715,11 @@ button:disabled {
 }
 
 .case-card strong {
+  min-width: 0;
+  overflow: hidden;
   font-size: 14px;
   line-height: 1.3;
+  text-overflow: ellipsis;
 }
 
 .case-meta,
@@ -656,6 +727,8 @@ button:disabled {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  min-width: 0;
+  overflow: hidden;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.35;
@@ -665,6 +738,8 @@ button:disabled {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .tag,
@@ -678,6 +753,10 @@ button:disabled {
   border-radius: 8px;
   font-size: 12px;
   font-weight: 900;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -727,7 +806,8 @@ button:disabled {
 }
 
 .live-runs,
-.view-body,
+.context-panel,
+.context-list,
 .case-properties,
 .approval-gates,
 .evidence-feed,
@@ -750,6 +830,11 @@ button:disabled {
 .run-card {
   display: grid;
   gap: 8px;
+  min-width: 0;
+}
+
+.run-page-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .run-head,
@@ -758,6 +843,18 @@ button:disabled {
   justify-content: space-between;
   gap: 10px;
   align-items: flex-start;
+  min-width: 0;
+}
+
+.run-head strong,
+.item-head strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ghost-count {
+  justify-self: end;
+  margin-top: 10px;
 }
 
 .pulse {
@@ -797,6 +894,7 @@ button:disabled {
 .work-item {
   display: grid;
   gap: 8px;
+  min-width: 0;
 }
 
 .work-item strong,
@@ -808,6 +906,7 @@ button:disabled {
 .gate-row strong {
   font-size: 14px;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .work-item p,
@@ -862,6 +961,7 @@ button:disabled {
 
 .property-row strong {
   min-width: 0;
+  overflow-wrap: anywhere;
   font-size: 13px;
   line-height: 1.4;
 }
@@ -1022,8 +1122,20 @@ button:disabled {
 }
 
 @media (max-width: 1320px) {
+  html,
+  body {
+    height: auto;
+  }
+
+  body {
+    overflow: auto;
+  }
+
   .app-shell {
     grid-template-columns: var(--rail-width) 248px minmax(0, 1fr);
+    height: auto;
+    max-height: none;
+    overflow: visible;
   }
 
   .ops-grid {
@@ -1041,6 +1153,19 @@ button:disabled {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     border-left: 0;
     border-top: 1px solid var(--line);
+  }
+
+  .main-surface {
+    height: auto;
+    overflow: visible;
+  }
+
+  .page-two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .board-panel .case-board {
+    min-height: auto;
   }
 }
 
@@ -1073,6 +1198,7 @@ button:disabled {
   .command-panel,
   .ops-grid,
   .properties-panel,
+  .page-two-col,
   .two-col,
   .agent-grid,
   .skill-grid,

@@ -591,7 +591,7 @@ function statusToColumn(status) {
 function counts() {
   return {
     dashboard: cases.length,
-    inbox: cases.filter((item) => item.status === "Escalated").length,
+    inbox: cases.filter((item) => item.status === "Escalated" || item.status === "Approval Pending").length,
     cases: cases.length,
     approvals: cases.filter((item) => item.status === "Approval Pending").length,
     runs: cases.filter((item) => item.status === "Agent Running").length,
@@ -635,12 +635,29 @@ function renderNavigation() {
   document.querySelectorAll("[data-view]").forEach((button) => {
     button.addEventListener("click", () => {
       activeView = button.dataset.view;
+      selectDefaultCaseForView(activeView);
       render();
     });
   });
 }
 
+function selectDefaultCaseForView(view) {
+  const selected = currentCase();
+  const matchers = {
+    inbox: (item) => item.status === "Escalated" || item.status === "Approval Pending",
+    approvals: (item) => item.status === "Approval Pending",
+    runs: (item) => item.status === "Agent Running" || item.status === "Approval Pending",
+    jeonse: (item) => item.pains.includes("jeonse-fraud"),
+  };
+  const matcher = matchers[view];
+  if (!matcher || matcher(selected)) return;
+  const next = cases.find(matcher);
+  if (next) selectedCaseId = next.id;
+}
+
 function renderMetrics() {
+  const metricGrid = document.getElementById("metric-grid");
+  if (!metricGrid) return;
   const highRisk = cases.filter((item) => item.riskScore >= 85).length;
   const pending = cases.filter((item) => item.status === "Approval Pending").length;
   const running = cases.filter((item) => item.status === "Agent Running").length;
@@ -652,7 +669,7 @@ function renderMetrics() {
     ["Live AgentRun", running, "현재 실행 중인 Agent 작업"],
     ["API Budget", `${Math.round((spend / total) * 100)}%`, `₩${spend.toLocaleString()} / ₩${total.toLocaleString()}`],
   ];
-  document.getElementById("metric-grid").innerHTML = cards
+  metricGrid.innerHTML = cards
     .map(
       ([label, value, detail]) => `
         <article class="metric-card">
@@ -666,6 +683,8 @@ function renderMetrics() {
 }
 
 function renderBoard() {
+  const caseBoard = document.getElementById("case-board");
+  if (!caseBoard) return;
   const columns = [
     ["todo", "TODO"],
     ["running", "IN PROGRESS"],
@@ -674,7 +693,7 @@ function renderBoard() {
     ["blocked", "BLOCKED"],
   ];
 
-  document.getElementById("case-board").innerHTML = columns
+  caseBoard.innerHTML = columns
     .map(([key, label]) => {
       const items = cases.filter((item) => statusToColumn(item.status) === key);
       return `
@@ -719,9 +738,12 @@ function renderCaseCard(item) {
 }
 
 function renderLiveRuns() {
+  const liveRuns = document.getElementById("live-runs");
+  const liveCount = document.getElementById("live-count");
+  if (!liveRuns || !liveCount) return;
   const live = cases.filter((item) => item.status === "Agent Running" || item.status === "Approval Pending");
-  document.getElementById("live-count").textContent = live.length;
-  document.getElementById("live-runs").innerHTML = live
+  liveCount.textContent = live.length;
+  liveRuns.innerHTML = live
     .map((item) => {
       const progress = item.status === "Approval Pending" ? 86 : 52;
       return `
@@ -740,51 +762,201 @@ function renderLiveRuns() {
 }
 
 function renderWorkbench() {
-  const views = [
-    ["dashboard", "Dashboard"],
-    ["inbox", "Inbox"],
-    ["cases", "Cases"],
-    ["approvals", "Approvals"],
-    ["runs", "Runs"],
-    ["jeonse", "Jeonse Shield"],
-    ["agents", "Agents"],
-    ["orgchart", "Org Chart"],
-    ["skills", "Skills"],
-    ["routines", "Routines"],
-    ["goals", "Goals"],
-    ["activity", "Activity"],
-    ["budget", "Budget"],
-    ["settings", "Settings"],
-  ];
-  document.getElementById("view-tabs").innerHTML = views
-    .map(
-      ([id, label]) => `<button class="${activeView === id ? "is-active" : ""}" type="button" data-view="${id}">${label}</button>`,
-    )
-    .join("");
+  const pageContent = document.getElementById("page-content");
+  if (!pageContent) return;
 
-  let body = "";
-  if (activeView === "dashboard") body = dashboardView();
-  if (activeView === "inbox") body = inboxView();
-  if (activeView === "cases") body = casesView();
-  if (activeView === "approvals") body = approvalsView();
-  if (activeView === "runs") body = runsView();
-  if (activeView === "jeonse") body = jeonseView();
-  if (activeView === "agents") body = agentsView();
-  if (activeView === "orgchart") body = orgChartView();
-  if (activeView === "skills") body = skillsView();
-  if (activeView === "routines") body = routinesView();
-  if (activeView === "goals") body = goalsView();
-  if (activeView === "activity") body = activityView();
-  if (activeView === "budget") body = budgetView();
-  if (activeView === "settings") body = settingsView();
+  const pages = {
+    dashboard: dashboardPage,
+    inbox: inboxPage,
+    cases: casesPage,
+    approvals: approvalsPage,
+    runs: runsPage,
+    jeonse: jeonsePage,
+    goals: goalsPage,
+    agents: agentsPage,
+    orgchart: orgChartPage,
+    skills: skillsPage,
+    routines: routinesPage,
+    activity: activityPage,
+    budget: budgetPage,
+    settings: settingsPage,
+  };
 
-  document.getElementById("view-body").innerHTML = body;
-  document.querySelectorAll("[data-view]").forEach((button) => {
-    button.addEventListener("click", () => {
-      activeView = button.dataset.view;
-      render();
-    });
-  });
+  pageContent.innerHTML = (pages[activeView] || pages.dashboard)();
+  bindPageActions();
+}
+
+function bindPageActions() {
+  const dispatchButton = document.getElementById("dispatch-command");
+  if (dispatchButton) dispatchButton.addEventListener("click", dispatchCommand);
+}
+
+function heroMarkup() {
+  return `
+    <section class="jb-hero" aria-label="JB LocalGuard OS hero">
+      <div class="hero-copy">
+        <span class="status-badge">JB금융그룹 Fin:AI Challenge · 자유주제</span>
+        <h2>JB LocalGuard OS</h2>
+        <p>지역 금융 pain point를 Case, AgentRun, Approval, Audit으로 자동화하는 AI Agent 모델</p>
+      </div>
+      <div class="hero-mark" aria-hidden="true">
+        <span class="mark-box"></span>
+        <strong>LocalGuard AI</strong>
+      </div>
+    </section>
+  `;
+}
+
+function pageHeader(eyebrow, title, description) {
+  return `
+    <section class="page-header">
+      <div>
+        <p class="eyebrow">${escapeHtml(eyebrow)}</p>
+        <h2>${escapeHtml(title)}</h2>
+        <p>${escapeHtml(description)}</p>
+      </div>
+    </section>
+  `;
+}
+
+function panelMarkup(eyebrow, title, body, extraClass = "") {
+  return `
+    <section class="panel ${extraClass}">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">${escapeHtml(eyebrow)}</p>
+          <h3>${escapeHtml(title)}</h3>
+        </div>
+      </div>
+      ${body}
+    </section>
+  `;
+}
+
+function commandMarkup() {
+  return `
+    <section class="command-panel" aria-label="orchestrator command">
+      <div>
+        <p class="eyebrow">Orchestrator Command</p>
+        <h3>지역 금융 오케스트레이터에게 지시하기</h3>
+      </div>
+      <div class="command-row">
+        <textarea id="command-input" rows="2">전주 카페 case의 금리 부담, 정책금융 후보, 고객 안내 초안을 승인 가능한 형태로 정리해줘.</textarea>
+        <button id="dispatch-command" class="primary-button" type="button">
+          <span aria-hidden="true">▶</span>
+          Dispatch
+        </button>
+      </div>
+    </section>
+  `;
+}
+
+function dashboardPage() {
+  return `
+    ${heroMarkup()}
+    ${commandMarkup()}
+    <section id="metric-grid" class="metric-grid" aria-label="metrics"></section>
+    <section class="page-two-col">
+      ${panelMarkup("Live Agent Runs", "실시간 실행", '<div id="live-runs" class="live-runs"></div><span id="live-count" class="count-pill ghost-count">0</span>')}
+      ${panelMarkup("Dashboard Brief", "오늘 운영 브리프", dashboardView())}
+    </section>
+  `;
+}
+
+function inboxPage() {
+  return `
+    ${pageHeader("Inbox", "알림함", "승인 대기, escalation, 실패 알림만 모아 보는 화면입니다.")}
+    ${panelMarkup("Action Needed", "처리 필요 알림", inboxView())}
+  `;
+}
+
+function casesPage() {
+  return `
+    ${pageHeader("Case Board", "위험 케이스 칸반", "금융 위험 case를 TODO, IN PROGRESS, APPROVAL, DONE, BLOCKED 상태로 관리합니다.")}
+    ${panelMarkup(
+      "Case Board",
+      "위험 케이스 칸반",
+      '<div class="view-switch board-switch" aria-label="board mode"><button class="is-active" type="button">Kanban</button><button type="button">Queue</button></div><div id="case-board" class="case-board"></div>',
+      "board-panel",
+    )}
+  `;
+}
+
+function approvalsPage() {
+  return `
+    ${pageHeader("Approvals", "승인 큐", "고객-facing 행동, 법률/권리 리스크, 금융조건 표현을 사람 승인 전까지 차단합니다.")}
+    ${panelMarkup("Approval Queue", "승인 대기 항목", approvalsView())}
+  `;
+}
+
+function runsPage() {
+  return `
+    ${pageHeader("AgentRun", "실시간 실행", "현재 실행 중이거나 승인 대기 중인 AgentRun transcript를 확인합니다.")}
+    ${panelMarkup("Live Agent Runs", "실시간 실행", '<div id="live-runs" class="live-runs run-page-list"></div><span id="live-count" class="count-pill ghost-count">0</span>')}
+  `;
+}
+
+function jeonsePage() {
+  return `
+    ${pageHeader("Jeonse Shield", "전세사기 AI Agent 라인", "전세 위험 신호, 고객 자산노출, 계약 전 체크리스트, 은행 서비스 연계를 전용 Agent들이 분담합니다.")}
+    ${panelMarkup("Jeonse Shield", "전세사기 대응 기능", jeonseView())}
+  `;
+}
+
+function goalsPage() {
+  return `
+    ${pageHeader("Goals", "운영 목표", "Agent 운영의 성공 기준과 달성률을 추적합니다.")}
+    ${panelMarkup("Operating Goals", "목표 달성률", goalsView())}
+  `;
+}
+
+function agentsPage() {
+  return `
+    ${pageHeader("Agents", "에이전트 팀", "각 AI Agent의 상태, 역할, 장착 스킬, 보고 체계를 확인합니다.")}
+    ${panelMarkup("Agent Team", "에이전트 팀", agentsView())}
+  `;
+}
+
+function orgChartPage() {
+  return `
+    ${pageHeader("Org Chart", "Agent 조직도", "AI Agent들이 어떤 상위 Agent 또는 사람에게 보고하는지 조직도로 확인합니다.")}
+    ${panelMarkup("Agent Organization", "Agent 조직도", orgChartView())}
+  `;
+}
+
+function skillsPage() {
+  return `
+    ${pageHeader("Skill Registry", "Skill Registry", "Agent에게 장착되는 금융, 리스크, 계약, 준법 스킬 패키지를 확인합니다.")}
+    ${panelMarkup("Skill Registry", "장착 가능 스킬", skillsView())}
+  `;
+}
+
+function routinesPage() {
+  return `
+    ${pageHeader("Heartbeat", "Heartbeat 루틴", "정기 실행되는 Agent scan과 SLA 점검 루틴을 관리합니다.")}
+    ${panelMarkup("Routine Schedule", "정기 실행", routinesView())}
+  `;
+}
+
+function activityPage() {
+  return `
+    ${pageHeader("Activity", "처리 이력", "Agent checkout, approval 생성, escalation, 승인/반려 기록을 시간순으로 봅니다.")}
+    ${panelMarkup("Activity Ledger", "처리 이력", activityView())}
+  `;
+}
+
+function budgetPage() {
+  return `
+    ${pageHeader("API Budget", "API 예산", "Agent별 월 예산과 사용률을 추적합니다.")}
+    ${panelMarkup("Budget Usage", "Agent별 사용률", budgetView())}
+  `;
+}
+
+function settingsPage() {
+  return `
+    ${pageHeader("Settings", "설정", "조직 프로필, 승인 정책, 외부 연동 adapter를 관리합니다.")}
+    ${panelMarkup("Settings", "운영 설정", settingsView())}
+  `;
 }
 
 function dashboardView() {
@@ -1065,26 +1237,30 @@ function workItem(title, description, meta) {
 }
 
 function renderProperties() {
-  const item = currentCase();
-  document.getElementById("property-title").textContent = item.customerName;
-  const status = document.getElementById("property-status");
-  status.textContent = item.status;
-  status.className = `status-pill ${statusClass(item.status)}`;
-  document.getElementById("case-properties").innerHTML = `
-    <div class="property-list">
-      ${propertyRow("Code", item.code)}
-      ${propertyRow("Affiliate", item.affiliate)}
-      ${propertyRow("Region", `${item.region} · ${item.industry}`)}
-      ${propertyRow("Risk", `${item.riskScore}/100 · ${item.priority}`)}
-      ${propertyRow("Zero-human", item.zeroHuman)}
-      ${propertyRow("Owner", item.owner)}
-      ${propertyRow("Exposure", item.exposure)}
-      ${propertyRow("Due", item.due)}
-    </div>
-    <div class="tag-row">${item.rootCauses.map((cause) => `<span class="tag">${escapeHtml(cause)}</span>`).join("")}</div>
-  `;
+  const contextPanel = document.getElementById("context-panel");
+  if (!contextPanel) return;
 
-  document.getElementById("approval-gates").innerHTML = item.gates
+  const contextPages = {
+    agents: agentContextMarkup,
+    orgchart: agentContextMarkup,
+    skills: skillContextMarkup,
+    routines: routineContextMarkup,
+    goals: goalContextMarkup,
+    activity: activityContextMarkup,
+    budget: budgetContextMarkup,
+    settings: settingsContextMarkup,
+  };
+
+  const renderContext = contextPages[activeView] || caseContextMarkup;
+  contextPanel.innerHTML = renderContext();
+  bindContextActions();
+}
+
+function caseContextMarkup() {
+  const item = currentCase();
+  const reviewDisabled = item.status !== "Approval Pending" ? "disabled" : "";
+  const runDisabled = item.status === "Agent Running" ? "disabled" : "";
+  const gateRows = item.gates
     .map(
       ([label, gateStatus]) => `
         <article class="gate-row">
@@ -1097,17 +1273,199 @@ function renderProperties() {
     )
     .join("");
 
-  document.getElementById("approve-action").disabled = item.status !== "Approval Pending";
-  document.getElementById("reject-action").disabled = item.status !== "Approval Pending";
+  return `
+    <section class="panel selected-case-panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Selected Case</p>
+          <h3 id="property-title">${escapeHtml(item.customerName)}</h3>
+        </div>
+        <span id="property-status" class="status-pill ${statusClass(item.status)}">${escapeHtml(item.status)}</span>
+      </div>
+      <div id="case-properties" class="case-properties">
+        <div class="property-list">
+          ${propertyRow("Code", item.code)}
+          ${propertyRow("Affiliate", item.affiliate)}
+          ${propertyRow("Region", `${item.region} · ${item.industry}`)}
+          ${propertyRow("Risk", `${item.riskScore}/100 · ${item.priority}`)}
+          ${propertyRow("Zero-human", item.zeroHuman)}
+          ${propertyRow("Owner", item.owner)}
+          ${propertyRow("Exposure", item.exposure)}
+          ${propertyRow("Due", item.due)}
+        </div>
+        <div class="tag-row">${item.rootCauses.map((cause) => `<span class="tag">${escapeHtml(cause)}</span>`).join("")}</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Approval Gate</p>
+          <h3>승인 정책</h3>
+        </div>
+      </div>
+      <div id="approval-gates" class="approval-gates">${gateRows}</div>
+      <div class="action-row">
+        <button id="run-agents" class="primary-button" type="button" ${runDisabled}>
+          <span aria-hidden="true">▶</span>
+          Run
+        </button>
+        <button id="approve-action" class="secondary-button" type="button" ${reviewDisabled}>
+          <span aria-hidden="true">✓</span>
+          Approve
+        </button>
+        <button id="reject-action" class="danger-button" type="button" ${reviewDisabled}>
+          <span aria-hidden="true">×</span>
+          Reject
+        </button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Evidence Feed</p>
+          <h3>근거</h3>
+        </div>
+      </div>
+      <div id="evidence-feed" class="evidence-feed"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Audit Ledger</p>
+          <h3>감사 로그</h3>
+        </div>
+      </div>
+      <div id="audit-log" class="audit-log"></div>
+    </section>
+  `;
 }
 
 function propertyRow(label, value) {
   return `<div class="property-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`;
 }
 
+function compactPanel(eyebrow, title, body) {
+  return `
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">${escapeHtml(eyebrow)}</p>
+          <h3>${escapeHtml(title)}</h3>
+        </div>
+      </div>
+      ${body}
+    </section>
+  `;
+}
+
+function agentContextMarkup() {
+  const running = agents.filter((agent) => agent.status === "running").length;
+  const pending = agents.filter((agent) => agent.status === "pending_approval").length;
+  const queue = agents.reduce((sum, agent) => sum + agent.queue, 0);
+  const topAgents = agents
+    .filter((agent) => agent.status === "running" || agent.status === "pending_approval")
+    .slice(0, 5)
+    .map((agent) => workItem(agent.name, agent.role, `${agent.status} · queue ${agent.queue}`))
+    .join("");
+
+  return `
+    ${compactPanel(
+      "Agent Control",
+      "팀 운영 요약",
+      `<div class="property-list">
+        ${propertyRow("Agents", agents.length)}
+        ${propertyRow("Running", running)}
+        ${propertyRow("Approval", pending)}
+        ${propertyRow("Queue", queue)}
+      </div>`,
+    )}
+    ${compactPanel("Active Agents", "실행/승인 대기", `<div class="context-list">${topAgents}</div>`)}
+  `;
+}
+
+function skillContextMarkup() {
+  const categoryCounts = skillRack.reduce((acc, skill) => {
+    acc[skill.type] = (acc[skill.type] || 0) + 1;
+    return acc;
+  }, {});
+  const highRisk = skillRack.filter((skill) => skill.risk === "high").length;
+  const categoryRows = Object.entries(categoryCounts)
+    .map(([type, count]) => propertyRow(type, count))
+    .join("");
+
+  return `
+    ${compactPanel(
+      "Skill Registry",
+      "스킬 구성",
+      `<div class="property-list">
+        ${propertyRow("Total", skillRack.length)}
+        ${propertyRow("High-risk", highRisk)}
+        ${propertyRow("Mandatory gates", skillRack.filter((skill) => skill.approval === "mandatory").length)}
+      </div>`,
+    )}
+    ${compactPanel("Categories", "타입별 분포", `<div class="property-list">${categoryRows}</div>`)}
+  `;
+}
+
+function routineContextMarkup() {
+  const enabled = routines.filter((routine) => routine[3] === "enabled").length;
+  const rows = routines.map((routine) => workItem(routine[1], `${routine[0]} · ${routine[2]}`, routine[3])).join("");
+  return `
+    ${compactPanel("Heartbeat", "정기 실행 상태", `<div class="property-list">${propertyRow("Enabled", enabled)}${propertyRow("Paused", routines.length - enabled)}</div>`)}
+    ${compactPanel("Schedule", "다음 루틴", `<div class="context-list">${rows}</div>`)}
+  `;
+}
+
+function goalContextMarkup() {
+  const average = Math.round(goals.reduce((sum, goal) => sum + goal[2], 0) / goals.length);
+  const rows = goals.map((goal) => workItem(goal[0], goal[1], `${goal[2]}%`)).join("");
+  return `
+    ${compactPanel("Operating Goals", "목표 평균", `<div class="property-list">${propertyRow("Goal count", goals.length)}${propertyRow("Average", `${average}%`)}</div>`)}
+    ${compactPanel("Targets", "관리 지표", `<div class="context-list">${rows}</div>`)}
+  `;
+}
+
+function activityContextMarkup() {
+  const latest = activity.slice(0, 5).map(([time, agent, action, code]) => workItem(`${time} · ${agent}`, action, code)).join("");
+  return compactPanel("Activity", "최근 처리 이력", `<div class="context-list">${latest}</div>`);
+}
+
+function budgetContextMarkup() {
+  const spent = agents.reduce((sum, agent) => sum + agent.spent, 0);
+  const budget = agents.reduce((sum, agent) => sum + agent.budget, 0);
+  const heavyUsers = agents
+    .slice()
+    .sort((a, b) => b.spent / b.budget - a.spent / a.budget)
+    .slice(0, 4)
+    .map((agent) => workItem(agent.name, `spent ₩${agent.spent.toLocaleString()} / ₩${agent.budget.toLocaleString()}`, `${Math.round((agent.spent / agent.budget) * 100)}%`))
+    .join("");
+
+  return `
+    ${compactPanel("API Budget", "전체 예산", `<div class="property-list">${propertyRow("Spent", `₩${spent.toLocaleString()}`)}${propertyRow("Budget", `₩${budget.toLocaleString()}`)}${propertyRow("Usage", `${Math.round((spent / budget) * 100)}%`)}</div>`)}
+    ${compactPanel("Usage", "사용률 상위 Agent", `<div class="context-list">${heavyUsers}</div>`)}
+  `;
+}
+
+function settingsContextMarkup() {
+  return compactPanel(
+    "Settings",
+    "운영 정책",
+    `<div class="property-list">
+      ${propertyRow("Tenant", "전북은행 · 광주은행 · JB우리캐피탈")}
+      ${propertyRow("Approval", "L0-L4 human gate")}
+      ${propertyRow("External", "mock adapters")}
+    </div>`,
+  );
+}
+
 function renderEvidence() {
   const item = currentCase();
-  document.getElementById("evidence-feed").innerHTML = evidence
+  const evidenceFeed = document.getElementById("evidence-feed");
+  if (!evidenceFeed) return;
+  evidenceFeed.innerHTML = evidence
     .filter((entry) => item.evidenceIds.includes(entry.id))
     .map(
       (entry) => `
@@ -1123,7 +1481,9 @@ function renderEvidence() {
 
 function renderAudit() {
   const item = currentCase();
-  document.getElementById("audit-log").innerHTML = item.audit
+  const auditLog = document.getElementById("audit-log");
+  if (!auditLog) return;
+  auditLog.innerHTML = item.audit
     .slice()
     .reverse()
     .map(
@@ -1191,7 +1551,8 @@ function rejectAction() {
 
 function dispatchCommand() {
   const item = currentCase();
-  const command = document.getElementById("command-input").value.trim();
+  const commandInput = document.getElementById("command-input");
+  const command = commandInput ? commandInput.value.trim() : "";
   item.audit.push([timestamp(), `Orchestrator command received: ${command || "empty command"}`]);
   item.status = "Agent Running";
   item.stage = "in_progress";
@@ -1208,10 +1569,6 @@ function newCaseDemo() {
 }
 
 function bindActions() {
-  document.getElementById("run-agents").addEventListener("click", runAgents);
-  document.getElementById("approve-action").addEventListener("click", approveAction);
-  document.getElementById("reject-action").addEventListener("click", rejectAction);
-  document.getElementById("dispatch-command").addEventListener("click", dispatchCommand);
   document.getElementById("new-case-button").addEventListener("click", newCaseDemo);
   document.getElementById("sidebar-search").addEventListener("input", (event) => {
     const query = event.target.value.toLowerCase();
@@ -1223,13 +1580,22 @@ function bindActions() {
   });
 }
 
+function bindContextActions() {
+  const runButton = document.getElementById("run-agents");
+  const approveButton = document.getElementById("approve-action");
+  const rejectButton = document.getElementById("reject-action");
+  if (runButton) runButton.addEventListener("click", runAgents);
+  if (approveButton) approveButton.addEventListener("click", approveAction);
+  if (rejectButton) rejectButton.addEventListener("click", rejectAction);
+}
+
 function render() {
   renderNavigation();
+  renderWorkbench();
+  renderProperties();
   renderMetrics();
   renderBoard();
   renderLiveRuns();
-  renderWorkbench();
-  renderProperties();
   renderEvidence();
   renderAudit();
 }

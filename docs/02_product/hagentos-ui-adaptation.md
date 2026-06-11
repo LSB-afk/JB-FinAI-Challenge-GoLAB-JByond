@@ -45,6 +45,7 @@ The palette follows the attached JB Challenge banner:
 
 ## Layout Specification
 
+- 1920x1080 desktop target: the app shell occupies one viewport with independent scrolling in the main work surface and properties panel
 - organization rail: 72px
 - sidebar: 272px desktop, 248px medium
 - properties panel: 360px desktop
@@ -53,7 +54,8 @@ The palette follows the attached JB Challenge banner:
 - card and control radius: 8px
 - hero minimum height: 220px
 - command panel: 280px label column plus flexible command input
-- operations grid: flexible board plus 320px live-run panel
+- page router: each sidebar item renders only its corresponding work screen in the main surface
+- context panel: selected case, approval gate, evidence feed, and audit ledger stay in the right-side panel
 
 ## Added Jeonse Shield Line
 
