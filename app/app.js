@@ -4,28 +4,28 @@ const navigation = [
     items: [
       { id: "dashboard", icon: "⌂", label: "대시보드", countKey: "dashboard" },
       { id: "inbox", icon: "!", label: "알림함", countKey: "inbox" },
-      { id: "cases", icon: "C", label: "케이스", countKey: "cases" },
-      { id: "approvals", icon: "A", label: "승인 큐", countKey: "approvals" },
-      { id: "runs", icon: "R", label: "AgentRun", countKey: "runs" },
-      { id: "jeonse", icon: "J", label: "전세 Shield", countKey: "jeonse" },
+      { id: "cases", icon: "문", label: "케이스", countKey: "cases" },
+      { id: "approvals", icon: "승", label: "승인", countKey: "approvals" },
+      { id: "runs", icon: "실", label: "실행 이력", countKey: "runs" },
+      { id: "jeonse", icon: "전", label: "전세 보호", countKey: "jeonse" },
     ],
   },
   {
     section: "AI 팀",
     items: [
-      { id: "agents", icon: "T", label: "에이전트 팀", countKey: "agents" },
-      { id: "orgchart", icon: "O", label: "Agent 조직도", countKey: "orgchart" },
-      { id: "routines", icon: "H", label: "자동화", countKey: "routines" },
-      { id: "goals", icon: "G", label: "운영 목표", countKey: "goals" },
+      { id: "agents", icon: "팀", label: "에이전트 팀", countKey: "agents" },
+      { id: "orgchart", icon: "조", label: "조직도", countKey: "orgchart" },
+      { id: "routines", icon: "자", label: "자동화", countKey: "routines" },
+      { id: "goals", icon: "목", label: "운영 목표", countKey: "goals" },
     ],
   },
   {
     section: "시스템",
     items: [
-      { id: "skills", icon: "K", label: "Skill Registry", countKey: "skills" },
-      { id: "activity", icon: "L", label: "처리 이력", countKey: "activity" },
-      { id: "budget", icon: "₩", label: "API 예산", countKey: "budget" },
-      { id: "settings", icon: "S", label: "설정", countKey: "settings" },
+      { id: "skills", icon: "스", label: "스킬", countKey: "skills" },
+      { id: "activity", icon: "활", label: "활동 이력", countKey: "activity" },
+      { id: "budget", icon: "비", label: "비용", countKey: "budget" },
+      { id: "settings", icon: "설", label: "설정", countKey: "settings" },
     ],
   },
 ];
@@ -56,7 +56,7 @@ const evidence = [
     source: "쿠키뉴스",
     url: "https://www.kukinews.com/article/view/kuk202602170018",
     implication:
-      "금융비용과 내수 침체가 동시에 부담으로 나타나 cashflow triage가 필요하다.",
+      "금융비용과 내수 침체가 동시에 부담으로 나타나 상환 위험 분류가 필요하다.",
   },
   {
     id: "rate-shock",
@@ -74,7 +74,7 @@ const evidence = [
     source: "금융위원회",
     url: "https://www.fsc.go.kr/no010101/86063",
     implication:
-      "딥페이크와 음성변조 등 AI 악용 사기에 대해 Fraud Shield Agent가 외부 경보를 연결해야 한다.",
+      "딥페이크와 음성변조 등 AI 악용 사기에 대해 사기 차단 에이전트가 외부 경보를 연결해야 한다.",
   },
   {
     id: "digital-gap",
@@ -106,16 +106,16 @@ const evidence = [
 ];
 
 const skillRack = [
-  ["case-os-core", "orchestration", "Case 생성, 상태 전이, 담당 Agent 배정", "internal only", "low"],
+  ["case-os-core", "orchestration", "케이스 생성, 상태 전이, 담당 에이전트 배정", "internal only", "low"],
   ["evidence-harvest", "research", "기사, 공식 발표, 상담 노트에서 위험 근거 수집", "internal only", "low"],
   ["source-ranker", "research", "공식성, 최신성, 금융 관련성을 점수화", "internal only", "low"],
-  ["pain-classifier", "reasoning", "cashflow, rate, fraud, policy, digital-barrier 분류", "internal only", "low"],
+  ["pain-classifier", "reasoning", "상환, 금리, 사기, 정책금융, 디지털 장벽 분류", "internal only", "low"],
   ["cashflow-stress", "finance", "매출 둔화, 금리 부담, 상환 압박 판단", "RM review", "medium"],
   ["rate-relief", "finance", "금리 충격과 대환 검토 필요성 판단", "RM review", "medium"],
   ["policy-match", "finance", "정책금융, 대환, 필요 서류 후보 매칭", "RM review", "medium"],
   ["document-checklist", "operations", "상담 전 필요한 서류와 확인 질문 생성", "RM review", "low"],
   ["fraud-shield", "risk", "보이스피싱, 딥페이크, 이상 콜백 위험 차단", "blocks external action", "high"],
-  ["do-not-contact-rule", "risk", "고위험 fraud case의 외부 고객 접촉 금지", "mandatory", "high"],
+  ["do-not-contact-rule", "risk", "고위험 사기 케이스의 외부 고객 접촉 금지", "mandatory", "high"],
   ["notification-brief", "communication", "RM 메모와 고객 콜백 스크립트 작성", "approval required", "medium"],
   ["compliance-guard", "compliance", "과장 표현, 개인정보, 준법 리스크 검토", "mandatory", "high"],
   ["approval-gate", "control", "외부 행동 전 사람 승인 요구", "mandatory", "high"],
@@ -153,7 +153,7 @@ const agents = [
     queue: 4,
     currentCase: "전주 중앙로 카페",
     skills: ["case-os-core", "approval-gate", "audit-ledger"],
-    role: "지시 해석, Agent 배정, 승인 레벨 산정",
+    role: "지시 해석, 에이전트 배정, 승인 레벨 산정",
   },
   {
     id: "pain-radar",
@@ -165,9 +165,9 @@ const agents = [
     spent: 31000,
     heartbeat: "1m",
     queue: 6,
-    currentCase: "portfolio scan",
+    currentCase: "포트폴리오 스캔",
     skills: ["evidence-harvest", "source-ranker", "pain-classifier"],
-    role: "기사, 공식자료, 상담 메모에서 pain signal 탐지",
+    role: "기사, 공식자료, 상담 메모에서 위험 신호 탐지",
   },
   {
     id: "cashflow",
@@ -221,7 +221,7 @@ const agents = [
     spent: 26000,
     heartbeat: "4m",
     queue: 5,
-    currentCase: "callback drafts",
+    currentCase: "콜백 초안",
     skills: ["notification-brief", "tone-control"],
     role: "RM 메모, 통화 스크립트, 후속 태스크 초안 생성",
   },
@@ -235,7 +235,7 @@ const agents = [
     spent: 52000,
     heartbeat: "1m",
     queue: 2,
-    currentCase: "approval queue",
+    currentCase: "승인 대기열",
     skills: ["compliance-guard", "privacy-redaction", "claim-limiter"],
     role: "금지 표현, 개인정보, 확정 혜택 표현 검토",
   },
@@ -249,9 +249,9 @@ const agents = [
     spent: 16000,
     heartbeat: "8m",
     queue: 0,
-    currentCase: "portfolio dashboard",
+    currentCase: "포트폴리오 대시보드",
     skills: ["portfolio-signal", "trend-summary", "case-metrics"],
-    role: "지점별 case cluster, queue health, 예산 흐름 집계",
+    role: "지점별 케이스 묶음, 대기열 상태, 예산 흐름 집계",
   },
   {
     id: "jeonse-lead",
@@ -265,7 +265,7 @@ const agents = [
     queue: 3,
     currentCase: "서울 신축빌라 전세 예정",
     skills: ["case-os-core", "jeonse-price-ratio", "approval-gate", "audit-ledger"],
-    role: "전세사기 위험 case를 생성하고 가격, 권리, 자산, 계약, 은행 연계 Agent를 배정",
+    role: "전세사기 위험 케이스를 생성하고 가격, 권리, 자산, 계약, 은행 연계 에이전트를 배정",
   },
   {
     id: "deposit-ratio",
@@ -370,9 +370,9 @@ const initialCases = [
     ],
     agents: ["pain-radar", "cashflow", "policy", "rm-copilot", "compliance"],
     transcript: [
-      "Pain Radar: 소상공인 금융비용 부담과 상담 메모가 같은 방향입니다.",
-      "Cashflow: 상환 스트레스 점검 우선순위 High입니다.",
-      "Compliance: 혜택 확정 표현을 검토 가능성 중심으로 낮췄습니다.",
+      "위험 신호 탐지 에이전트: 소상공인 금융비용 부담과 상담 메모가 같은 방향입니다.",
+      "상환 위험 분류 에이전트: 상환 스트레스 점검 우선순위가 높습니다.",
+      "준법 검토 에이전트: 혜택 확정 표현을 검토 가능성 중심으로 낮췄습니다.",
     ],
     audit: [
       ["09:14", "Case opened from RM note and small-business risk feed."],
@@ -410,8 +410,8 @@ const initialCases = [
     ],
     agents: ["pain-radar", "policy", "rm-copilot"],
     transcript: [
-      "Policy Match: 사업자등록, 매출 증빙, 기존 대출 조건 확인이 필요합니다.",
-      "RM Copilot: 고객 안내 문구를 확정형이 아닌 검토형으로 작성했습니다.",
+      "정책금융 매칭 에이전트: 사업자등록, 매출 증빙, 기존 대출 조건 확인이 필요합니다.",
+      "RM 코파일럿 에이전트: 고객 안내 문구를 확정형이 아닌 검토형으로 작성했습니다.",
     ],
     audit: [["10:02", "Policy match case created from branch request."]],
   },
@@ -433,20 +433,20 @@ const initialCases = [
     due: "즉시",
     exposure: "리스 계약 · 의심 콜백 URL",
     primaryPain: "보이스피싱 의심 콜백",
-    nextAction: "외부 행동 차단과 보안 escalation",
-    approvalTitle: "보안팀 escalation memo",
+    nextAction: "외부 행동 차단과 보안 상위 검토",
+    approvalTitle: "보안팀 상위 보고 메모",
     pains: ["fraud", "callback-risk", "do-not-contact"],
     rootCauses: ["긴급 송금 요청", "외부 URL", "음성변조 의심"],
     evidenceIds: ["jb-network", "fraud-ai", "jb-ai-mou"],
     gates: [
-      ["고객-facing 자동 발송 금지", "blocked"],
-      ["보안팀 내부 escalation만 허용", "passed"],
+      ["고객 대상 자동 발송 금지", "blocked"],
+      ["보안팀 내부 상위 검토만 허용", "passed"],
       ["개인정보 마스킹", "passed"],
     ],
     agents: ["fraud", "compliance", "orchestrator"],
     transcript: [
-      "Fraud Shield: 긴급 송금 요청과 콜백 URL이 결합되어 고위험입니다.",
-      "Orchestrator: 외부 고객 접촉은 차단하고 내부 escalation만 허용합니다.",
+      "사기 차단 에이전트: 긴급 송금 요청과 콜백 URL이 결합되어 고위험입니다.",
+      "로컬가드 오케스트레이터: 외부 고객 접촉은 차단하고 내부 상위 검토만 허용합니다.",
     ],
     audit: [
       ["11:20", "Suspicious callback report converted to high-risk fraud case."],
@@ -471,8 +471,8 @@ const initialCases = [
     due: "내일 15:00",
     exposure: "매출 계절성 · 카드매출 변동",
     primaryPain: "매출 변동성",
-    nextAction: "위험 원인 분류 후 RM briefing",
-    approvalTitle: "RM briefing note",
+    nextAction: "위험 원인 분류 후 RM 브리핑",
+    approvalTitle: "RM 브리핑 노트",
     pains: ["cashflow-stress", "seasonality"],
     rootCauses: ["매출 계절성", "원재료비 변동"],
     evidenceIds: ["smallbiz-burden", "jb-network"],
@@ -482,7 +482,7 @@ const initialCases = [
     ],
     agents: ["pain-radar", "cashflow", "analytics"],
     transcript: [
-      "Pain Radar: 매출 변동과 원재료비 이슈를 분리해 확인 중입니다.",
+      "위험 신호 탐지 에이전트: 매출 변동과 원재료비 이슈를 분리해 확인 중입니다.",
     ],
     audit: [["13:08", "Case assigned to Pain Radar Agent."]],
   },
@@ -517,10 +517,10 @@ const initialCases = [
     ],
     agents: ["jeonse-lead", "deposit-ratio", "registry-rights", "tenant-asset", "contract-check", "bank-linkage", "compliance"],
     transcript: [
-      "Deposit Ratio: 전세보증금이 주변 시세 대비 높아 전세가율 과다 후보입니다.",
-      "Registry Rights: 등기부 원문에서 근저당, 신탁등기, 소유권 이전 이력 확인이 필요합니다.",
-      "Tenant Asset Risk: 보증금이 고객 총자산의 대부분을 차지해 손실 민감도가 높습니다.",
-      "Bank Linkage: 전세대출 상담과 보증보험 가능성 확인 안내를 승인 대기로 올렸습니다.",
+      "전세가율 분석 에이전트: 전세보증금이 주변 시세 대비 높아 전세가율 과다 후보입니다.",
+      "등기 권리 분석 에이전트: 등기부 원문에서 근저당, 신탁등기, 소유권 이전 이력 확인이 필요합니다.",
+      "임차인 자산위험 에이전트: 보증금이 고객 총자산의 대부분을 차지해 손실 민감도가 높습니다.",
+      "은행 연계 에이전트: 전세대출 상담과 보증보험 가능성 확인 안내를 승인 대기로 올렸습니다.",
     ],
     audit: [
       ["14:02", "Jeonse Shield case opened from pre-contract customer 상담."],
@@ -531,19 +531,19 @@ const initialCases = [
 ];
 
 const routines = [
-  ["평일 08:30", "지역 소상공인 pain radar scan", "Pain Radar Agent", "enabled"],
-  ["매일 10:00", "승인 대기 case SLA 점검", "LocalGuard Orchestrator", "enabled"],
+  ["평일 08:30", "지역 소상공인 위험 신호 스캔", "Pain Radar Agent", "enabled"],
+  ["매일 10:00", "승인 대기 케이스 SLA 점검", "LocalGuard Orchestrator", "enabled"],
   ["매일 14:00", "보이스피싱 경보 동기화", "Fraud Shield Agent", "enabled"],
-  ["매일 15:00", "전세 위험 매물/상담 case 점검", "Jeonse Shield Lead", "enabled"],
-  ["금요일 17:00", "지점별 case cluster 리포트", "Analytics Agent", "paused"],
+  ["매일 15:00", "전세 위험 매물/상담 케이스 점검", "Jeonse Shield Lead", "enabled"],
+  ["금요일 17:00", "지점별 케이스 묶음 리포트", "Analytics Agent", "paused"],
 ];
 
 const goals = [
   ["Triage time", "RM이 원인과 다음 행동을 파악하는 시간을 50% 단축", 64],
-  ["Evidence traceability", "Agent 판단 100%에 근거 링크 또는 내부 이벤트 연결", 91],
-  ["Approval safety", "고객-facing 행동 100% 승인 게이트 통과", 100],
-  ["Fraud block", "고위험 사기 case 외부 발송 차단", 100],
-  ["Jeonse safe-contract", "전세 위험 case 100%에 권리관계/보증보험/은행 연계 체크리스트 연결", 86],
+  ["Evidence traceability", "에이전트 판단 100%에 근거 링크 또는 내부 이벤트 연결", 91],
+  ["Approval safety", "고객 대상 행동 100% 승인 게이트 통과", 100],
+  ["Fraud block", "고위험 사기 케이스 외부 발송 차단", 100],
+  ["Jeonse safe-contract", "전세 위험 케이스 100%에 권리관계/보증보험/은행 연계 체크리스트 연결", 86],
 ];
 
 const jeonseFeatures = [
@@ -595,6 +595,8 @@ let draggedCaseId = null;
 let railFilter = "all";
 let caseSequence = 201;
 let runSequence = 1;
+let propertiesOpen = true;
+let collapsedPanelKeys = new Set(["case-agents", "case-approval", "case-evidence", "case-audit"]);
 let agentRuns = [
   {
     id: "run-001",
@@ -620,6 +622,165 @@ let activity = [
   ["10:02", "Policy Match Agent", "created document checklist", "JBG-118"],
 ];
 
+const statusLabels = {
+  New: "신규",
+  "Agent Running": "실행 중",
+  "Approval Pending": "승인 대기",
+  Approved: "승인 완료",
+  Escalated: "상위 검토",
+  Rejected: "반려",
+  running: "실행 중",
+  pending_approval: "승인 대기",
+  escalated: "상위 검토",
+  completed: "완료",
+  rejected: "반려",
+  idle: "대기",
+  enabled: "사용 중",
+  paused: "일시정지",
+  passed: "통과",
+  pending: "대기",
+  blocked: "차단",
+  active: "활성",
+  high: "높음",
+  medium: "중간",
+  low: "낮음",
+  urgent: "긴급",
+  critical: "최긴급",
+};
+
+const agentNameLabels = {
+  "LocalGuard Orchestrator": "로컬가드 오케스트레이터",
+  "Pain Radar Agent": "위험 신호 탐지 에이전트",
+  "Cashflow Triage Agent": "상환 위험 분류 에이전트",
+  "Policy Match Agent": "정책금융 매칭 에이전트",
+  "Fraud Shield Agent": "사기 차단 에이전트",
+  "RM Copilot Agent": "RM 코파일럿 에이전트",
+  "Compliance Guard Agent": "준법 검토 에이전트",
+  "Analytics Agent": "포트폴리오 분석 에이전트",
+  "Jeonse Shield Lead": "전세 보호 리드 에이전트",
+  "Deposit Ratio Agent": "전세가율 분석 에이전트",
+  "Registry Rights Agent": "등기 권리 분석 에이전트",
+  "Tenant Asset Risk Agent": "임차인 자산위험 에이전트",
+  "Contract Checklist Agent": "계약 체크리스트 에이전트",
+  "Bank Linkage Agent": "은행 연계 에이전트",
+  "Human RM Lead": "RM 최종 승인자",
+  "Human Compliance Lead": "준법 최종 승인자",
+  "Compliance Guard": "준법 검토 에이전트",
+  "Approval Gate": "승인 게이트",
+  "Human RM": "RM 담당자",
+  "Human reviewer": "검토 담당자",
+};
+
+const skillLabels = {
+  "case-os-core": "케이스 운영 코어",
+  "evidence-harvest": "근거 수집",
+  "source-ranker": "출처 신뢰도 평가",
+  "pain-classifier": "위험 원인 분류",
+  "cashflow-stress": "상환 스트레스 분석",
+  "rate-relief": "금리 완화 검토",
+  "policy-match": "정책금융 매칭",
+  "document-checklist": "서류 체크리스트",
+  "fraud-shield": "사기 위험 차단",
+  "do-not-contact-rule": "외부 접촉 차단",
+  "notification-brief": "안내문 초안",
+  "compliance-guard": "준법 검토",
+  "approval-gate": "승인 게이트",
+  "audit-ledger": "감사 기록",
+  "portfolio-signal": "포트폴리오 신호",
+  "trend-summary": "추세 요약",
+  "case-metrics": "케이스 지표",
+  "tone-control": "톤 조정",
+  "privacy-redaction": "개인정보 마스킹",
+  "claim-limiter": "확정 표현 제한",
+  "risk-banding": "위험 등급화",
+  "eligibility-explain": "자격 설명",
+  "escalation-memo": "상위 보고 메모",
+  "next-best-action": "다음 행동 추천",
+  "jeonse-price-ratio": "전세가율 분석",
+  "local-market-compare": "주변 시세 비교",
+  "registry-rights-scan": "등기 권리 스캔",
+  "ownership-transfer-delta": "소유권 이전 탐지",
+  "guarantee-feasibility": "보증보험 가능성",
+  "tenant-asset-exposure": "임차인 자산노출",
+  "housing-cost-burden": "주거비 부담 분석",
+  "pre-contract-checklist": "계약 전 체크리스트",
+  "special-clause-drafter": "특약 문구 초안",
+  "bank-linkage-brief": "은행 연계 안내",
+};
+
+const tagLabels = {
+  "cashflow-stress": "상환 부담",
+  "rate-shock": "금리 충격",
+  "policy-match": "정책금융",
+  documentation: "서류 준비",
+  "digital-barrier": "디지털 신청 장벽",
+  fraud: "사기 위험",
+  "callback-risk": "콜백 위험",
+  "do-not-contact": "외부 접촉 금지",
+  seasonality: "계절성",
+  "jeonse-fraud": "전세사기 위험",
+  "price-ratio": "전세가율",
+  "registry-risk": "권리관계",
+  "guarantee-feasibility": "보증보험",
+  triage: "초기 분류",
+};
+
+const typeLabels = {
+  orchestration: "운영 조율",
+  research: "근거 탐색",
+  reasoning: "판단",
+  finance: "금융",
+  operations: "운영",
+  risk: "위험 통제",
+  communication: "고객 안내",
+  compliance: "준법",
+  control: "통제",
+  analytics: "분석",
+  "jeonse-risk": "전세 위험",
+  "legal-risk": "권리/법률 위험",
+  guarantee: "보증",
+  "asset-risk": "자산 위험",
+  contract: "계약",
+  banking: "은행 연계",
+  "housing-risk": "주거 위험",
+  orchestrator: "오케스트레이터",
+};
+
+const approvalLabels = {
+  "internal only": "내부 전용",
+  "RM review": "RM 검토",
+  "blocks external action": "외부 행동 차단",
+  mandatory: "필수 통제",
+  "approval required": "승인 필요",
+  "human/legal review": "사람/법률 검토",
+  "advisor review": "상담자 검토",
+  "legal review": "법률 검토",
+  "RM approval": "RM 승인",
+};
+
+const sourceTypeLabels = {
+  "JB Official": "JB 공식자료",
+  News: "기사",
+  Policy: "정책자료",
+  Official: "공식자료",
+};
+
+const actionLabels = {
+  "created approval": "승인 요청 생성",
+  "requested source document": "원문 자료 확인 요청",
+  "checked out": "실행 착수",
+  "blocked outbound action": "외부 발송 차단",
+  "created document checklist": "서류 체크리스트 생성",
+  "resumed routine": "루틴 재개",
+  "paused routine": "루틴 일시정지",
+  "escalated case": "상위 검토 요청",
+  "approved action": "조치 승인",
+  "rejected draft": "초안 반려",
+  "dispatched command": "지시 실행",
+  "registered case": "케이스 등록",
+  "changed status": "상태 변경",
+};
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -627,6 +788,114 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function displayFrom(map, value) {
+  return map[value] || value;
+}
+
+function statusLabel(status) {
+  return displayFrom(statusLabels, status);
+}
+
+function agentLabel(value) {
+  return displayFrom(agentNameLabels, value && value.name ? value.name : value);
+}
+
+function skillLabel(slug) {
+  return displayFrom(skillLabels, slug);
+}
+
+function tagLabel(value) {
+  return displayFrom(tagLabels, value);
+}
+
+function typeLabel(value) {
+  return displayFrom(typeLabels, value);
+}
+
+function approvalLabel(value) {
+  return displayFrom(approvalLabels, value);
+}
+
+function sourceTypeLabel(value) {
+  return displayFrom(sourceTypeLabels, value);
+}
+
+function actionLabel(value) {
+  return displayFrom(actionLabels, value);
+}
+
+function activeDetailLabel(value) {
+  return {
+    case: "케이스",
+    agent: "에이전트",
+    skill: "스킬",
+    feature: "기능",
+    view: "화면",
+  }[value] || value;
+}
+
+function localizeLine(text) {
+  let value = String(text);
+  const exact = {
+    "Case opened from RM note and small-business risk feed.": "RM 메모와 소상공인 위험 피드에서 케이스를 열었습니다.",
+    "Evidence Harvest attached 4 sources.": "근거 수집 스킬이 4개 출처를 연결했습니다.",
+    "Approval request created for RM callback draft.": "RM 콜백 초안에 대한 승인 요청을 생성했습니다.",
+    "Policy match case created from branch request.": "영업점 요청에서 정책금융 매칭 케이스를 생성했습니다.",
+    "Suspicious callback report converted to high-risk fraud case.": "의심 콜백 제보를 고위험 사기 케이스로 전환했습니다.",
+    "Fraud Shield blocked customer-facing action.": "사기 차단 에이전트가 고객 대상 행동을 차단했습니다.",
+    "Case assigned to Pain Radar Agent.": "위험 신호 탐지 에이전트에 케이스를 배정했습니다.",
+    "Jeonse Shield case opened from pre-contract customer 상담.": "계약 전 고객 상담에서 전세 보호 케이스를 열었습니다.",
+    "Deposit Ratio and Registry Rights Agents assigned.": "전세가율 분석과 등기 권리 분석 에이전트를 배정했습니다.",
+    "Approval request created for safe-contract guide and bank 상담 연결.": "안전 계약 가이드와 은행 상담 연결 승인 요청을 생성했습니다.",
+    "Run started. Mounted skills: jeonse-price-ratio, registry-rights-scan, tenant-asset-exposure.": "실행 시작: 전세가율 분석, 등기 권리 스캔, 임차인 자산노출 스킬을 장착했습니다.",
+    "Approval Gate: Draft action is ready for human review.": "승인 게이트: 조치 초안이 사람 검토 단계에 들어갔습니다.",
+    "Fraud Shield: Customer-facing action remains blocked. Internal escalation only.": "사기 차단: 고객 대상 행동은 계속 차단하고 내부 상위 검토만 허용합니다.",
+    "Human RM approved the action. Run closed.": "RM 담당자가 조치를 승인했고 실행을 종료했습니다.",
+    "Human reviewer rejected the draft. Run closed.": "검토 담당자가 초안을 반려했고 실행을 종료했습니다.",
+    "Triage time": "분류 시간 단축",
+    "Evidence traceability": "근거 추적성",
+    "Approval safety": "승인 안전성",
+    "Fraud block": "사기 차단",
+    "Jeonse safe-contract": "전세 안전계약",
+  };
+  if (exact[value]) return exact[value];
+  Object.entries(agentNameLabels).forEach(([raw, label]) => {
+    value = value.replaceAll(raw, label);
+  });
+  Object.entries(skillLabels).forEach(([raw, label]) => {
+    value = value.replaceAll(raw, label);
+  });
+  return value
+    .replaceAll("AgentRun", "에이전트 실행")
+    .replaceAll("Approval Gate", "승인 게이트")
+    .replaceAll("Evidence Harvest", "근거 수집")
+    .replaceAll("Run started", "실행 시작")
+    .replaceAll("Mounted skills", "장착 스킬")
+    .replaceAll("case context", "케이스 맥락")
+    .replaceAll("customer-facing", "고객 대상")
+    .replaceAll("Customer-facing", "고객 대상")
+    .replaceAll("case", "케이스")
+    .replaceAll("Case", "케이스")
+    .replaceAll("Agent", "에이전트")
+    .replaceAll("Run", "실행")
+    .replaceAll("queue", "대기열")
+    .replaceAll("portfolio", "포트폴리오")
+    .replaceAll("callback", "콜백")
+    .replaceAll("pain signal", "위험 신호")
+    .replaceAll("pain", "위험 원인")
+    .replaceAll("briefing", "브리핑")
+    .replaceAll("Internal escalation only", "내부 상위 검토만 허용")
+    .replaceAll("Kanban status changed", "보드 상태 변경")
+    .replaceAll("Kanban status move", "보드 상태 이동")
+    .replaceAll("IN PROGRESS", "진행 중")
+    .replaceAll("completed and approval policy evaluated", "완료 및 승인 정책 검토")
+    .replaceAll("started:", "시작:");
+}
+
+function slugKey(...parts) {
+  return parts.join("-").toLowerCase().replace(/[^a-z0-9가-힣]+/g, "-").replace(/^-|-$/g, "");
 }
 
 function currentCase() {
@@ -691,11 +960,10 @@ function casesByEvidence(entryId) {
 }
 
 function statusClass(status) {
-  if (status === "Agent Running") return "status-running";
-  if (status === "Approval Pending") return "status-pending";
-  if (status === "Approved") return "status-approved";
-  if (status === "Escalated") return "status-escalated";
-  if (status === "Rejected") return "status-rejected";
+  if (status === "Agent Running" || status === "running") return "status-running";
+  if (status === "Approval Pending" || status === "pending_approval" || status === "pending") return "status-pending";
+  if (status === "Approved" || status === "completed" || status === "passed") return "status-approved";
+  if (status === "Escalated" || status === "Rejected" || status === "escalated" || status === "rejected" || status === "blocked") return "status-escalated";
   return "status-new";
 }
 
@@ -795,6 +1063,15 @@ function renderNavigation() {
   });
 }
 
+function renderShellState() {
+  const shell = document.querySelector(".app-shell");
+  const toggle = document.getElementById("properties-toggle");
+  if (shell) shell.classList.toggle("properties-collapsed", !propertiesOpen);
+  if (!toggle) return;
+  toggle.setAttribute("aria-expanded", String(propertiesOpen));
+  toggle.textContent = propertiesOpen ? "상세 패널 닫기" : "상세 패널 열기";
+}
+
 function defaultDetailForView(view) {
   if ((view === "agents" || view === "orgchart") && selectedAgentId) return "agent";
   if (view === "skills" && selectedSkillId) return "skill";
@@ -827,9 +1104,9 @@ function renderMetrics() {
   const running = scoped.filter((item) => item.status === "Agent Running").length;
   const jeonse = scoped.filter((item) => item.pains.includes("jeonse-fraud")).length;
   const cards = [
-    ["실행 중 에이전트", running, "현재 AgentRun과 승인 전 처리 흐름"],
-    ["활성 케이스", scoped.length, `${highRisk}건은 High Risk 이상`],
-    ["전세 Shield", jeonse, "전세가율, 권리관계, 보증보험 점검"],
+    ["실행 중 에이전트", running, "현재 에이전트 실행과 승인 전 처리 흐름"],
+    ["활성 케이스", scoped.length, `${highRisk}건은 고위험 이상`],
+    ["전세 보호", jeonse, "전세가율, 권리관계, 보증보험 점검"],
     ["승인 대기", pending, "RM 또는 준법 승인 대기"],
   ];
   metricGrid.innerHTML = cards
@@ -856,7 +1133,7 @@ function renderBoard() {
     const queued = scoped.slice().sort((a, b) => b.riskScore - a.riskScore);
     caseBoard.innerHTML = `
       <div class="case-list">
-        ${queued.length ? groupedCaseList(queued) : '<div class="empty-state">검색 조건에 맞는 case 없음</div>'}
+      ${queued.length ? groupedCaseList(queued) : '<div class="empty-state">검색 조건에 맞는 케이스 없음</div>'}
       </div>
     `;
     return;
@@ -864,12 +1141,12 @@ function renderBoard() {
 
   caseBoard.className = "case-board hagent-kanban";
   const columns = [
-    ["backlog", "BACKLOG"],
-    ["todo", "TODO"],
-    ["in_progress", "IN PROGRESS"],
-    ["in_review", "REVIEW"],
-    ["blocked", "BLOCKED"],
-    ["done", "DONE"],
+    ["backlog", "백로그"],
+    ["todo", "신규"],
+    ["in_progress", "진행 중"],
+    ["in_review", "검토"],
+    ["blocked", "차단"],
+    ["done", "완료"],
   ];
 
   caseBoard.innerHTML = columns
@@ -884,7 +1161,7 @@ function renderBoard() {
           ${
             items.length
               ? items.map(renderCaseCard).join("")
-              : '<div class="empty-state">대기 case 없음</div>'
+              : '<div class="empty-state">대기 케이스 없음</div>'
           }
         </section>
       `;
@@ -895,7 +1172,7 @@ function renderBoard() {
 function groupedCaseList(items) {
   const groups = [
     ["approval", "승인 필요", (item) => item.status === "Approval Pending"],
-    ["running", "Agent 실행 중", (item) => item.status === "Agent Running"],
+    ["running", "에이전트 실행 중", (item) => item.status === "Agent Running"],
     ["risk", "고위험 점검", (item) => item.riskScore >= 85 && item.status !== "Approval Pending"],
     ["new", "신규/분류", (item) => item.status === "New" && item.riskScore < 85],
     ["closed", "완료/차단", (item) => ["Approved", "Escalated", "Rejected"].includes(item.status)],
@@ -919,7 +1196,7 @@ function groupedCaseList(items) {
       `;
     })
     .join("");
-  return markup || '<div class="empty-state">표시할 case 없음</div>';
+  return markup || '<div class="empty-state">표시할 케이스 없음</div>';
 }
 
 function renderCaseRow(item) {
@@ -930,8 +1207,8 @@ function renderCaseRow(item) {
         <strong>${escapeHtml(item.customerName)}</strong>
         <small>${escapeHtml(item.region)} · ${escapeHtml(item.segment)} · ${escapeHtml(item.primaryPain)}</small>
       </span>
-      <span class="case-row-owner">${escapeHtml(item.owner)}</span>
-      <span class="status-pill ${statusClass(item.status)}">${escapeHtml(item.status)}</span>
+      <span class="case-row-owner">${escapeHtml(agentLabel(item.owner))}</span>
+      <span class="status-pill ${statusClass(item.status)}">${escapeHtml(statusLabel(item.status))}</span>
       <span class="risk-score">${item.riskScore}</span>
     </button>
   `;
@@ -943,16 +1220,16 @@ function renderCaseCard(item) {
       <span class="mini-line">
         <span>${escapeHtml(item.code)}</span>
         <span>${escapeHtml(item.affiliate)}</span>
-        <span>SLA ${escapeHtml(item.sla)}</span>
+        <span>처리 기한 ${escapeHtml(item.sla)}</span>
       </span>
       <strong>${escapeHtml(item.customerName)}</strong>
       <span class="case-meta">
         <span>${escapeHtml(item.region)}</span>
         <span>${escapeHtml(item.segment)}</span>
       </span>
-      <span class="status-pill ${statusClass(item.status)}">${escapeHtml(item.status)}</span>
+      <span class="status-pill ${statusClass(item.status)}">${escapeHtml(statusLabel(item.status))}</span>
       <div class="risk-bar"><i style="width:${item.riskScore}%"></i></div>
-      <div class="tag-row">${item.pains.map((pain) => `<span class="tag">${escapeHtml(pain)}</span>`).join("")}</div>
+      <div class="tag-row">${item.pains.map((pain) => `<span class="tag">${escapeHtml(tagLabel(pain))}</span>`).join("")}</div>
     </button>
   `;
 }
@@ -969,16 +1246,16 @@ function renderLiveRuns() {
       return `
         <article class="run-card is-clickable" data-case-id="${escapeHtml(item.id)}" role="button" tabindex="0">
           <div class="run-head">
-            <strong><span class="pulse"></span>${escapeHtml(item.owner)}</strong>
-            <span class="status-pill ${statusClass(item.status)}">${escapeHtml(item.status)}</span>
+            <strong><span class="pulse"></span>${escapeHtml(agentLabel(item.owner))}</strong>
+            <span class="status-pill ${statusClass(item.status)}">${escapeHtml(statusLabel(item.status))}</span>
           </div>
           <p>${escapeHtml(item.code)} · ${escapeHtml(item.customerName)}</p>
           <div class="progress-track"><i style="width:${progress}%"></i></div>
-          <p>${escapeHtml(item.transcript[item.transcript.length - 1] || "Waiting for run output...")}</p>
+          <p>${escapeHtml(localizeLine(item.transcript[item.transcript.length - 1] || "실행 결과를 기다리는 중입니다."))}</p>
         </article>
       `;
     })
-    .join("") || '<div class="empty-state">실행 중인 AgentRun 없음</div>';
+    .join("") || '<div class="empty-state">실행 중인 에이전트 없음</div>';
 }
 
 function renderWorkbench() {
@@ -1062,11 +1339,11 @@ function heroMarkup() {
       <div class="hero-copy">
         <span class="status-badge">JB금융그룹 Fin:AI Challenge · 자유주제</span>
         <h2>JB LocalGuard OS</h2>
-        <p>지역 금융 pain point를 Case, AgentRun, Approval, Audit으로 자동화하는 AI Agent 모델</p>
+        <p>지역 금융 위험 신호를 케이스, 에이전트 실행, 승인, 감사 로그로 자동화하는 AI 에이전트 모델</p>
       </div>
       <div class="hero-mark" aria-hidden="true">
         <span class="mark-box"></span>
-        <strong>LocalGuard AI</strong>
+        <strong>로컬가드 AI</strong>
       </div>
     </section>
   `;
@@ -1104,11 +1381,11 @@ function commandMarkup() {
       <div class="instruction-copy">
         <p class="eyebrow">운영 지시</p>
         <h3>한 줄로 바로 실행합니다.</h3>
-        <p>Case 생성, Agent 배정, 승인 큐 등록, 감사 로그까지 같은 프로세스로 처리합니다.</p>
+        <p>케이스 생성, 에이전트 배정, 승인 큐 등록, 감사 로그까지 같은 프로세스로 처리합니다.</p>
       </div>
       <div class="command-row">
-        <textarea id="command-input" rows="3" aria-label="운영 지시 입력">전주 카페 case의 금리 부담, 정책금융 후보, 고객 안내 초안을 승인 가능한 형태로 정리해줘.</textarea>
-        <button id="dispatch-command" class="primary-button icon-command-button" type="button" title="Dispatch">
+        <textarea id="command-input" rows="3" aria-label="운영 지시 입력">전주 카페 케이스의 금리 부담, 정책금융 후보, 고객 안내 초안을 승인 가능한 형태로 정리해줘.</textarea>
+        <button id="dispatch-command" class="primary-button icon-command-button" type="button" title="지시 실행">
           <span aria-hidden="true">↗</span>
         </button>
       </div>
@@ -1118,40 +1395,40 @@ function commandMarkup() {
 
 function dashboardPage() {
   return `
-    ${pageHeader("Dashboard", "대시보드", "오케스트레이터 상태와 최근 흐름을 한 화면에서 확인합니다.")}
+    ${pageHeader("대시보드", "대시보드", "오케스트레이터 상태와 최근 흐름을 한 화면에서 확인합니다.")}
     ${commandMarkup()}
     ${dispatchResultMarkup()}
     <section id="metric-grid" class="metric-grid" aria-label="metrics"></section>
     <section class="dashboard-grid">
-      ${panelMarkup("Live Agent Runs", "실시간 실행", '<div id="live-runs" class="live-runs"></div><span id="live-count" class="count-pill ghost-count">0</span>', "live-panel")}
-      ${panelMarkup("Process", "처리 흐름 상태", dashboardView(), "process-panel")}
-      ${panelMarkup("Recent Cases", "최근 케이스", recentCasesView(), "recent-panel")}
-      ${panelMarkup("Activity", "최근 처리 이력", activityView(), "activity-panel")}
+      ${panelMarkup("실시간 실행", "실시간 실행", '<div id="live-runs" class="live-runs"></div><span id="live-count" class="count-pill ghost-count">0</span>', "live-panel")}
+      ${panelMarkup("처리 흐름", "처리 흐름 상태", dashboardView(), "process-panel")}
+      ${panelMarkup("최근 케이스", "최근 케이스", recentCasesView(), "recent-panel")}
+      ${panelMarkup("활동 이력", "최근 처리 이력", activityView(), "activity-panel")}
     </section>
   `;
 }
 
 function inboxPage() {
   return `
-    ${pageHeader("Inbox", "알림함", "승인 대기, escalation, 실패 알림만 모아 보는 화면입니다.")}
-    ${panelMarkup("Action Needed", "처리 필요 알림", inboxView())}
+    ${pageHeader("알림함", "알림함", "승인 대기, 상위 검토, 실패 알림만 모아 보는 화면입니다.")}
+    ${panelMarkup("처리 필요", "처리 필요 알림", inboxView())}
   `;
 }
 
 function casesPage() {
   return `
-    ${pageHeader("Cases", "케이스", "지역 금융 위험 case를 리스트로 빠르게 읽고, 보드에서 상태를 이동합니다.")}
+    ${pageHeader("케이스", "케이스", "지역 금융 위험 케이스를 목록으로 빠르게 읽고, 보드에서 상태를 이동합니다.")}
     ${panelMarkup(
-      "Case Workspace",
+      "케이스 작업공간",
       "위험 케이스 운영",
       `<div class="case-toolbar">
         <label class="case-search">
           <span>검색</span>
-          <input id="case-search" type="search" value="${escapeHtml(caseSearchQuery)}" placeholder="고객, 지역, pain, Agent 검색" />
+          <input id="case-search" type="search" value="${escapeHtml(caseSearchQuery)}" placeholder="고객, 지역, 위험 원인, 에이전트 검색" />
         </label>
         <div class="view-switch board-switch" aria-label="board mode">
-          <button class="${boardMode === "list" ? "is-active" : ""}" type="button" data-board-mode="list">List</button>
-          <button class="${boardMode === "kanban" ? "is-active" : ""}" type="button" data-board-mode="kanban">Board</button>
+          <button class="${boardMode === "list" ? "is-active" : ""}" type="button" data-board-mode="list">목록</button>
+          <button class="${boardMode === "kanban" ? "is-active" : ""}" type="button" data-board-mode="kanban">보드</button>
         </div>
       </div><div id="case-board" class="case-board"></div>`,
       "board-panel",
@@ -1161,9 +1438,9 @@ function casesPage() {
 
 function approvalsPage() {
   return `
-    ${pageHeader("Approvals", "승인 큐", "고객-facing 행동, 법률/권리 리스크, 금융조건 표현을 사람 승인 전까지 차단합니다.")}
+    ${pageHeader("승인", "승인 큐", "고객 대상 행동, 법률/권리 리스크, 금융조건 표현을 사람 승인 전까지 차단합니다.")}
     ${panelMarkup(
-      "Approval Queue",
+      "승인 대기열",
       "승인 대기 항목",
       `<div class="view-tabs approval-tabs">
         ${["all", "pending", "approved", "rejected"].map((tab) => `<button class="${approvalTab === tab ? "is-active" : ""}" type="button" data-approval-tab="${tab}">${escapeHtml(approvalTabLabel(tab))}</button>`).join("")}
@@ -1175,82 +1452,82 @@ function approvalsPage() {
 
 function runsPage() {
   return `
-    ${pageHeader("AgentRun", "실시간 실행", "Dispatch와 Run으로 생성된 AgentRun 실행 로그와 라이브 상태를 확인합니다.")}
+    ${pageHeader("실행 이력", "실시간 실행", "지시 실행과 수동 실행으로 생성된 에이전트 실행 로그와 라이브 상태를 확인합니다.")}
     <section class="page-two-col">
-      ${panelMarkup("Run Log", "AgentRun 실행 로그", runsView())}
-      ${panelMarkup("Live Agent Runs", "실시간 실행", '<div id="live-runs" class="live-runs run-page-list"></div><span id="live-count" class="count-pill ghost-count">0</span>')}
+      ${panelMarkup("실행 로그", "에이전트 실행 로그", runsView())}
+      ${panelMarkup("실시간 실행", "실시간 실행", '<div id="live-runs" class="live-runs run-page-list"></div><span id="live-count" class="count-pill ghost-count">0</span>')}
     </section>
   `;
 }
 
 function jeonsePage() {
   return `
-    ${pageHeader("Jeonse Shield", "전세사기 AI Agent 라인", "전세 위험 신호, 고객 자산노출, 계약 전 체크리스트, 은행 서비스 연계를 전용 Agent들이 분담합니다.")}
-    ${panelMarkup("Jeonse Shield", "전세사기 대응 기능", jeonseView())}
+    ${pageHeader("전세 보호", "전세사기 AI 에이전트 라인", "전세 위험 신호, 고객 자산노출, 계약 전 체크리스트, 은행 서비스 연계를 전용 에이전트들이 분담합니다.")}
+    ${panelMarkup("전세 보호", "전세사기 대응 기능", jeonseView())}
   `;
 }
 
 function goalsPage() {
   return `
-    ${pageHeader("Goals", "운영 목표", "Agent 운영의 성공 기준과 달성률을 추적합니다.")}
-    ${panelMarkup("Operating Goals", "목표 달성률", goalsView())}
+    ${pageHeader("운영 목표", "운영 목표", "에이전트 운영의 성공 기준과 달성률을 추적합니다.")}
+    ${panelMarkup("운영 목표", "목표 달성률", goalsView())}
   `;
 }
 
 function agentsPage() {
   return `
-    ${pageHeader("Agents", "에이전트 팀", "각 AI Agent의 상태, 역할, 장착 스킬, 보고 체계를 확인합니다.")}
-    ${panelMarkup("Agent Team", "에이전트 팀", agentsView())}
+    ${pageHeader("에이전트", "에이전트 팀", "각 AI 에이전트의 상태, 역할, 장착 스킬, 보고 체계를 확인합니다.")}
+    ${panelMarkup("에이전트 팀", "에이전트 팀", agentsView())}
   `;
 }
 
 function orgChartPage() {
   return `
-    ${pageHeader("Org Chart", "Agent 조직도", "AI Agent들이 어떤 상위 Agent 또는 사람에게 보고하는지 조직도로 확인합니다.")}
-    ${panelMarkup("Agent Organization", "Agent 조직도", orgChartView())}
+    ${pageHeader("조직도", "에이전트 조직도", "AI 에이전트들이 어떤 상위 에이전트 또는 사람에게 보고하는지 조직도로 확인합니다.")}
+    ${panelMarkup("에이전트 조직", "에이전트 조직도", orgChartView())}
   `;
 }
 
 function skillsPage() {
   return `
-    ${pageHeader("Skill Registry", "Skill Registry", "Agent에게 장착되는 금융, 리스크, 계약, 준법 스킬 패키지를 확인합니다.")}
-    ${panelMarkup("Skill Registry", "장착 가능 스킬", skillsView())}
+    ${pageHeader("스킬", "스킬 저장소", "에이전트에게 장착되는 금융, 리스크, 계약, 준법 스킬 패키지를 확인합니다.")}
+    ${panelMarkup("스킬 저장소", "장착 가능 스킬", skillsView())}
   `;
 }
 
 function routinesPage() {
   return `
-    ${pageHeader("Heartbeat", "Heartbeat 루틴", "정기 실행되는 Agent scan과 SLA 점검 루틴을 관리합니다.")}
-    ${panelMarkup("Routine Schedule", "정기 실행", routinesView())}
+    ${pageHeader("자동화", "정기 실행 루틴", "정기 실행되는 에이전트 점검과 SLA 점검 루틴을 관리합니다.")}
+    ${panelMarkup("루틴 일정", "정기 실행", routinesView())}
   `;
 }
 
 function activityPage() {
   return `
-    ${pageHeader("Activity", "처리 이력", "Agent checkout, approval 생성, escalation, 승인/반려 기록을 시간순으로 봅니다.")}
-    ${panelMarkup("Activity Ledger", "처리 이력", activityView())}
+    ${pageHeader("활동 이력", "처리 이력", "에이전트 착수, 승인 생성, 상위 검토, 승인/반려 기록을 시간순으로 봅니다.")}
+    ${panelMarkup("활동 장부", "처리 이력", activityView())}
   `;
 }
 
 function budgetPage() {
   return `
-    ${pageHeader("API Budget", "API 예산", "Agent별 월 예산과 사용률을 추적합니다.")}
-    ${panelMarkup("Budget Usage", "Agent별 사용률", budgetView())}
+    ${pageHeader("비용", "API 비용", "에이전트별 월 예산과 사용률을 추적합니다.")}
+    ${panelMarkup("비용 사용률", "에이전트별 사용률", budgetView())}
   `;
 }
 
 function settingsPage() {
   return `
-    ${pageHeader("Settings", "설정", "조직 프로필, 승인 정책, 외부 연동 adapter를 관리합니다.")}
-    ${panelMarkup("Settings", "운영 설정", settingsView())}
+    ${pageHeader("설정", "설정", "조직 프로필, 승인 정책, 외부 연동 어댑터를 관리합니다.")}
+    ${panelMarkup("설정", "운영 설정", settingsView())}
   `;
 }
 
 function dashboardView() {
   const scoped = visibleCases();
   const flow = [
-    ["백로그", scoped.filter((item) => item.status === "New").length, "신규 접수와 pain 분류 대기"],
-    ["진행 중", scoped.filter((item) => item.status === "Agent Running").length, "AgentRun으로 근거와 초안 생성"],
+    ["백로그", scoped.filter((item) => item.status === "New").length, "신규 접수와 위험 원인 분류 대기"],
+    ["진행 중", scoped.filter((item) => item.status === "Agent Running").length, "에이전트 실행으로 근거와 초안 생성"],
     ["검토 중", scoped.filter((item) => item.status === "Approval Pending").length, "RM/준법 승인 대기"],
     ["차단됨", scoped.filter((item) => item.status === "Escalated" || item.status === "Rejected").length, "외부 행동 차단 또는 반려"],
     ["완료", scoped.filter((item) => item.status === "Approved").length, "승인 후 감사 로그 기록"],
@@ -1277,7 +1554,7 @@ function dispatchResultMarkup() {
   return `
     <section class="dispatch-result workspace-panel">
       <div>
-        <p class="eyebrow">AgentRun Created</p>
+        <p class="eyebrow">에이전트 실행 생성</p>
         <h3>${escapeHtml(lastDispatchResult.caseCode)} · ${escapeHtml(lastDispatchResult.caseTitle)}</h3>
         <p>${escapeHtml(lastDispatchResult.summary)}</p>
       </div>
@@ -1310,7 +1587,7 @@ function inboxView() {
             <button class="work-item link-card ${item.id === selectedCaseId && activeDetailType === "case" ? "is-selected" : ""}" type="button" data-case-id="${escapeHtml(item.id)}">
               <div class="item-head">
                 <strong>${escapeHtml(item.code)} · ${escapeHtml(item.customerName)}</strong>
-                <span class="status-pill ${statusClass(item.status)}">${escapeHtml(item.status)}</span>
+                <span class="status-pill ${statusClass(item.status)}">${escapeHtml(statusLabel(item.status))}</span>
               </div>
               <p>${escapeHtml(item.nextAction)}</p>
             </button>
@@ -1324,7 +1601,7 @@ function inboxView() {
 function casesView() {
   return `
     <div class="two-col">
-      ${cases.map((item) => workItem(`${item.code} · ${item.customerName}`, `${item.primaryPain} · ${item.exposure}`, `${item.status} · ${item.zeroHuman}`)).join("")}
+      ${cases.map((item) => workItem(`${item.code} · ${item.customerName}`, `${item.primaryPain} · ${item.exposure}`, `${statusLabel(item.status)} · ${item.zeroHuman}`)).join("")}
     </div>
   `;
 }
@@ -1352,11 +1629,11 @@ function approvalsView() {
               <div class="action-row approval-actions">
                 <button class="secondary-button" type="button" data-approve-case="${escapeHtml(item.id)}" ${item.status === "Approval Pending" ? "" : "disabled"}>
                   <span aria-hidden="true">✓</span>
-                  Approve
+                  승인
                 </button>
                 <button class="danger-button" type="button" data-reject-case="${escapeHtml(item.id)}" ${item.status === "Approval Pending" ? "" : "disabled"}>
                   <span aria-hidden="true">×</span>
-                  Reject
+                  반려
                 </button>
                 <button class="ghost-button" type="button" data-case-id="${escapeHtml(item.id)}">상세 보기</button>
               </div>
@@ -1379,17 +1656,17 @@ function approvalTabLabel(tab) {
 
 function runStatusLabel(status) {
   const labels = {
-    running: "Agent Running",
-    approval_pending: "Approval Pending",
-    escalated: "Escalated",
-    completed: "Approved",
-    rejected: "Rejected",
+    running: "실행 중",
+    approval_pending: "승인 대기",
+    escalated: "상위 검토",
+    completed: "완료",
+    rejected: "반려",
   };
   return labels[status] || status;
 }
 
 function runsView() {
-  if (!agentRuns.length) return '<div class="empty-state">실행된 AgentRun 없음</div>';
+  if (!agentRuns.length) return '<div class="empty-state">실행된 에이전트 실행 없음</div>';
   return `
     <div class="run-log-list">
       ${agentRuns
@@ -1399,11 +1676,11 @@ function runsView() {
           return `
             <article class="run-card run-log-card ${run.status === "running" ? "is-live" : ""}">
               <div class="run-head">
-                <strong>${run.status === "running" ? '<span class="pulse"></span>' : ""}${escapeHtml(run.id)} · ${escapeHtml(run.agentName)}</strong>
-                <span class="status-pill ${statusClass(label)}">${escapeHtml(label)}</span>
+                <strong>${run.status === "running" ? '<span class="pulse"></span>' : ""}${escapeHtml(run.id)} · ${escapeHtml(agentLabel(run.agentName))}</strong>
+              <span class="status-pill ${statusClass(run.status)}">${escapeHtml(label)}</span>
               </div>
               <button class="link-button" type="button" data-case-id="${escapeHtml(run.caseId)}">
-                ${escapeHtml(run.caseCode)} · ${escapeHtml(target ? target.customerName : "unknown case")}
+                ${escapeHtml(run.caseCode)} · ${escapeHtml(target ? target.customerName : "케이스 없음")}
               </button>
               <p class="run-command">“${escapeHtml(run.command)}”</p>
               <div class="run-log">
@@ -1412,7 +1689,7 @@ function runsView() {
                     ([time, text]) => `
                       <div class="audit-item">
                         <span class="audit-time">${escapeHtml(time)}</span>
-                        <p>${escapeHtml(text)}</p>
+                        <p>${escapeHtml(localizeLine(text))}</p>
                       </div>
                     `,
                   )
@@ -1433,7 +1710,7 @@ function jeonseView() {
       <article class="work-item featured is-clickable ${jeonseCase.id === selectedCaseId && activeDetailType === "case" ? "is-selected" : ""}" data-case-id="${escapeHtml(jeonseCase.id)}" role="button" tabindex="0">
         <div class="item-head">
           <strong>${escapeHtml(jeonseCase.code)} · ${escapeHtml(jeonseCase.customerName)}</strong>
-          <span class="status-pill ${statusClass(jeonseCase.status)}">${escapeHtml(jeonseCase.status)}</span>
+          <span class="status-pill ${statusClass(jeonseCase.status)}">${escapeHtml(statusLabel(jeonseCase.status))}</span>
         </div>
         <p>${escapeHtml(jeonseCase.primaryPain)} · ${escapeHtml(jeonseCase.exposure)}</p>
         <div class="tag-row">${jeonseCase.rootCauses.map((cause) => `<span class="tag">${escapeHtml(cause)}</span>`).join("")}</div>
@@ -1446,10 +1723,10 @@ function jeonseView() {
               <article class="work-item is-clickable ${feature.id === selectedFeatureId && activeDetailType === "feature" ? "is-selected" : ""}" data-feature-id="${escapeHtml(feature.id)}" role="button" tabindex="0">
                 <div class="item-head">
                   <strong>${escapeHtml(feature.title)}</strong>
-                  <span class="source-badge">${featureAgents.length} agents · ${feature.skills.length} skills</span>
+                  <span class="source-badge">${featureAgents.length}개 에이전트 · ${feature.skills.length}개 스킬</span>
                 </div>
                 <p>${escapeHtml(feature.description)}</p>
-                <div class="tag-row">${feature.skills.map((skill) => `<span class="tag">${escapeHtml(skill)}</span>`).join("")}</div>
+                <div class="tag-row">${feature.skills.map((skill) => `<span class="tag">${escapeHtml(skillLabel(skill))}</span>`).join("")}</div>
               </article>
             `;
           })
@@ -1467,12 +1744,12 @@ function agentsView() {
           (agent) => `
             <article class="agent-card is-clickable ${agent.id === selectedAgentId && activeDetailType === "agent" ? "is-selected" : ""}" data-agent-id="${escapeHtml(agent.id)}" role="button" tabindex="0">
               <div class="item-head">
-                <strong>${escapeHtml(agent.name)}</strong>
-                <span class="status-pill ${agent.status === "running" ? "status-running" : agent.status === "pending_approval" ? "status-pending" : "status-new"}">${escapeHtml(agent.status)}</span>
+                <strong>${escapeHtml(agentLabel(agent))}</strong>
+                <span class="status-pill ${agent.status === "running" ? "status-running" : agent.status === "pending_approval" ? "status-pending" : "status-new"}">${escapeHtml(statusLabel(agent.status))}</span>
               </div>
-              <p>${escapeHtml(agent.role)}</p>
-              <div class="tag-row">${agent.skills.map((skill) => `<span class="tag">${escapeHtml(skill)}</span>`).join("")}</div>
-              <p>reportsTo: ${escapeHtml(agent.reportsTo)} · heartbeat ${escapeHtml(agent.heartbeat)} · queue ${agent.queue}</p>
+              <p>${escapeHtml(localizeLine(agent.role))}</p>
+              <div class="tag-row">${agent.skills.map((skill) => `<span class="tag">${escapeHtml(skillLabel(skill))}</span>`).join("")}</div>
+              <p>보고 대상: ${escapeHtml(agentLabel(agent.reportsTo))} · 상태 확인 ${escapeHtml(agent.heartbeat)} · 대기열 ${agent.queue}</p>
             </article>
           `,
         )
@@ -1485,33 +1762,33 @@ function orgChartView() {
   const agentById = Object.fromEntries(agents.map((agent) => [agent.id, agent]));
   const branches = [
     {
-      title: "Regional Pain Radar",
-      subtitle: "기사·공식자료·상담메모 기반 지역 금융 pain signal",
+      title: "지역 위험 신호 탐지",
+      subtitle: "기사·공식자료·상담 메모 기반 지역 금융 위험 신호",
       agents: ["pain-radar", "cashflow", "policy", "analytics"],
     },
     {
-      title: "Jeonse Shield Line",
+      title: "전세 보호 라인",
       subtitle: "전세가율·권리관계·고객 자산노출·은행 연계",
       agents: ["jeonse-lead", "deposit-ratio", "registry-rights", "tenant-asset", "bank-linkage"],
       featured: true,
     },
     {
-      title: "Approval & Customer Ops",
+      title: "승인과 고객 운영",
       subtitle: "RM 초안, 승인 게이트, 고객 안내 전 통제",
       agents: ["rm-copilot"],
     },
     {
-      title: "Fraud & Compliance",
+      title: "사기 차단과 준법",
       subtitle: "사기 차단, 준법 검토, 특약/계약 문구 통제",
       agents: ["fraud", "contract-check"],
     },
   ];
 
   return `
-    <div class="org-diagram" role="img" aria-label="JB LocalGuard OS AI Agent 조직도">
+      <div class="org-diagram" role="img" aria-label="JB LocalGuard OS AI 에이전트 조직도">
       <div class="org-tier org-human-tier">
-        ${humanNode("Human RM Lead", "RM 최종 승인권자")}
-        ${humanNode("Human Compliance Lead", "준법 최종 승인권자")}
+        ${humanNode("RM 최종 승인자", "고객 안내와 RM 조치 최종 승인")}
+        ${humanNode("준법 최종 승인자", "규제, 개인정보, 법률 표현 최종 검토")}
       </div>
       <div class="org-connector split-connector" aria-hidden="true"></div>
       <div class="org-tier org-command-tier">
@@ -1523,9 +1800,9 @@ function orgChartView() {
         ${branches.map((branch) => orgBranch(branch, agentById)).join("")}
       </div>
       <div class="org-legend">
-        <span><i class="legend-dot running"></i>running</span>
-        <span><i class="legend-dot pending"></i>pending approval</span>
-        <span><i class="legend-dot idle"></i>idle</span>
+        <span><i class="legend-dot running"></i>실행 중</span>
+        <span><i class="legend-dot pending"></i>승인 대기</span>
+        <span><i class="legend-dot idle"></i>대기</span>
       </div>
     </div>
   `;
@@ -1534,7 +1811,7 @@ function orgChartView() {
 function humanNode(title, description) {
   return `
     <article class="org-node human">
-      <span class="node-kicker">Human Gate</span>
+      <span class="node-kicker">사람 승인</span>
       <strong>${escapeHtml(title)}</strong>
       <p>${escapeHtml(description)}</p>
     </article>
@@ -1562,15 +1839,15 @@ function orgNode(agent, variant = "") {
   return `
     <article class="org-node is-clickable ${variant} ${selected}" data-agent-id="${escapeHtml(agent.id)}" role="button" tabindex="0">
       <div class="node-topline">
-        <span class="node-kicker">${escapeHtml(agent.type)}</span>
-        <span class="status-pill ${status}">${escapeHtml(agent.status)}</span>
+        <span class="node-kicker">${escapeHtml(typeLabel(agent.type))}</span>
+        <span class="status-pill ${status}">${escapeHtml(statusLabel(agent.status))}</span>
       </div>
-      <strong>${escapeHtml(agent.name)}</strong>
-      <p>${escapeHtml(agent.role)}</p>
+      <strong>${escapeHtml(agentLabel(agent))}</strong>
+      <p>${escapeHtml(localizeLine(agent.role))}</p>
       <div class="node-meta">
-        <span>${escapeHtml(agent.heartbeat)}</span>
-        <span>queue ${agent.queue}</span>
-        <span>${agent.skills.length} skills</span>
+        <span>상태 확인 ${escapeHtml(agent.heartbeat)}</span>
+        <span>대기열 ${agent.queue}</span>
+        <span>스킬 ${agent.skills.length}개</span>
       </div>
     </article>
   `;
@@ -1584,11 +1861,11 @@ function skillsView() {
           (skill) => `
             <article class="skill-card is-clickable ${skill.slug === selectedSkillId && activeDetailType === "skill" ? "is-selected" : ""}" data-skill-id="${escapeHtml(skill.slug)}" role="button" tabindex="0">
               <div class="item-head">
-                <strong>${escapeHtml(skill.slug)}</strong>
-                <span class="source-badge">${escapeHtml(skill.type)}</span>
+                <strong>${escapeHtml(skillLabel(skill.slug))}</strong>
+                <span class="source-badge">${escapeHtml(typeLabel(skill.type))}</span>
               </div>
-              <p>${escapeHtml(skill.purpose)}</p>
-              <span class="risk-chip ${skill.risk === "high" ? "status-escalated" : skill.risk === "medium" ? "status-pending" : "status-approved"}">${escapeHtml(skill.risk)} · ${escapeHtml(skill.approval)}</span>
+              <p>${escapeHtml(localizeLine(skill.purpose))}</p>
+              <span class="risk-chip ${skill.risk === "high" ? "status-escalated" : skill.risk === "medium" ? "status-pending" : "status-approved"}">${escapeHtml(statusLabel(skill.risk))} · ${escapeHtml(approvalLabel(skill.approval))}</span>
             </article>
           `,
         )
@@ -1606,9 +1883,9 @@ function routinesView() {
             <article class="work-item">
               <div class="item-head">
                 <strong>${escapeHtml(routine[1])}</strong>
-                <span class="status-pill ${routine[3] === "enabled" ? "status-approved" : "status-new"}">${escapeHtml(routine[3])}</span>
+                <span class="status-pill ${routine[3] === "enabled" ? "status-approved" : "status-new"}">${escapeHtml(statusLabel(routine[3]))}</span>
               </div>
-              <p>${escapeHtml(routine[0])} · ${escapeHtml(routine[2])}</p>
+              <p>${escapeHtml(routine[0])} · ${escapeHtml(agentLabel(routine[2]))}</p>
               <div class="action-row action-stack">
                 <button class="ghost-button" type="button" data-routine-toggle="${index}">${routine[3] === "enabled" ? "일시정지" : "재개"}</button>
               </div>
@@ -1627,7 +1904,7 @@ function goalsView() {
         .map(
           (goal) => `
             <article class="work-item">
-              <div class="item-head"><strong>${escapeHtml(goal[0])}</strong><span>${goal[2]}%</span></div>
+              <div class="item-head"><strong>${escapeHtml(localizeLine(goal[0]))}</strong><span>${goal[2]}%</span></div>
               <p>${escapeHtml(goal[1])}</p>
               <div class="progress-track"><i style="width:${goal[2]}%"></i></div>
             </article>
@@ -1646,8 +1923,8 @@ function activityView() {
           ([time, agent, action, code]) => `
             <article class="activity-item">
               <span class="audit-time">${escapeHtml(time)}</span>
-              <strong>${escapeHtml(agent)} ${escapeHtml(action)}</strong>
-              <p>on ${escapeHtml(code)}</p>
+              <strong>${escapeHtml(agentLabel(agent))} · ${escapeHtml(actionLabel(action))}</strong>
+              <p>대상 ${escapeHtml(code)}</p>
             </article>
           `,
         )
@@ -1664,7 +1941,7 @@ function budgetView() {
           const percent = Math.round((agent.spent / agent.budget) * 100);
           return `
             <div class="budget-row">
-              <strong>${escapeHtml(agent.name)}</strong>
+              <strong>${escapeHtml(agentLabel(agent))}</strong>
               <div class="progress-track"><i style="width:${percent}%"></i></div>
               <span>${percent}%</span>
             </div>
@@ -1678,9 +1955,9 @@ function budgetView() {
 function settingsView() {
   return `
     <div class="work-grid">
-      ${workItem("Organization profile", "전북은행 · 광주은행 · JB우리캐피탈 mock tenant를 전환한다.", "local_trusted")}
-      ${workItem("Approval policy", "L0-L4 zero-human 레벨과 금지 자동 실행 항목을 관리한다.", "mandatory")}
-      ${workItem("External integrations", "뉴스/공식자료/RM 상담 기록/보안 경보 adapter를 연결한다.", "mocked")}
+      ${workItem("조직 프로필", "전북은행 · 광주은행 · JB우리캐피탈 데모 조직을 전환합니다.", "로컬 신뢰")}
+      ${workItem("승인 정책", "L0-L4 자동화 레벨과 금지 자동 실행 항목을 관리합니다.", "필수 통제")}
+      ${workItem("외부 연동", "뉴스, 공식자료, RM 상담 기록, 보안 경보 어댑터를 연결합니다.", "데모 연동")}
     </div>
   `;
 }
@@ -1690,9 +1967,9 @@ function workItem(title, description, meta) {
     <article class="work-item">
       <div class="item-head">
         <strong>${escapeHtml(title)}</strong>
-        <span class="source-badge">${escapeHtml(meta)}</span>
+        <span class="source-badge">${escapeHtml(localizeLine(meta))}</span>
       </div>
-      <p>${escapeHtml(description)}</p>
+      <p>${escapeHtml(localizeLine(description))}</p>
     </article>
   `;
 }
@@ -1728,10 +2005,10 @@ function renderProperties() {
   contextPanel.innerHTML = `
     <div class="properties-header">
       <div>
-        <p class="eyebrow">Properties</p>
+        <p class="eyebrow">상세 정보</p>
         <h2>${escapeHtml(propertyPanelTitle())}</h2>
       </div>
-      <span class="status-pill status-new">${escapeHtml(activeDetailType)}</span>
+      <span class="status-pill status-new">${escapeHtml(activeDetailLabel(activeDetailType))}</span>
     </div>
     ${markup}
   `;
@@ -1739,8 +2016,8 @@ function renderProperties() {
 }
 
 function propertyPanelTitle() {
-  if (activeDetailType === "agent" && currentAgent()) return currentAgent().name;
-  if (activeDetailType === "skill" && currentSkill()) return currentSkill().slug;
+  if (activeDetailType === "agent" && currentAgent()) return agentLabel(currentAgent());
+  if (activeDetailType === "skill" && currentSkill()) return skillLabel(currentSkill().slug);
   if (activeDetailType === "feature" && currentFeature()) return currentFeature().title;
   if (activeDetailType === "view") return "선택 화면 요약";
   const item = currentCase();
@@ -1752,7 +2029,7 @@ function caseLinkButton(item) {
     <button class="work-item link-card" type="button" data-case-id="${escapeHtml(item.id)}">
       <div class="item-head">
         <strong>${escapeHtml(item.code)} · ${escapeHtml(item.customerName)}</strong>
-        <span class="status-pill ${statusClass(item.status)}">${escapeHtml(item.status)}</span>
+        <span class="status-pill ${statusClass(item.status)}">${escapeHtml(statusLabel(item.status))}</span>
       </div>
       <p>${escapeHtml(item.primaryPain)}</p>
     </button>
@@ -1764,16 +2041,33 @@ function agentLinkButton(agent) {
   return `
     <button class="work-item link-card" type="button" data-agent-id="${escapeHtml(agent.id)}">
       <div class="item-head">
-        <strong>${escapeHtml(agent.name)}</strong>
-        <span class="status-pill ${status}">${escapeHtml(agent.status)}</span>
+        <strong>${escapeHtml(agentLabel(agent))}</strong>
+        <span class="status-pill ${status}">${escapeHtml(statusLabel(agent.status))}</span>
       </div>
-      <p>${escapeHtml(agent.role)}</p>
+      <p>${escapeHtml(localizeLine(agent.role))}</p>
     </button>
   `;
 }
 
 function skillTagButton(slug) {
-  return `<button class="tag tag-button" type="button" data-skill-id="${escapeHtml(slug)}">${escapeHtml(slug)}</button>`;
+  return `<button class="tag tag-button" type="button" data-skill-id="${escapeHtml(slug)}" title="${escapeHtml(slug)}">${escapeHtml(skillLabel(slug))}</button>`;
+}
+
+function collapsiblePanel(key, eyebrow, title, body, meta = "", extraClass = "") {
+  const collapsed = collapsedPanelKeys.has(key);
+  return `
+    <section class="panel collapsible-panel ${collapsed ? "is-collapsed" : ""} ${extraClass}" data-panel-key="${escapeHtml(key)}">
+      <button class="panel-toggle" type="button" data-collapse-key="${escapeHtml(key)}" aria-expanded="${collapsed ? "false" : "true"}">
+        <span class="panel-toggle-title">
+          <span class="eyebrow">${escapeHtml(eyebrow)}</span>
+          <strong>${escapeHtml(title)}</strong>
+        </span>
+        ${meta ? `<span class="panel-toggle-meta">${escapeHtml(meta)}</span>` : ""}
+        <span class="panel-toggle-icon" aria-hidden="true">${collapsed ? "+" : "−"}</span>
+      </button>
+      <div class="panel-body" ${collapsed ? "hidden" : ""}>${body}</div>
+    </section>
+  `;
 }
 
 function agentDetailMarkup() {
@@ -1783,45 +2077,44 @@ function agentDetailMarkup() {
   const statusPill = agent.status === "running" ? "status-running" : agent.status === "pending_approval" ? "status-pending" : "status-new";
   const firstCase = linked[0];
   return `
-    <section class="panel selected-case-panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Selected Agent</p>
-          <h3>${escapeHtml(agent.name)}</h3>
-        </div>
-        <span class="status-pill ${statusPill}">${escapeHtml(agent.status)}</span>
-      </div>
-      <div class="case-properties">
+    ${collapsiblePanel(
+      "agent-summary",
+      "선택 에이전트",
+      agentLabel(agent),
+      `<div class="case-properties">
         <div class="property-list">
-          ${propertyRow("담당 업무", agent.role)}
-          ${propertyRow("Type", agent.type)}
-          ${propertyRow("Reports To", agent.reportsTo)}
-          ${propertyRow("Heartbeat", agent.heartbeat)}
-          ${propertyRow("Queue", agent.queue)}
-          ${propertyRow("Budget", `₩${agent.spent.toLocaleString()} / ₩${agent.budget.toLocaleString()} · ${percent}%`)}
-          ${propertyRow("Current", agent.currentCase)}
+          ${propertyRow("담당 업무", localizeLine(agent.role))}
+          ${propertyRow("유형", typeLabel(agent.type))}
+          ${propertyRow("보고 대상", agentLabel(agent.reportsTo))}
+          ${propertyRow("상태 확인", agent.heartbeat)}
+          ${propertyRow("대기열", agent.queue)}
+          ${propertyRow("예산", `₩${agent.spent.toLocaleString()} / ₩${agent.budget.toLocaleString()} · ${percent}%`)}
+          ${propertyRow("현재 업무", localizeLine(agent.currentCase))}
         </div>
-        <p class="eyebrow">Mounted Skills</p>
+        <p class="eyebrow">장착 스킬</p>
         <div class="tag-row">${agent.skills.map(skillTagButton).join("")}</div>
-      </div>
-    </section>
+      </div>`,
+      statusLabel(agent.status),
+      "selected-case-panel",
+    )}
     ${compactPanel(
-      "Assigned Cases",
+      "담당 케이스",
       "담당 케이스",
       linked.length
         ? `<div class="context-list">${linked.map(caseLinkButton).join("")}</div>`
         : '<div class="empty-state">연결된 케이스 없음</div>',
+      `${linked.length}개`,
     )}
     ${compactPanel(
-      "Agent Actions",
-      "실행 가능 action",
+      "실행 작업",
+      "실행 가능한 작업",
       `<div class="action-row action-stack">
         <button id="agent-run-case" class="primary-button" type="button" ${firstCase && firstCase.status !== "Agent Running" ? "" : "disabled"}>
           <span aria-hidden="true">▶</span>
           ${escapeHtml(firstCase ? `${firstCase.code} 실행` : "실행할 케이스 없음")}
         </button>
         <button id="agent-open-cases" class="secondary-button" type="button" ${firstCase ? "" : "disabled"}>케이스 화면으로 이동</button>
-        <button id="back-to-case" class="ghost-button" type="button">Selected Case로 돌아가기</button>
+        <button id="back-to-case" class="ghost-button" type="button">선택 케이스로 돌아가기</button>
       </div>`,
     )}
   `;
@@ -1833,39 +2126,39 @@ function skillDetailMarkup() {
   const linked = casesBySkill(skill.slug);
   const riskPill = skill.risk === "high" ? "status-escalated" : skill.risk === "medium" ? "status-pending" : "status-approved";
   return `
-    <section class="panel selected-case-panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Selected Skill</p>
-          <h3>${escapeHtml(skill.slug)}</h3>
-        </div>
-        <span class="status-pill ${riskPill}">${escapeHtml(skill.risk)}</span>
-      </div>
-      <div class="case-properties">
+    ${collapsiblePanel(
+      "skill-summary",
+      "선택 스킬",
+      skillLabel(skill.slug),
+      `<div class="case-properties">
         <div class="property-list">
-          ${propertyRow("Type", skill.type)}
-          ${propertyRow("Purpose", skill.purpose)}
-          ${propertyRow("위험도", skill.risk)}
-          ${propertyRow("승인 정책", skill.approval)}
-          ${propertyRow("Enabled", skill.enabled ? "yes" : "no")}
+          ${propertyRow("유형", typeLabel(skill.type))}
+          ${propertyRow("목적", localizeLine(skill.purpose))}
+          ${propertyRow("위험도", statusLabel(skill.risk))}
+          ${propertyRow("승인 정책", approvalLabel(skill.approval))}
+          ${propertyRow("사용 여부", skill.enabled ? "사용 중" : "중지")}
         </div>
-      </div>
-    </section>
-    ${compactPanel(
-      "Mounted Agents",
-      "이 Skill을 사용하는 Agent",
-      users.length
-        ? `<div class="context-list">${users.map(agentLinkButton).join("")}</div>`
-        : '<div class="empty-state">장착한 Agent 없음</div>',
+      </div>`,
+      statusLabel(skill.risk),
+      "selected-case-panel",
     )}
     ${compactPanel(
-      "Applied Cases",
-      "이 Skill이 적용된 Case",
+      "장착 에이전트",
+      "이 스킬을 사용하는 에이전트",
+      users.length
+        ? `<div class="context-list">${users.map(agentLinkButton).join("")}</div>`
+        : '<div class="empty-state">장착한 에이전트 없음</div>',
+      `${users.length}개`,
+    )}
+    ${compactPanel(
+      "적용 케이스",
+      "이 스킬이 적용된 케이스",
       linked.length
         ? `<div class="context-list">${linked.map(caseLinkButton).join("")}</div>`
         : '<div class="empty-state">적용된 케이스 없음</div>',
+      `${linked.length}개`,
     )}
-    ${compactPanel("Navigate", "이동", '<div class="action-row action-stack"><button id="back-to-case" class="ghost-button" type="button">Selected Case로 돌아가기</button></div>')}
+    ${compactPanel("이동", "이동", '<div class="action-row action-stack"><button id="back-to-case" class="ghost-button" type="button">선택 케이스로 돌아가기</button></div>')}
   `;
 }
 
@@ -1874,33 +2167,32 @@ function featureDetailMarkup() {
   const featureAgents = agentsByFeature(feature);
   const jeonseCase = cases.find((item) => item.pains.includes("jeonse-fraud"));
   return `
-    <section class="panel selected-case-panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Jeonse Shield Feature</p>
-          <h3>${escapeHtml(feature.title)}</h3>
-        </div>
-        <span class="status-pill status-running">active</span>
-      </div>
-      <div class="case-properties">
+    ${collapsiblePanel(
+      "feature-summary",
+      "전세 보호 기능",
+      feature.title,
+      `<div class="case-properties">
         <p>${escapeHtml(feature.description)}</p>
-        <p class="eyebrow">Linked Skills</p>
+        <p class="eyebrow">연결 스킬</p>
         <div class="tag-row">${feature.skills.map(skillTagButton).join("")}</div>
-      </div>
-    </section>
-    ${compactPanel(
-      "Linked Agents",
-      "이 기능을 수행하는 Agent",
-      featureAgents.length
-        ? `<div class="context-list">${featureAgents.map(agentLinkButton).join("")}</div>`
-        : '<div class="empty-state">연결된 Agent 없음</div>',
+      </div>`,
+      "활성",
+      "selected-case-panel",
     )}
     ${compactPanel(
-      "Target Case",
+      "연결 에이전트",
+      "이 기능을 수행하는 에이전트",
+      featureAgents.length
+        ? `<div class="context-list">${featureAgents.map(agentLinkButton).join("")}</div>`
+        : '<div class="empty-state">연결된 에이전트 없음</div>',
+      `${featureAgents.length}개`,
+    )}
+    ${compactPanel(
+      "대상 케이스",
       "적용 대상 케이스",
       jeonseCase ? `<div class="context-list">${caseLinkButton(jeonseCase)}</div>` : '<div class="empty-state">전세 케이스 없음</div>',
     )}
-    ${compactPanel("Navigate", "이동", '<div class="action-row action-stack"><button id="back-to-case" class="ghost-button" type="button">Selected Case로 돌아가기</button></div>')}
+    ${compactPanel("이동", "이동", '<div class="action-row action-stack"><button id="back-to-case" class="ghost-button" type="button">선택 케이스로 돌아가기</button></div>')}
   `;
 }
 
@@ -1914,7 +2206,7 @@ function caseContextMarkup() {
         <article class="gate-row">
           <div class="item-head">
             <strong>${escapeHtml(label)}</strong>
-            <span class="status-pill ${gateStatus === "passed" ? "status-approved" : gateStatus === "blocked" ? "status-escalated" : "status-pending"}">${escapeHtml(gateStatus)}</span>
+            <span class="status-pill ${gateStatus === "passed" ? "status-approved" : gateStatus === "blocked" ? "status-escalated" : "status-pending"}">${escapeHtml(statusLabel(gateStatus))}</span>
           </div>
         </article>
       `,
@@ -1922,84 +2214,62 @@ function caseContextMarkup() {
     .join("");
 
   return `
-    <section class="panel selected-case-panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Selected Case</p>
-          <h3 id="property-title">${escapeHtml(item.customerName)}</h3>
-        </div>
-        <span id="property-status" class="status-pill ${statusClass(item.status)}">${escapeHtml(item.status)}</span>
-      </div>
-      <div id="case-properties" class="case-properties">
+    ${collapsiblePanel(
+      "case-summary",
+      "선택 케이스",
+      item.customerName,
+      `<div id="case-properties" class="case-properties">
         <div class="property-list">
-          ${propertyRow("Code", item.code)}
-          ${propertyRow("Affiliate", item.affiliate)}
-          ${propertyRow("Region", `${item.region} · ${item.industry}`)}
-          ${propertyRow("Risk", `${item.riskScore}/100 · ${item.priority}`)}
-          ${propertyRow("Zero-human", item.zeroHuman)}
-          ${propertyRow("Owner", item.owner)}
-          ${propertyRow("Exposure", item.exposure)}
-          ${propertyRow("Due", item.due)}
+          ${propertyRow("케이스 코드", item.code)}
+          ${propertyRow("계열사", item.affiliate)}
+          ${propertyRow("지역/업종", `${item.region} · ${item.industry}`)}
+          ${propertyRow("위험도", `${item.riskScore}/100 · ${statusLabel(item.priority)}`)}
+          ${propertyRow("자동화 수준", item.zeroHuman)}
+          ${propertyRow("담당자", agentLabel(item.owner))}
+          ${propertyRow("노출 위험", item.exposure)}
+          ${propertyRow("마감", item.due)}
         </div>
         <div class="tag-row">${item.rootCauses.map((cause) => `<span class="tag">${escapeHtml(cause)}</span>`).join("")}</div>
-        <p class="eyebrow">Mounted Skills</p>
+        <p class="eyebrow">장착 스킬</p>
         <div class="tag-row">${skillsByCase(item).map(skillTagButton).join("")}</div>
-      </div>
-    </section>
+      </div>`,
+      `${statusLabel(item.status)} · 위험도 ${item.riskScore}`,
+      "selected-case-panel",
+    )}
 
-    <section class="panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Case Agents</p>
-          <h3>담당 Agent</h3>
-        </div>
-      </div>
-      <div class="context-list">${caseAgents(item).map(agentLinkButton).join("") || '<div class="empty-state">배정된 Agent 없음</div>'}</div>
-    </section>
+    ${collapsiblePanel(
+      "case-agents",
+      "담당 에이전트",
+      "업무와 스킬",
+      `<div class="context-list">${caseAgents(item).map(agentLinkButton).join("") || '<div class="empty-state">배정된 에이전트 없음</div>'}</div>`,
+      `${caseAgents(item).length}개 배정`,
+    )}
 
-    <section class="panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Approval Gate</p>
-          <h3>승인 정책</h3>
-        </div>
-      </div>
-      <div id="approval-gates" class="approval-gates">${gateRows}</div>
+    ${collapsiblePanel(
+      "case-approval",
+      "승인 정책",
+      "사람 승인 게이트",
+      `<div id="approval-gates" class="approval-gates">${gateRows}</div>
       <div class="action-row">
         <button id="run-agents" class="primary-button" type="button" ${runDisabled}>
           <span aria-hidden="true">▶</span>
-          Run
+          실행
         </button>
         <button id="approve-action" class="secondary-button" type="button" ${reviewDisabled}>
           <span aria-hidden="true">✓</span>
-          Approve
+          승인
         </button>
         <button id="reject-action" class="danger-button" type="button" ${reviewDisabled}>
           <span aria-hidden="true">×</span>
-          Reject
+          반려
         </button>
-      </div>
-    </section>
+      </div>`,
+      `${item.gates.length}개 통제`,
+    )}
 
-    <section class="panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Evidence Feed</p>
-          <h3>근거</h3>
-        </div>
-      </div>
-      <div id="evidence-feed" class="evidence-feed"></div>
-    </section>
+    ${collapsiblePanel("case-evidence", "근거", "근거 피드", '<div id="evidence-feed" class="evidence-feed"></div>', `${item.evidenceIds.length}개 출처`)}
 
-    <section class="panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Audit Ledger</p>
-          <h3>감사 로그</h3>
-        </div>
-      </div>
-      <div id="audit-log" class="audit-log"></div>
-    </section>
+    ${collapsiblePanel("case-audit", "감사 로그", "처리 기록", '<div id="audit-log" class="audit-log"></div>', `${item.audit.length}개 기록`)}
   `;
 }
 
@@ -2007,18 +2277,8 @@ function propertyRow(label, value) {
   return `<div class="property-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`;
 }
 
-function compactPanel(eyebrow, title, body) {
-  return `
-    <section class="panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">${escapeHtml(eyebrow)}</p>
-          <h3>${escapeHtml(title)}</h3>
-        </div>
-      </div>
-      ${body}
-    </section>
-  `;
+function compactPanel(eyebrow, title, body, meta = "") {
+  return collapsiblePanel(slugKey(eyebrow, title), eyebrow, title, body, meta);
 }
 
 function agentContextMarkup() {
@@ -2028,21 +2288,21 @@ function agentContextMarkup() {
   const topAgents = agents
     .filter((agent) => agent.status === "running" || agent.status === "pending_approval")
     .slice(0, 5)
-    .map((agent) => workItem(agent.name, agent.role, `${agent.status} · queue ${agent.queue}`))
+    .map((agent) => workItem(agentLabel(agent), localizeLine(agent.role), `${statusLabel(agent.status)} · 대기열 ${agent.queue}`))
     .join("");
 
   return `
     ${compactPanel(
-      "Agent Control",
+      "에이전트 통제",
       "팀 운영 요약",
       `<div class="property-list">
-        ${propertyRow("Agents", agents.length)}
-        ${propertyRow("Running", running)}
-        ${propertyRow("Approval", pending)}
-        ${propertyRow("Queue", queue)}
+        ${propertyRow("에이전트", agents.length)}
+        ${propertyRow("실행 중", running)}
+        ${propertyRow("승인 대기", pending)}
+        ${propertyRow("전체 대기열", queue)}
       </div>`,
     )}
-    ${compactPanel("Active Agents", "실행/승인 대기", `<div class="context-list">${topAgents}</div>`)}
+    ${compactPanel("활성 에이전트", "실행/승인 대기", `<div class="context-list">${topAgents}</div>`)}
   `;
 }
 
@@ -2053,44 +2313,44 @@ function skillContextMarkup() {
   }, {});
   const highRisk = skillRack.filter((skill) => skill.risk === "high").length;
   const categoryRows = Object.entries(categoryCounts)
-    .map(([type, count]) => propertyRow(type, count))
+    .map(([type, count]) => propertyRow(typeLabel(type), count))
     .join("");
 
   return `
     ${compactPanel(
-      "Skill Registry",
+      "스킬 저장소",
       "스킬 구성",
       `<div class="property-list">
-        ${propertyRow("Total", skillRack.length)}
-        ${propertyRow("High-risk", highRisk)}
-        ${propertyRow("Mandatory gates", skillRack.filter((skill) => skill.approval === "mandatory").length)}
+        ${propertyRow("전체 스킬", skillRack.length)}
+        ${propertyRow("고위험 스킬", highRisk)}
+        ${propertyRow("필수 통제", skillRack.filter((skill) => skill.approval === "mandatory").length)}
       </div>`,
     )}
-    ${compactPanel("Categories", "타입별 분포", `<div class="property-list">${categoryRows}</div>`)}
+    ${compactPanel("유형", "유형별 분포", `<div class="property-list">${categoryRows}</div>`)}
   `;
 }
 
 function routineContextMarkup() {
   const enabled = routines.filter((routine) => routine[3] === "enabled").length;
-  const rows = routines.map((routine) => workItem(routine[1], `${routine[0]} · ${routine[2]}`, routine[3])).join("");
+  const rows = routines.map((routine) => workItem(localizeLine(routine[1]), `${routine[0]} · ${agentLabel(routine[2])}`, statusLabel(routine[3]))).join("");
   return `
-    ${compactPanel("Heartbeat", "정기 실행 상태", `<div class="property-list">${propertyRow("Enabled", enabled)}${propertyRow("Paused", routines.length - enabled)}</div>`)}
-    ${compactPanel("Schedule", "다음 루틴", `<div class="context-list">${rows}</div>`)}
+    ${compactPanel("자동화", "정기 실행 상태", `<div class="property-list">${propertyRow("사용 중", enabled)}${propertyRow("일시정지", routines.length - enabled)}</div>`)}
+    ${compactPanel("일정", "다음 루틴", `<div class="context-list">${rows}</div>`)}
   `;
 }
 
 function goalContextMarkup() {
   const average = Math.round(goals.reduce((sum, goal) => sum + goal[2], 0) / goals.length);
-  const rows = goals.map((goal) => workItem(goal[0], goal[1], `${goal[2]}%`)).join("");
+  const rows = goals.map((goal) => workItem(localizeLine(goal[0]), goal[1], `${goal[2]}%`)).join("");
   return `
-    ${compactPanel("Operating Goals", "목표 평균", `<div class="property-list">${propertyRow("Goal count", goals.length)}${propertyRow("Average", `${average}%`)}</div>`)}
-    ${compactPanel("Targets", "관리 지표", `<div class="context-list">${rows}</div>`)}
+    ${compactPanel("운영 목표", "목표 평균", `<div class="property-list">${propertyRow("목표 수", goals.length)}${propertyRow("평균", `${average}%`)}</div>`)}
+    ${compactPanel("관리 지표", "관리 지표", `<div class="context-list">${rows}</div>`)}
   `;
 }
 
 function activityContextMarkup() {
-  const latest = activity.slice(0, 5).map(([time, agent, action, code]) => workItem(`${time} · ${agent}`, action, code)).join("");
-  return compactPanel("Activity", "최근 처리 이력", `<div class="context-list">${latest}</div>`);
+  const latest = activity.slice(0, 5).map(([time, agent, action, code]) => workItem(`${time} · ${agentLabel(agent)}`, actionLabel(action), code)).join("");
+  return compactPanel("활동 이력", "최근 처리 이력", `<div class="context-list">${latest}</div>`);
 }
 
 function budgetContextMarkup() {
@@ -2100,23 +2360,23 @@ function budgetContextMarkup() {
     .slice()
     .sort((a, b) => b.spent / b.budget - a.spent / a.budget)
     .slice(0, 4)
-    .map((agent) => workItem(agent.name, `spent ₩${agent.spent.toLocaleString()} / ₩${agent.budget.toLocaleString()}`, `${Math.round((agent.spent / agent.budget) * 100)}%`))
+    .map((agent) => workItem(agentLabel(agent), `사용 ₩${agent.spent.toLocaleString()} / 예산 ₩${agent.budget.toLocaleString()}`, `${Math.round((agent.spent / agent.budget) * 100)}%`))
     .join("");
 
   return `
-    ${compactPanel("API Budget", "전체 예산", `<div class="property-list">${propertyRow("Spent", `₩${spent.toLocaleString()}`)}${propertyRow("Budget", `₩${budget.toLocaleString()}`)}${propertyRow("Usage", `${Math.round((spent / budget) * 100)}%`)}</div>`)}
-    ${compactPanel("Usage", "사용률 상위 Agent", `<div class="context-list">${heavyUsers}</div>`)}
+    ${compactPanel("비용", "전체 예산", `<div class="property-list">${propertyRow("사용액", `₩${spent.toLocaleString()}`)}${propertyRow("예산", `₩${budget.toLocaleString()}`)}${propertyRow("사용률", `${Math.round((spent / budget) * 100)}%`)}</div>`)}
+    ${compactPanel("사용률", "사용률 상위 에이전트", `<div class="context-list">${heavyUsers}</div>`)}
   `;
 }
 
 function settingsContextMarkup() {
   return compactPanel(
-    "Settings",
+    "설정",
     "운영 정책",
     `<div class="property-list">
-      ${propertyRow("Tenant", "전북은행 · 광주은행 · JB우리캐피탈")}
-      ${propertyRow("Approval", "L0-L4 human gate")}
-      ${propertyRow("External", "mock adapters")}
+      ${propertyRow("조직", "전북은행 · 광주은행 · JB우리캐피탈")}
+      ${propertyRow("승인", "L0-L4 사람 승인 게이트")}
+      ${propertyRow("외부 연동", "데모 어댑터")}
     </div>`,
   );
 }
@@ -2133,7 +2393,7 @@ function renderEvidence() {
       const judgment = selected
         ? `
           <div class="evidence-judgment">
-            <p class="eyebrow">이 Evidence가 연결된 판단</p>
+            <p class="eyebrow">이 근거가 연결된 판단</p>
             <p><strong>${escapeHtml(item.code)}</strong> · ${escapeHtml(item.approvalTitle)}</p>
             <p>다음 행동: ${escapeHtml(item.nextAction)}</p>
             <p>사용 케이스: ${linkedCases.map((linked) => escapeHtml(linked.code)).join(", ") || "없음"}</p>
@@ -2142,9 +2402,9 @@ function renderEvidence() {
         : "";
       return `
         <article class="evidence-card is-clickable ${selected ? "is-selected" : ""}" data-evidence-id="${escapeHtml(entry.id)}" role="button" tabindex="0">
-          <span class="source-badge">${escapeHtml(entry.type)} · ${escapeHtml(entry.source)}</span>
+          <span class="source-badge">${escapeHtml(sourceTypeLabel(entry.type))} · ${escapeHtml(entry.source)}</span>
           <a href="${escapeHtml(entry.url)}" target="_blank" rel="noreferrer">${escapeHtml(entry.title)}</a>
-          <p>${escapeHtml(entry.implication)}</p>
+            <p>${escapeHtml(localizeLine(entry.implication))}</p>
           ${judgment}
         </article>
       `;
@@ -2163,7 +2423,7 @@ function renderAudit() {
       ([time, text]) => `
         <article class="audit-item">
           <span class="audit-time">${escapeHtml(time)}</span>
-          <p>${escapeHtml(text)}</p>
+          <p>${escapeHtml(localizeLine(text))}</p>
         </article>
       `,
     )
@@ -2188,13 +2448,13 @@ function startAgentRun(item, command) {
     startedAt: timestamp(),
     status: "running",
     command,
-    log: [[timestamp(), `Run started by ${item.owner}. Mounted skills and injected case context.`]],
+    log: [[timestamp(), `${agentLabel(item.owner)}가 실행을 시작하고 케이스 맥락과 장착 스킬을 불러왔습니다.`]],
   };
   agentRuns.unshift(run);
 
   item.status = "Agent Running";
   item.stage = "in_progress";
-  item.audit.push([timestamp(), `AgentRun ${run.id} started: ${command}`]);
+  item.audit.push([timestamp(), `에이전트 실행 ${run.id} 시작: ${command}`]);
   activity.unshift([timestamp(), item.owner, "checked out", item.code]);
 
   window.setTimeout(() => {
@@ -2203,8 +2463,8 @@ function startAgentRun(item, command) {
     run.log.push([
       timestamp(),
       target && target.pains.includes("jeonse-fraud")
-        ? "Registry Rights Agent: 등기부 권리관계와 전세가율 신호를 교차 확인 중."
-        : "Evidence Harvest: 근거 소스와 상담 메모를 case context에 연결 중.",
+        ? "등기 권리 분석 에이전트: 등기부 권리관계와 전세가율 신호를 교차 확인 중."
+        : "근거 수집: 출처와 상담 메모를 케이스 맥락에 연결 중.",
     ]);
     render();
   }, 700);
@@ -2218,18 +2478,18 @@ function startAgentRun(item, command) {
     run.log.push([
       timestamp(),
       escalate
-        ? "Fraud Shield: Customer-facing action remains blocked. Internal escalation only."
-        : "Approval Gate: Draft action is ready for human review.",
+        ? "사기 차단: 고객 대상 행동은 계속 차단하고 내부 상위 검토만 허용합니다."
+        : "승인 게이트: 조치 초안이 사람 검토 단계에 들어갔습니다.",
     ]);
     if (target.status === "Agent Running") {
       target.status = escalate ? "Escalated" : "Approval Pending";
       target.stage = escalate ? "blocked" : "pending_approval";
       target.transcript.push(
         escalate
-          ? "Fraud Shield: Customer-facing action remains blocked. Internal escalation only."
-          : "Approval Gate: Draft action is ready for human review.",
+          ? "사기 차단: 고객 대상 행동은 계속 차단하고 내부 상위 검토만 허용합니다."
+          : "승인 게이트: 조치 초안이 사람 검토 단계에 들어갔습니다.",
       );
-      target.audit.push([timestamp(), `AgentRun ${run.id} completed and approval policy evaluated.`]);
+      target.audit.push([timestamp(), `에이전트 실행 ${run.id} 완료 및 승인 정책을 검토했습니다.`]);
       activity.unshift([timestamp(), "Approval Gate", escalate ? "escalated case" : "created approval", target.code]);
     }
     render();
@@ -2258,9 +2518,9 @@ function approveCase(item) {
   if (!item || item.status !== "Approval Pending") return;
   item.status = "Approved";
   item.stage = "done";
-  item.audit.push([timestamp(), "Human RM approved the proposed action. Demo outbound task recorded."]);
+  item.audit.push([timestamp(), "RM 담당자가 제안 조치를 승인했고 데모 후속 작업을 기록했습니다."]);
   activity.unshift([timestamp(), "Human RM", "approved action", item.code]);
-  closeRunsForCase(item, "completed", "Human RM approved the action. Run closed.");
+  closeRunsForCase(item, "completed", "RM 담당자가 조치를 승인했고 실행을 종료했습니다.");
   render();
 }
 
@@ -2268,9 +2528,9 @@ function rejectCase(item) {
   if (!item || item.status !== "Approval Pending") return;
   item.status = "Rejected";
   item.stage = "blocked";
-  item.audit.push([timestamp(), "Human reviewer rejected the draft and requested revision."]);
+  item.audit.push([timestamp(), "검토 담당자가 초안을 반려하고 수정을 요청했습니다."]);
   activity.unshift([timestamp(), "Human reviewer", "rejected draft", item.code]);
-  closeRunsForCase(item, "rejected", "Human reviewer rejected the draft. Run closed.");
+  closeRunsForCase(item, "rejected", "검토 담당자가 초안을 반려했고 실행을 종료했습니다.");
   render();
 }
 
@@ -2286,14 +2546,14 @@ function dispatchCommand() {
   const item = currentCase();
   const commandInput = document.getElementById("command-input");
   const command = (commandInput ? commandInput.value.trim() : "") || "empty command";
-  item.audit.push([timestamp(), `Orchestrator command received: ${command}`]);
+  item.audit.push([timestamp(), `오케스트레이터 지시 수신: ${command}`]);
   activity.unshift([timestamp(), "LocalGuard Orchestrator", "dispatched command", item.code]);
   const run = startAgentRun(item, command);
   lastDispatchResult = {
     caseCode: item.code,
     caseTitle: item.customerName,
     runId: run.id,
-    summary: "지시가 AgentRun으로 변환되었고 담당 Agent에게 case context, evidence, approval gate가 전달되었습니다.",
+    summary: "지시가 에이전트 실행으로 변환되었고 담당 에이전트에게 케이스 맥락, 근거, 승인 게이트가 전달되었습니다.",
     next: "완료된 초안은 승인 큐와 감사 로그에 자동 반영됩니다.",
   };
   activeView = "dashboard";
@@ -2323,7 +2583,7 @@ function newCaseDemo() {
     due: "내일 18:00",
     exposure: "상담 접수 · 분류 대기",
     primaryPain: "분류 대기",
-    nextAction: "Pain 분류와 담당 Agent 배정",
+    nextAction: "위험 원인 분류와 담당 에이전트 배정",
     approvalTitle: "초기 분류 결과 확인",
     pains: ["triage"],
     rootCauses: ["신규 접수"],
@@ -2331,7 +2591,7 @@ function newCaseDemo() {
     gates: [["RM 승인 후 고객 접촉", "pending"]],
     agents: ["orchestrator", "pain-radar"],
     transcript: [],
-    audit: [[timestamp(), "Case registered from console New Case button."]],
+    audit: [[timestamp(), "콘솔의 신규 케이스 버튼으로 케이스를 등록했습니다."]],
   };
   cases.push(fresh);
   activity.unshift([timestamp(), "LocalGuard Orchestrator", "registered case", code]);
@@ -2379,12 +2639,12 @@ function moveCaseToColumn(caseId, column) {
   const previous = item.status;
   if (nextStatus === "Agent Running") {
     selectedCaseId = item.id;
-    startAgentRun(item, `Kanban status move: ${previous} -> IN PROGRESS. ${item.nextAction}`);
+    startAgentRun(item, `보드 상태 이동: ${statusLabel(previous)}에서 진행 중으로 변경. ${item.nextAction}`);
     lastDispatchResult = {
       caseCode: item.code,
       caseTitle: item.customerName,
       runId: agentRuns[0].id,
-      summary: "보드 상태 이동으로 AgentRun이 시작되었습니다.",
+      summary: "보드 상태 이동으로 에이전트 실행이 시작되었습니다.",
       next: "완료된 초안은 승인 큐로 이동합니다.",
     };
     render();
@@ -2392,7 +2652,7 @@ function moveCaseToColumn(caseId, column) {
   }
   item.status = nextStatus;
   item.stage = column;
-  item.audit.push([timestamp(), `Kanban status changed: ${previous} -> ${nextStatus}.`]);
+  item.audit.push([timestamp(), `보드 상태 변경: ${statusLabel(previous)}에서 ${statusLabel(nextStatus)}로 이동했습니다.`]);
   activity.unshift([timestamp(), "LocalGuard Orchestrator", "changed status", item.code]);
   selectedCaseId = item.id;
   activeDetailType = "case";
@@ -2455,6 +2715,13 @@ function bindSelectionTargets() {
 
 function bindActions() {
   document.getElementById("new-case-button").addEventListener("click", newCaseDemo);
+  const propertiesToggle = document.getElementById("properties-toggle");
+  if (propertiesToggle) {
+    propertiesToggle.addEventListener("click", () => {
+      propertiesOpen = !propertiesOpen;
+      renderShellState();
+    });
+  }
   document.getElementById("sidebar-search").addEventListener("input", (event) => {
     const query = event.target.value.trim().toLowerCase();
     if (!query) return;
@@ -2499,6 +2766,22 @@ function bindActions() {
 }
 
 function bindContextActions() {
+  document.querySelectorAll("[data-collapse-key]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.collapseKey;
+      if (!key) return;
+      if (collapsedPanelKeys.has(key)) {
+        collapsedPanelKeys.delete(key);
+      } else {
+        collapsedPanelKeys.add(key);
+      }
+      renderProperties();
+      renderEvidence();
+      renderAudit();
+      bindSelectionTargets();
+    });
+  });
+
   const runButton = document.getElementById("run-agents");
   const approveButton = document.getElementById("approve-action");
   const rejectButton = document.getElementById("reject-action");
@@ -2523,7 +2806,7 @@ function bindContextActions() {
       const target = linked.find((item) => item.status !== "Agent Running");
       if (!target) return;
       selectedCaseId = target.id;
-      startAgentRun(target, `${agent.name} 단독 실행: ${target.nextAction}`);
+      startAgentRun(target, `${agentLabel(agent)} 단독 실행: ${target.nextAction}`);
       render();
     });
   }
@@ -2543,6 +2826,7 @@ function bindContextActions() {
 }
 
 function render() {
+  renderShellState();
   renderNavigation();
   renderWorkbench();
   renderProperties();

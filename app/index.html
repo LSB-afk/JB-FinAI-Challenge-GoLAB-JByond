@@ -20,9 +20,9 @@
 
       <aside class="sidebar" aria-label="main navigation">
         <div class="sidebar-brand">
-          <p class="eyebrow">JB Fin:AI Agent Model</p>
+          <p class="eyebrow">JB 금융 AI 운영 모델</p>
           <h1>JB LocalGuard OS</h1>
-          <span>JB 금융안전 Agent 운영 콘솔</span>
+          <span>JB 금융안전 에이전트 운영 콘솔</span>
         </div>
 
         <button id="new-case-button" class="new-case-button" type="button">
@@ -32,15 +32,15 @@
 
         <label class="sidebar-search">
           <span>⌘K</span>
-          <input id="sidebar-search" type="search" placeholder="케이스, Agent, Skill 검색" />
+          <input id="sidebar-search" type="search" placeholder="케이스, 에이전트, 스킬 검색" />
         </label>
 
         <nav id="nav-list" class="nav-list" aria-label="workspace pages"></nav>
 
         <div class="sidebar-footer">
           <div>
-            <strong id="system-health">Live</strong>
-            <span>Heartbeat 38s · Mock runtime</span>
+            <strong id="system-health">정상</strong>
+            <span>상태 확인 38초 전 · 데모 런타임</span>
           </div>
         </div>
       </aside>
@@ -48,6 +48,10 @@
       <main class="main-surface">
         <div id="page-content" class="page-content"></div>
       </main>
+
+      <button id="properties-toggle" class="properties-toggle" type="button" aria-controls="context-panel" aria-expanded="true">
+        상세 패널 닫기
+      </button>
 
       <aside class="properties-panel" aria-label="properties panel">
         <div id="context-panel" class="context-panel"></div>

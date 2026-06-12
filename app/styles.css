@@ -2526,3 +2526,473 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* HagentOS-aligned Korean console refinements */
+:root {
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --surface-soft: #f8fafc;
+  --surface-blue: #eaf8fb;
+  --ink: #191f28;
+  --muted: #4e5968;
+  --line: #e5e8eb;
+  --blue-700: #005a9c;
+  --blue-600: #0878bd;
+  --cyan-500: #0ea5b0;
+  --cyan-300: #8ee8ee;
+  --cyan-100: #e7fbfd;
+  --shadow: 0 14px 30px rgba(25, 31, 40, 0.08);
+  --shadow-soft: 0 6px 16px rgba(25, 31, 40, 0.06);
+  --sidebar-width: 280px;
+  --properties-width: 392px;
+  --page-gap: 14px;
+  --page-pad: 18px;
+  --radius: 8px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family:
+    "Toss Product Sans", "Pretendard Variable", Pretendard, "Noto Sans KR",
+    -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 500;
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+.app-shell {
+  transition: grid-template-columns 180ms ease;
+}
+
+.app-shell.properties-collapsed {
+  grid-template-columns: var(--rail-width) var(--sidebar-width) minmax(0, 1fr) 0;
+}
+
+.app-shell.properties-collapsed .properties-panel {
+  width: 0;
+  min-width: 0;
+  padding: 0;
+  border-left: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.org-rail {
+  background: #111827;
+}
+
+.sidebar,
+.properties-panel,
+.workspace-panel,
+.panel,
+.work-item,
+.agent-card,
+.skill-card,
+.run-card,
+.activity-item,
+.evidence-card,
+.audit-item,
+.gate-row {
+  border-color: var(--line);
+  box-shadow: none;
+}
+
+.sidebar {
+  background: #ffffff;
+}
+
+.sidebar-brand h1,
+.workspace-header h2,
+.jb-hero h2,
+.panel h3,
+.properties-header h2,
+.item-head strong,
+.agent-card strong,
+.skill-card strong,
+.run-head strong {
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.nav-section-title,
+.eyebrow,
+.status-badge,
+.node-kicker {
+  color: #8b95a1;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.nav-item,
+.work-item p,
+.agent-card p,
+.skill-card p,
+.evidence-card p,
+.audit-item p,
+.workspace-header p,
+.case-meta,
+.node-meta,
+.property-row span {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.nav-item {
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.nav-icon,
+.rail-logo,
+.rail-item,
+.rail-icon {
+  font-weight: 700;
+}
+
+.nav-count,
+.status-pill,
+.source-badge,
+.risk-chip,
+.tag,
+.tag-button,
+.primary-button,
+.secondary-button,
+.danger-button,
+.ghost-button,
+.new-case-button,
+.view-switch button,
+.panel-toggle-meta {
+  font-weight: 700;
+}
+
+.jb-hero {
+  min-height: 178px;
+  border-radius: 8px;
+}
+
+.workspace-header,
+.workspace-panel,
+.dispatch-result,
+.panel {
+  border-radius: 8px;
+}
+
+.properties-toggle {
+  position: fixed;
+  top: 14px;
+  right: calc(var(--properties-width) + 14px);
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 10px;
+  color: var(--blue-700);
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    right 180ms ease,
+    border-color 140ms ease,
+    background 140ms ease;
+}
+
+.properties-toggle:hover {
+  background: var(--cyan-100);
+  border-color: rgba(14, 165, 176, 0.45);
+}
+
+.app-shell.properties-collapsed .properties-toggle {
+  right: 14px;
+}
+
+.context-panel {
+  display: grid;
+  gap: 10px;
+  height: calc(100dvh - 32px);
+  padding: 16px 14px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-content: start;
+}
+
+.context-panel .panel,
+.context-panel > section.panel:nth-of-type(n),
+.selected-case-panel {
+  max-height: none;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.context-panel .case-properties,
+.context-panel .property-list,
+.context-panel .approval-gates,
+.context-panel .evidence-feed,
+.context-panel .audit-log,
+.selected-case-panel .case-properties,
+.selected-case-panel .case-properties > .tag-row,
+.selected-case-panel .case-properties > .tag-row:last-child,
+.context-panel .context-list,
+.context-panel > section.panel:nth-of-type(n) .approval-gates,
+.context-panel > section.panel:nth-of-type(n) .evidence-feed,
+.context-panel > section.panel:nth-of-type(n) .audit-log {
+  max-height: none;
+  overflow: visible;
+}
+
+.properties-header {
+  padding: 0 4px 4px;
+}
+
+.properties-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.collapsible-panel {
+  background: #ffffff;
+}
+
+.collapsible-panel + .collapsible-panel {
+  margin-top: 0;
+}
+
+.panel-toggle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  min-height: 58px;
+  padding: 12px;
+  color: var(--ink);
+  text-align: left;
+  background: #ffffff;
+  border: 0;
+  cursor: pointer;
+}
+
+.panel-toggle:hover {
+  background: var(--surface-soft);
+}
+
+.panel-toggle-title {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.panel-toggle-title .eyebrow {
+  margin: 0;
+  color: var(--blue-600);
+  font-size: 11px;
+}
+
+.panel-toggle-title strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panel-toggle-meta {
+  max-width: 128px;
+  padding: 4px 8px;
+  overflow: hidden;
+  color: var(--blue-700);
+  background: var(--surface-blue);
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panel-toggle-icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  color: var(--blue-700);
+  background: var(--surface-blue);
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.panel-body {
+  display: grid;
+  gap: 10px;
+  padding: 0 12px 12px;
+}
+
+.collapsible-panel.is-collapsed .panel-toggle {
+  border-bottom: 0;
+}
+
+.collapsible-panel.is-collapsed .panel-toggle-title strong {
+  font-size: 15px;
+}
+
+.context-panel .property-row {
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.context-panel .property-row span {
+  font-size: 12px;
+}
+
+.context-panel .property-row strong {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.context-panel .tag,
+.context-panel .tag-button,
+.context-panel .status-pill,
+.context-panel .source-badge,
+.context-panel .risk-chip {
+  min-height: 24px;
+  max-width: 100%;
+  padding: 4px 8px;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.context-panel .tag-button {
+  max-width: 100%;
+  white-space: normal;
+}
+
+.context-panel .context-list {
+  display: grid;
+  gap: 8px;
+}
+
+.context-panel .link-card,
+.context-panel .work-item,
+.context-panel .agent-card,
+.context-panel .skill-card,
+.context-panel .gate-row,
+.context-panel .evidence-card,
+.context-panel .audit-item {
+  padding: 10px;
+}
+
+.context-panel .link-card p,
+.context-panel .work-item p,
+.context-panel .agent-card p,
+.context-panel .skill-card p,
+.context-panel .evidence-card p,
+.context-panel .audit-item p,
+.context-panel .gate-row p {
+  display: block;
+  overflow: visible;
+  font-size: 12px;
+  line-height: 1.45;
+  -webkit-line-clamp: unset;
+}
+
+.context-panel .item-head {
+  align-items: start;
+}
+
+.context-panel .item-head strong,
+.context-panel .run-head strong,
+.context-panel .work-item strong,
+.context-panel .agent-card strong,
+.context-panel .skill-card strong {
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.context-panel .action-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.context-panel .primary-button,
+.context-panel .secondary-button,
+.context-panel .danger-button,
+.context-panel .ghost-button {
+  min-height: 34px;
+  padding: 7px 8px;
+  font-size: 12px;
+}
+
+@media (max-width: 1500px) {
+  .app-shell:not(.properties-collapsed) {
+    grid-template-columns: var(--rail-width) var(--sidebar-width) minmax(0, 1fr) var(--properties-width);
+  }
+
+  .properties-panel {
+    grid-column: auto;
+    height: 100vh;
+    border-top: 0;
+    border-left: 1px solid var(--line);
+  }
+}
+
+@media (max-width: 1180px) {
+  .app-shell,
+  .app-shell:not(.properties-collapsed),
+  .app-shell.properties-collapsed {
+    grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .properties-panel {
+    grid-column: 1 / -1;
+    height: auto;
+    max-height: none;
+  }
+
+  .properties-toggle {
+    right: 14px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .app-shell,
+  .app-shell:not(.properties-collapsed),
+  .app-shell.properties-collapsed {
+    grid-template-columns: 1fr;
+  }
+
+  .org-rail {
+    display: none;
+  }
+
+  .properties-toggle {
+    position: sticky;
+    top: 8px;
+    right: auto;
+    justify-self: end;
+    margin: 8px 12px 0 auto;
+  }
+}
