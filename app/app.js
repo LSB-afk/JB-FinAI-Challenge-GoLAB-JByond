@@ -339,6 +339,88 @@ const agents = [
   },
 ];
 
+const agentTeamGroups = [
+  {
+    id: "command",
+    title: "운영 지휘·감사",
+    description: "케이스 생성, 에이전트 배정, 상태 추적, 운영 지표 집계를 담당합니다.",
+    icon: "network",
+    owner: "RM 최종 승인자",
+    agentIds: ["orchestrator", "analytics"],
+  },
+  {
+    id: "risk-finance",
+    title: "위험·금융 판단",
+    description: "기사, 상담 메모, 금융 부담 신호를 읽고 위험 원인과 정책금융 후보를 분류합니다.",
+    icon: "activity",
+    owner: "로컬가드 오케스트레이터",
+    agentIds: ["pain-radar", "cashflow", "policy"],
+  },
+  {
+    id: "jeonse",
+    title: "전세 보호 전문 라인",
+    description: "전세가율, 주변 시세, 권리관계, 임차인 자산노출을 전세사기 관점에서 점검합니다.",
+    icon: "shield",
+    owner: "전세 보호 리드 에이전트",
+    agentIds: ["jeonse-lead", "deposit-ratio", "registry-rights", "tenant-asset"],
+  },
+  {
+    id: "control",
+    title: "준법·차단·계약 통제",
+    description: "사기 징후, 개인정보, 금지 표현, 계약 특약 문구를 사람 승인 전 단계에서 통제합니다.",
+    icon: "lock",
+    owner: "준법 최종 승인자",
+    agentIds: ["fraud", "compliance", "contract-check"],
+  },
+  {
+    id: "customer-bank",
+    title: "고객 안내·은행 연계",
+    description: "RM 안내문, 통화 스크립트, 전세대출 상담, 보증보험 안내를 고객 접점으로 연결합니다.",
+    icon: "link",
+    owner: "RM 최종 승인자",
+    agentIds: ["rm-copilot", "bank-linkage"],
+  },
+];
+
+const agentReadinessGaps = [
+  {
+    title: "실데이터 연결",
+    level: "최우선",
+    icon: "database",
+    detail: "등기부, HUG 보증 가능성, KB/국토부 실거래·시세, 은행 상담/심사 시스템 어댑터가 아직 데모 데이터입니다.",
+  },
+  {
+    title: "위험 점수 산식",
+    level: "최우선",
+    icon: "gauge",
+    detail: "전세가율, 권리관계, 소득 대비 부담, 보증보험 가능성을 하나의 설명 가능한 점수로 합치는 기준표가 필요합니다.",
+  },
+  {
+    title: "실행 실패 복구",
+    level: "높음",
+    icon: "repeat",
+    detail: "에이전트 실패, 외부 API 지연, 승인 SLA 초과 시 재시도·우회·상위 보고 규칙이 더 구체화되어야 합니다.",
+  },
+  {
+    title: "권한과 보안",
+    level: "높음",
+    icon: "lock",
+    detail: "RM, 준법, 지점 관리자별 접근권한, 개인정보 마스킹, 감사 로그 위변조 방지 정책을 실제 권한 모델로 연결해야 합니다.",
+  },
+  {
+    title: "문서 자동 생성",
+    level: "중간",
+    icon: "clipboard",
+    detail: "계약 전 체크리스트, 특약 문구, 고객 안내문이 화면 카드에 머무르지 않고 문서·알림·상담 이력으로 생성되어야 합니다.",
+  },
+  {
+    title: "모델 품질 검증",
+    level: "중간",
+    icon: "check-square",
+    detail: "오탐·미탐 테스트셋, 근거 출처 신뢰도 평가, 사람 승인 전/후 결과 비교 지표가 추가되면 심사용 완성도가 올라갑니다.",
+  },
+];
+
 const initialCases = [
   {
     id: "jeonju-cafe",
@@ -806,6 +888,12 @@ function iconSvg(name) {
     history: '<path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 3v6h6"></path><path d="M12 7v5l3 2"></path>',
     wallet: '<path d="M20 7H5a2 2 0 0 1 0-4h13v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H5"></path><path d="M16 14h2"></path>',
     settings: '<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V22a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1A2 2 0 1 1 4.2 18l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1A2 2 0 1 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6h.1a1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 1 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path>',
+    database: '<ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"></path>',
+    lock: '<rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path>',
+    link: '<path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"></path><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"></path>',
+    gauge: '<path d="M21 13a9 9 0 1 0-18 0"></path><path d="M12 13l4-5"></path><path d="M5 19h14"></path>',
+    clipboard: '<rect x="4" y="4" width="16" height="18" rx="2"></rect><path d="M9 2h6v4H9z"></path><path d="M8 12h8"></path><path d="M8 16h6"></path>',
+    repeat: '<path d="m17 2 4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path>',
     "chevron-down": '<path d="m6 9 6 6 6-6"></path>',
     "chevron-right": '<path d="m9 18 6-6-6-6"></path>',
     "panel-close": '<rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M15 4v16"></path><path d="m10 9-3 3 3 3"></path>',
@@ -1517,7 +1605,8 @@ function goalsPage() {
 function agentsPage() {
   return `
     ${pageHeader("에이전트", "에이전트 팀", "각 AI 에이전트의 상태, 역할, 장착 스킬, 보고 체계를 확인합니다.")}
-    ${panelMarkup("에이전트 팀", "에이전트 팀", agentsView())}
+    ${panelMarkup("에이전트 팀", "업무 범주별 에이전트 팀", agentsView(), "agent-team-panel")}
+    ${panelMarkup("보완 필요 사항", "현재 부족한 부분", agentReadinessView(), "agent-gap-panel")}
   `;
 }
 
@@ -1777,19 +1866,67 @@ function jeonseView() {
 }
 
 function agentsView() {
+  const agentById = Object.fromEntries(agents.map((agent) => [agent.id, agent]));
   return `
-    <div class="agent-grid">
-      ${agents
-        .map(
-          (agent) => `
-            <article class="agent-card is-clickable ${agent.id === selectedAgentId && activeDetailType === "agent" ? "is-selected" : ""}" data-agent-id="${escapeHtml(agent.id)}" role="button" tabindex="0">
-              <div class="item-head">
-                <strong>${escapeHtml(agentLabel(agent))}</strong>
-                <span class="status-pill ${agent.status === "running" ? "status-running" : agent.status === "pending_approval" ? "status-pending" : "status-new"}">${escapeHtml(statusLabel(agent.status))}</span>
+    <div class="agent-team-groups">
+      ${agentTeamGroups
+        .map((group) => {
+          const groupAgents = group.agentIds.map((id) => agentById[id]).filter(Boolean);
+          return `
+            <section class="agent-team-group" aria-label="${escapeHtml(group.title)}">
+              <div class="agent-team-group-head">
+                <span class="agent-team-icon" aria-hidden="true">${iconSvg(group.icon)}</span>
+                <div>
+                  <p class="eyebrow">${escapeHtml(group.owner)} 담당</p>
+                  <h4>${escapeHtml(group.title)}</h4>
+                  <p>${escapeHtml(group.description)}</p>
+                </div>
+                <div class="agent-team-stats">
+                  <span>${groupAgents.length}개 에이전트</span>
+                  <span>실행 ${groupAgents.filter((agent) => agent.status === "running").length}</span>
+                  <span>대기열 ${groupAgents.reduce((sum, agent) => sum + agent.queue, 0)}</span>
+                </div>
               </div>
-              <p>${escapeHtml(localizeLine(agent.role))}</p>
-              <div class="tag-row">${agent.skills.map((skill) => `<span class="tag">${escapeHtml(skillLabel(skill))}</span>`).join("")}</div>
-              <p>보고 대상: ${escapeHtml(agentLabel(agent.reportsTo))} · 상태 확인 ${escapeHtml(agent.heartbeat)} · 대기열 ${agent.queue}</p>
+              <div class="agent-team-grid">
+                ${groupAgents.map(agentCardMarkup).join("")}
+              </div>
+            </section>
+          `;
+        })
+        .join("")}
+    </div>
+  `;
+}
+
+function agentCardMarkup(agent) {
+  return `
+    <article class="agent-card is-clickable ${agent.id === selectedAgentId && activeDetailType === "agent" ? "is-selected" : ""}" data-agent-id="${escapeHtml(agent.id)}" role="button" tabindex="0">
+      <div class="item-head">
+        <strong>${escapeHtml(agentLabel(agent))}</strong>
+        <span class="status-pill ${statusClass(agent.status)}">${escapeHtml(statusLabel(agent.status))}</span>
+      </div>
+      <p>${escapeHtml(localizeLine(agent.role))}</p>
+      <div class="tag-row">${agent.skills.map((skill) => `<span class="tag">${escapeHtml(skillLabel(skill))}</span>`).join("")}</div>
+      <p>보고 대상: ${escapeHtml(agentLabel(agent.reportsTo))} · 상태 확인 ${escapeHtml(agent.heartbeat)} · 대기열 ${agent.queue}</p>
+    </article>
+  `;
+}
+
+function agentReadinessView() {
+  return `
+    <div class="gap-grid">
+      ${agentReadinessGaps
+        .map(
+          (gap) => `
+            <article class="gap-card">
+              <div class="gap-card-head">
+                <span class="gap-icon" aria-hidden="true">${iconSvg(gap.icon)}</span>
+                <div>
+                  <strong>${escapeHtml(gap.title)}</strong>
+                  <span>${escapeHtml(gap.level)}</span>
+                </div>
+              </div>
+              <p>${escapeHtml(gap.detail)}</p>
             </article>
           `,
         )
