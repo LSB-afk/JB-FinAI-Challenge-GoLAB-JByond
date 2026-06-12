@@ -2996,3 +2996,157 @@ body {
     margin: 8px 12px 0 auto;
   }
 }
+
+.nav-button {
+  min-height: 54px;
+}
+
+.nav-button-main {
+  align-items: center;
+}
+
+.nav-icon svg,
+.metric-icon svg,
+.panel-toggle-icon svg,
+.detail-group-icon svg,
+.properties-toggle svg,
+.primary-button svg,
+.secondary-button svg,
+.danger-button svg,
+.ghost-button svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.nav-label,
+.nav-hint {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-hint {
+  color: #8b95a1;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.nav-button.is-active .nav-hint,
+.nav-button:hover .nav-hint {
+  color: var(--muted);
+}
+
+.properties-toggle {
+  gap: 6px;
+}
+
+.properties-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.metric-icon {
+  color: var(--blue-700);
+}
+
+.metric-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.panel-toggle-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.collapsible-panel.is-collapsed .panel-body,
+.panel-body[aria-hidden="true"] {
+  display: none !important;
+}
+
+.collapsible-panel.is-collapsed .panel-toggle-title strong {
+  font-size: 16px;
+}
+
+.detail-group {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.detail-group:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.detail-group-head {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+}
+
+.detail-group-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: var(--blue-700);
+  background: var(--surface-blue);
+  border-radius: 8px;
+}
+
+.detail-group-head span:last-child {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.detail-group-head strong {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.detail-group-head small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.detail-group-body {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.detail-group-body > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.context-panel .detail-group .context-list {
+  gap: 7px;
+}
+
+.context-panel .detail-group .link-card {
+  padding: 9px;
+}

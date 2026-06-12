@@ -1,31 +1,31 @@
 const navigation = [
   {
-    section: "업무",
+    section: "운영 업무",
     items: [
-      { id: "dashboard", icon: "⌂", label: "대시보드", countKey: "dashboard" },
-      { id: "inbox", icon: "!", label: "알림함", countKey: "inbox" },
-      { id: "cases", icon: "문", label: "케이스", countKey: "cases" },
-      { id: "approvals", icon: "승", label: "승인", countKey: "approvals" },
-      { id: "runs", icon: "실", label: "실행 이력", countKey: "runs" },
-      { id: "jeonse", icon: "전", label: "전세 보호", countKey: "jeonse" },
+      { id: "dashboard", icon: "layout-dashboard", label: "대시보드", description: "전체 현황", countKey: "dashboard" },
+      { id: "inbox", icon: "bell", label: "알림함", description: "긴급 알림", countKey: "inbox" },
+      { id: "cases", icon: "file-text", label: "케이스", description: "위험 케이스", countKey: "cases" },
+      { id: "approvals", icon: "check-square", label: "승인", description: "사람 검토", countKey: "approvals" },
+      { id: "runs", icon: "activity", label: "실행 이력", description: "에이전트 로그", countKey: "runs" },
+      { id: "jeonse", icon: "shield", label: "전세 보호", description: "전세사기 대응", countKey: "jeonse" },
     ],
   },
   {
-    section: "AI 팀",
+    section: "AI 조직",
     items: [
-      { id: "agents", icon: "팀", label: "에이전트 팀", countKey: "agents" },
-      { id: "orgchart", icon: "조", label: "조직도", countKey: "orgchart" },
-      { id: "routines", icon: "자", label: "자동화", countKey: "routines" },
-      { id: "goals", icon: "목", label: "운영 목표", countKey: "goals" },
+      { id: "agents", icon: "bot", label: "에이전트 팀", description: "담당 업무", countKey: "agents" },
+      { id: "orgchart", icon: "network", label: "조직도", description: "보고 체계", countKey: "orgchart" },
+      { id: "routines", icon: "refresh-cw", label: "자동화", description: "정기 실행", countKey: "routines" },
+      { id: "goals", icon: "target", label: "운영 목표", description: "성과 기준", countKey: "goals" },
     ],
   },
   {
-    section: "시스템",
+    section: "시스템 관리",
     items: [
-      { id: "skills", icon: "스", label: "스킬", countKey: "skills" },
-      { id: "activity", icon: "활", label: "활동 이력", countKey: "activity" },
-      { id: "budget", icon: "비", label: "비용", countKey: "budget" },
-      { id: "settings", icon: "설", label: "설정", countKey: "settings" },
+      { id: "skills", icon: "puzzle", label: "스킬", description: "기능 묶음", countKey: "skills" },
+      { id: "activity", icon: "history", label: "활동 이력", description: "처리 기록", countKey: "activity" },
+      { id: "budget", icon: "wallet", label: "비용", description: "예산 사용률", countKey: "budget" },
+      { id: "settings", icon: "settings", label: "설정", description: "운영 정책", countKey: "settings" },
     ],
   },
 ];
@@ -790,6 +790,34 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function iconSvg(name) {
+  const icons = {
+    "layout-dashboard": '<rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect>',
+    bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path>',
+    "file-text": '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M8 13h8"></path><path d="M8 17h6"></path>',
+    "check-square": '<path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>',
+    activity: '<path d="M22 12h-4l-3 8L9 4l-3 8H2"></path>',
+    shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path>',
+    bot: '<rect x="5" y="8" width="14" height="10" rx="2"></rect><path d="M12 8V4"></path><path d="M8 4h8"></path><circle cx="9" cy="13" r="1"></circle><circle cx="15" cy="13" r="1"></circle><path d="M9 18v2"></path><path d="M15 18v2"></path>',
+    network: '<rect x="9" y="2" width="6" height="6" rx="1.5"></rect><rect x="3" y="16" width="6" height="6" rx="1.5"></rect><rect x="15" y="16" width="6" height="6" rx="1.5"></rect><path d="M12 8v4"></path><path d="M6 16l6-4 6 4"></path>',
+    "refresh-cw": '<path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path><path d="M3 16h6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M15 8h6"></path>',
+    target: '<circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle>',
+    puzzle: '<path d="M14 7V5a3 3 0 1 0-6 0v2H5a2 2 0 0 0-2 2v3h2a3 3 0 1 1 0 6H3v1a2 2 0 0 0 2 2h6v-2a3 3 0 1 1 6 0v2h2a2 2 0 0 0 2-2v-5h-2a3 3 0 1 1 0-6h2V9a2 2 0 0 0-2-2z"></path>',
+    history: '<path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 3v6h6"></path><path d="M12 7v5l3 2"></path>',
+    wallet: '<path d="M20 7H5a2 2 0 0 1 0-4h13v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H5"></path><path d="M16 14h2"></path>',
+    settings: '<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V22a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1A2 2 0 1 1 4.2 18l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1A2 2 0 1 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6h.1a1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 1 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path>',
+    "chevron-down": '<path d="m6 9 6 6 6-6"></path>',
+    "chevron-right": '<path d="m9 18 6-6-6-6"></path>',
+    "panel-close": '<rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M15 4v16"></path><path d="m10 9-3 3 3 3"></path>',
+    "panel-open": '<rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M15 4v16"></path><path d="m7 9 3 3-3 3"></path>',
+    alert: '<path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.9"></path><path d="M16 3.1a4 4 0 0 1 0 7.8"></path>',
+    key: '<circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M12 12l9-9"></path><path d="M16 7l3 3"></path>',
+    folder: '<path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>',
+  };
+  return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${icons[name] || icons.folder}</svg>`;
+}
+
 function displayFrom(map, value) {
   return map[value] || value;
 }
@@ -1038,10 +1066,13 @@ function renderNavigation() {
           ${group.items
             .map(
               (item) => `
-                <button class="nav-button ${activeView === item.id ? "is-active" : ""}" type="button" data-view="${escapeHtml(item.id)}">
+                <button class="nav-button ${activeView === item.id ? "is-active" : ""}" type="button" data-view="${escapeHtml(item.id)}" title="${escapeHtml(`${group.section} · ${item.label} · ${item.description}`)}" aria-label="${escapeHtml(`${group.section} ${item.label}: ${item.description}`)}">
                   <span class="nav-button-main">
-                    <span class="nav-icon">${escapeHtml(item.icon)}</span>
-                    <span class="nav-label">${escapeHtml(item.label)}</span>
+                    <span class="nav-icon" aria-hidden="true">${iconSvg(item.icon)}</span>
+                    <span class="nav-text">
+                      <span class="nav-label">${escapeHtml(item.label)}</span>
+                      <span class="nav-hint">${escapeHtml(item.description)}</span>
+                    </span>
                   </span>
                   <span class="nav-count">${escapeHtml(currentCounts[item.countKey])}</span>
                 </button>
@@ -1069,7 +1100,7 @@ function renderShellState() {
   if (shell) shell.classList.toggle("properties-collapsed", !propertiesOpen);
   if (!toggle) return;
   toggle.setAttribute("aria-expanded", String(propertiesOpen));
-  toggle.textContent = propertiesOpen ? "상세 패널 닫기" : "상세 패널 열기";
+  toggle.innerHTML = `${iconSvg(propertiesOpen ? "panel-close" : "panel-open")}<span>${propertiesOpen ? "상세 패널 닫기" : "상세 패널 열기"}</span>`;
 }
 
 function defaultDetailForView(view) {
@@ -1113,7 +1144,7 @@ function renderMetrics() {
     .map(
       ([label, value, detail]) => `
         <article class="metric-card">
-          <div class="metric-icon" aria-hidden="true">${escapeHtml(String(label).charAt(0))}</div>
+          <div class="metric-icon" aria-hidden="true">${iconSvg(metricIcon(label))}</div>
           <strong>${escapeHtml(value)}</strong>
           <span>${escapeHtml(label)}</span>
           <p>${escapeHtml(detail)}</p>
@@ -1121,6 +1152,15 @@ function renderMetrics() {
       `,
     )
     .join("");
+}
+
+function metricIcon(label) {
+  return {
+    "실행 중 에이전트": "activity",
+    "활성 케이스": "file-text",
+    "전세 보호": "shield",
+    "승인 대기": "check-square",
+  }[label] || "layout-dashboard";
 }
 
 function renderBoard() {
@@ -2053,19 +2093,59 @@ function skillTagButton(slug) {
   return `<button class="tag tag-button" type="button" data-skill-id="${escapeHtml(slug)}" title="${escapeHtml(slug)}">${escapeHtml(skillLabel(slug))}</button>`;
 }
 
+function detailGroup(title, description, body, iconName = "folder") {
+  return `
+    <section class="detail-group" aria-label="${escapeHtml(title)}">
+      <div class="detail-group-head">
+        <span class="detail-group-icon" aria-hidden="true">${iconSvg(iconName)}</span>
+        <span>
+          <strong>${escapeHtml(title)}</strong>
+          ${description ? `<small>${escapeHtml(description)}</small>` : ""}
+        </span>
+      </div>
+      <div class="detail-group-body">${body}</div>
+    </section>
+  `;
+}
+
+function categorizeAgent(agent) {
+  if (["orchestrator", "compliance", "risk", "contract"].includes(agent.type)) return "관제·통제";
+  if (["finance", "banking"].includes(agent.type)) return "금융·은행";
+  if (["communication"].includes(agent.type)) return "고객 안내";
+  return "탐지·분석";
+}
+
+function groupedAgentsMarkup(agentList) {
+  const groups = ["관제·통제", "탐지·분석", "금융·은행", "고객 안내"]
+    .map((title) => [title, agentList.filter((agent) => categorizeAgent(agent) === title)])
+    .filter(([, entries]) => entries.length);
+  if (!groups.length) return '<div class="empty-state">배정된 에이전트 없음</div>';
+  return groups
+    .map(([title, entries]) =>
+      detailGroup(
+        title,
+        `${entries.length}개 에이전트`,
+        `<div class="context-list">${entries.map(agentLinkButton).join("")}</div>`,
+        title === "관제·통제" ? "key" : title === "금융·은행" ? "wallet" : title === "고객 안내" ? "users" : "activity",
+      ),
+    )
+    .join("");
+}
+
 function collapsiblePanel(key, eyebrow, title, body, meta = "", extraClass = "") {
   const collapsed = collapsedPanelKeys.has(key);
+  const bodyId = `panel-body-${slugKey(key)}`;
   return `
     <section class="panel collapsible-panel ${collapsed ? "is-collapsed" : ""} ${extraClass}" data-panel-key="${escapeHtml(key)}">
-      <button class="panel-toggle" type="button" data-collapse-key="${escapeHtml(key)}" aria-expanded="${collapsed ? "false" : "true"}">
+      <button class="panel-toggle" type="button" data-collapse-key="${escapeHtml(key)}" aria-expanded="${collapsed ? "false" : "true"}" aria-controls="${escapeHtml(bodyId)}">
         <span class="panel-toggle-title">
           <span class="eyebrow">${escapeHtml(eyebrow)}</span>
           <strong>${escapeHtml(title)}</strong>
         </span>
         ${meta ? `<span class="panel-toggle-meta">${escapeHtml(meta)}</span>` : ""}
-        <span class="panel-toggle-icon" aria-hidden="true">${collapsed ? "+" : "−"}</span>
+        <span class="panel-toggle-icon" aria-hidden="true">${iconSvg(collapsed ? "chevron-right" : "chevron-down")}</span>
       </button>
-      <div class="panel-body" ${collapsed ? "hidden" : ""}>${body}</div>
+      <div id="${escapeHtml(bodyId)}" class="panel-body" aria-hidden="${collapsed ? "true" : "false"}">${body}</div>
     </section>
   `;
 }
@@ -2082,17 +2162,28 @@ function agentDetailMarkup() {
       "선택 에이전트",
       agentLabel(agent),
       `<div class="case-properties">
-        <div class="property-list">
-          ${propertyRow("담당 업무", localizeLine(agent.role))}
-          ${propertyRow("유형", typeLabel(agent.type))}
-          ${propertyRow("보고 대상", agentLabel(agent.reportsTo))}
-          ${propertyRow("상태 확인", agent.heartbeat)}
-          ${propertyRow("대기열", agent.queue)}
-          ${propertyRow("예산", `₩${agent.spent.toLocaleString()} / ₩${agent.budget.toLocaleString()} · ${percent}%`)}
-          ${propertyRow("현재 업무", localizeLine(agent.currentCase))}
-        </div>
-        <p class="eyebrow">장착 스킬</p>
-        <div class="tag-row">${agent.skills.map(skillTagButton).join("")}</div>
+        ${detailGroup(
+          "역할과 보고",
+          "이 에이전트가 맡은 업무와 보고 대상을 확인합니다.",
+          `<div class="property-list">
+            ${propertyRow("담당 업무", localizeLine(agent.role))}
+            ${propertyRow("유형", typeLabel(agent.type))}
+            ${propertyRow("보고 대상", agentLabel(agent.reportsTo))}
+          </div>`,
+          "network",
+        )}
+        ${detailGroup(
+          "운영 상태",
+          "현재 작업량과 예산 사용률을 확인합니다.",
+          `<div class="property-list">
+            ${propertyRow("상태 확인", agent.heartbeat)}
+            ${propertyRow("대기열", agent.queue)}
+            ${propertyRow("예산", `₩${agent.spent.toLocaleString()} / ₩${agent.budget.toLocaleString()} · ${percent}%`)}
+            ${propertyRow("현재 업무", localizeLine(agent.currentCase))}
+          </div>`,
+          "activity",
+        )}
+        ${detailGroup("장착 스킬", "이 에이전트가 실행할 수 있는 기능입니다.", `<div class="tag-row">${agent.skills.map(skillTagButton).join("")}</div>`, "puzzle")}
       </div>`,
       statusLabel(agent.status),
       "selected-case-panel",
@@ -2131,13 +2222,25 @@ function skillDetailMarkup() {
       "선택 스킬",
       skillLabel(skill.slug),
       `<div class="case-properties">
-        <div class="property-list">
-          ${propertyRow("유형", typeLabel(skill.type))}
-          ${propertyRow("목적", localizeLine(skill.purpose))}
-          ${propertyRow("위험도", statusLabel(skill.risk))}
-          ${propertyRow("승인 정책", approvalLabel(skill.approval))}
-          ${propertyRow("사용 여부", skill.enabled ? "사용 중" : "중지")}
-        </div>
+        ${detailGroup(
+          "기능 정보",
+          "스킬의 목적과 적용 범주입니다.",
+          `<div class="property-list">
+            ${propertyRow("유형", typeLabel(skill.type))}
+            ${propertyRow("목적", localizeLine(skill.purpose))}
+          </div>`,
+          "puzzle",
+        )}
+        ${detailGroup(
+          "통제 정책",
+          "실행 전에 필요한 승인과 위험 수준입니다.",
+          `<div class="property-list">
+            ${propertyRow("위험도", statusLabel(skill.risk))}
+            ${propertyRow("승인 정책", approvalLabel(skill.approval))}
+            ${propertyRow("사용 여부", skill.enabled ? "사용 중" : "중지")}
+          </div>`,
+          "key",
+        )}
       </div>`,
       statusLabel(skill.risk),
       "selected-case-panel",
@@ -2172,9 +2275,8 @@ function featureDetailMarkup() {
       "전세 보호 기능",
       feature.title,
       `<div class="case-properties">
-        <p>${escapeHtml(feature.description)}</p>
-        <p class="eyebrow">연결 스킬</p>
-        <div class="tag-row">${feature.skills.map(skillTagButton).join("")}</div>
+        ${detailGroup("기능 설명", "사용자가 이 항목에서 확인할 업무입니다.", `<p>${escapeHtml(feature.description)}</p>`, "shield")}
+        ${detailGroup("연결 스킬", "이 기능을 실행하는 세부 스킬입니다.", `<div class="tag-row">${feature.skills.map(skillTagButton).join("")}</div>`, "puzzle")}
       </div>`,
       "활성",
       "selected-case-panel",
@@ -2212,27 +2314,70 @@ function caseContextMarkup() {
       `,
     )
     .join("");
+  const caseSummaryBody = `
+    <div id="case-properties" class="case-properties">
+      ${detailGroup(
+        "기본 식별",
+        "어느 고객과 계열사 케이스인지 확인합니다.",
+        `<div class="property-list">
+          ${propertyRow("케이스 코드", item.code)}
+          ${propertyRow("계열사", item.affiliate)}
+          ${propertyRow("지역/업종", `${item.region} · ${item.industry}`)}
+        </div>`,
+        "file-text",
+      )}
+      ${detailGroup(
+        "위험 판단",
+        "왜 우선 처리해야 하는지 확인합니다.",
+        `<div class="property-list">
+          ${propertyRow("위험도", `${item.riskScore}/100 · ${statusLabel(item.priority)}`)}
+          ${propertyRow("노출 위험", item.exposure)}
+        </div>
+        <div class="tag-row">${item.rootCauses.map((cause) => `<span class="tag">${escapeHtml(cause)}</span>`).join("")}</div>`,
+        "alert",
+      )}
+      ${detailGroup(
+        "처리 책임",
+        "누가 어떤 스킬로 처리하는지 확인합니다.",
+        `<div class="property-list">
+          ${propertyRow("자동화 수준", item.zeroHuman)}
+          ${propertyRow("담당자", agentLabel(item.owner))}
+          ${propertyRow("마감", item.due)}
+        </div>
+        <div class="tag-row">${skillsByCase(item).map(skillTagButton).join("")}</div>`,
+        "users",
+      )}
+    </div>
+  `;
+  const approvalBody = `
+    ${detailGroup("고객 전 통제", "고객 안내 전에 통과해야 하는 조건입니다.", `<div id="approval-gates" class="approval-gates">${gateRows}</div>`, "check-square")}
+    ${detailGroup(
+      "처리 버튼",
+      "실행, 승인, 반려를 한곳에서 처리합니다.",
+      `<div class="action-row">
+        <button id="run-agents" class="primary-button" type="button" ${runDisabled}>
+          <span aria-hidden="true">${iconSvg("activity")}</span>
+          실행
+        </button>
+        <button id="approve-action" class="secondary-button" type="button" ${reviewDisabled}>
+          <span aria-hidden="true">${iconSvg("check-square")}</span>
+          승인
+        </button>
+        <button id="reject-action" class="danger-button" type="button" ${reviewDisabled}>
+          <span aria-hidden="true">${iconSvg("alert")}</span>
+          반려
+        </button>
+      </div>`,
+      "activity",
+    )}
+  `;
 
   return `
     ${collapsiblePanel(
       "case-summary",
       "선택 케이스",
       item.customerName,
-      `<div id="case-properties" class="case-properties">
-        <div class="property-list">
-          ${propertyRow("케이스 코드", item.code)}
-          ${propertyRow("계열사", item.affiliate)}
-          ${propertyRow("지역/업종", `${item.region} · ${item.industry}`)}
-          ${propertyRow("위험도", `${item.riskScore}/100 · ${statusLabel(item.priority)}`)}
-          ${propertyRow("자동화 수준", item.zeroHuman)}
-          ${propertyRow("담당자", agentLabel(item.owner))}
-          ${propertyRow("노출 위험", item.exposure)}
-          ${propertyRow("마감", item.due)}
-        </div>
-        <div class="tag-row">${item.rootCauses.map((cause) => `<span class="tag">${escapeHtml(cause)}</span>`).join("")}</div>
-        <p class="eyebrow">장착 스킬</p>
-        <div class="tag-row">${skillsByCase(item).map(skillTagButton).join("")}</div>
-      </div>`,
+      caseSummaryBody,
       `${statusLabel(item.status)} · 위험도 ${item.riskScore}`,
       "selected-case-panel",
     )}
@@ -2241,7 +2386,7 @@ function caseContextMarkup() {
       "case-agents",
       "담당 에이전트",
       "업무와 스킬",
-      `<div class="context-list">${caseAgents(item).map(agentLinkButton).join("") || '<div class="empty-state">배정된 에이전트 없음</div>'}</div>`,
+      groupedAgentsMarkup(caseAgents(item)),
       `${caseAgents(item).length}개 배정`,
     )}
 
@@ -2249,21 +2394,7 @@ function caseContextMarkup() {
       "case-approval",
       "승인 정책",
       "사람 승인 게이트",
-      `<div id="approval-gates" class="approval-gates">${gateRows}</div>
-      <div class="action-row">
-        <button id="run-agents" class="primary-button" type="button" ${runDisabled}>
-          <span aria-hidden="true">▶</span>
-          실행
-        </button>
-        <button id="approve-action" class="secondary-button" type="button" ${reviewDisabled}>
-          <span aria-hidden="true">✓</span>
-          승인
-        </button>
-        <button id="reject-action" class="danger-button" type="button" ${reviewDisabled}>
-          <span aria-hidden="true">×</span>
-          반려
-        </button>
-      </div>`,
+      approvalBody,
       `${item.gates.length}개 통제`,
     )}
 
