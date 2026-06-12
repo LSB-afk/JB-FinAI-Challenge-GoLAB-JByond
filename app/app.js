@@ -1564,6 +1564,7 @@ function dashboardPage() {
       ${panelMarkup("서비스 사이클", "완료된 사용자 가치", scenarioCompletionView(), "scenario-panel")}
       ${panelMarkup("처리 흐름", "처리 흐름 상태", dashboardView(), "process-panel")}
       ${panelMarkup("데이터 상태", "데이터 출처와 저장 상태", dataStatusView(), "data-panel")}
+      ${panelMarkup("데이터 신뢰도", "샘플·실제·오류 상태", dataReliabilityView(), "data-reliability-panel")}
       ${panelMarkup("비용과 효과", "운영 비용 해석", dashboardCostView(), "cost-panel")}
       ${panelMarkup("추세", "월별 비용 추이", dashboardTrendView(), "trend-panel")}
       ${panelMarkup("지역 비교", "지역별 위험도", dashboardRegionView(), "region-panel")}
@@ -1799,6 +1800,84 @@ function dataStatusView() {
       </div>
       <p class="insight-copy">최근 저장 시각: ${escapeHtml(lastSavedAt || "이번 세션에서 아직 저장 없음")} · 실제 API 연동 전까지는 데이터 출처를 화면에서 계속 구분합니다.</p>
     </div>
+  `;
+}
+
+function dataReliabilityView() {
+  const data = buildDashboardData();
+  const running = data.scoped.filter((item) => item.status === "Agent Running").length;
+  const cards = [
+    {
+      state: "sample",
+      title: "샘플 데이터",
+      value: `${data.demoData.length}건`,
+      detail: "제안서 시연을 위해 준비된 기본 케이스입니다.",
+    },
+    {
+      state: "real",
+      title: "사용자 입력",
+      value: `${data.userInput.length}건`,
+      detail: "화면에서 등록한 데이터입니다. 실제 은행 원장 연동은 아직 아닙니다.",
+    },
+    {
+      state: "success",
+      title: "분석 완료",
+      value: `${data.savedResults.length}건`,
+      detail: "결과 저장과 후속 작업 생성까지 완료된 케이스를 추적합니다.",
+    },
+    {
+      state: "loading",
+      title: "분석 중",
+      value: `${running}건`,
+      detail: running ? "에이전트가 근거 수집과 승인 게이트를 확인 중입니다." : "현재 실행 중인 분석은 없습니다.",
+    },
+    {
+      state: "empty",
+      title: "빈 상태",
+      value: scenarioResults.length ? "해소" : "대기",
+      detail: scenarioResults.length ? "저장된 시나리오 결과가 있습니다." : "진단 실행 후 결과 저장을 누르면 완료 기록이 생성됩니다.",
+    },
+    {
+      state: "error",
+      title: "외부 API",
+      value: "미연결",
+      detail: "등기부, 보증보험, 은행 심사 API는 아직 데모 어댑터 상태입니다.",
+    },
+    {
+      state: "stale",
+      title: "갱신 기준",
+      value: lastSavedAt || "샘플 스냅샷",
+      detail: "실제 API 연동 전까지는 기준 시점과 출처를 반드시 함께 확인해야 합니다.",
+    },
+  ];
+
+  return `
+    <div class="data-reliability">
+      <div class="data-state-grid" aria-label="데이터 신뢰도 상태">
+        ${cards.map(dataStateCard).join("")}
+      </div>
+      <p class="insight-copy">현재 대시보드는 샘플 데이터와 사용자 입력 데이터를 함께 사용합니다. 실제 API 미연결 항목은 고객 안내나 자동 실행 근거로 사용하지 말고, 승인 전 추가 확인이 필요합니다.</p>
+    </div>
+  `;
+}
+
+function dataStateCard(card) {
+  const labels = {
+    loading: "Loading",
+    success: "Success",
+    empty: "Empty",
+    error: "Error",
+    sample: "Sample",
+    real: "Real",
+    stale: "Stale",
+  };
+  return `
+    <article class="data-state-card" data-state="${escapeHtml(card.state)}">
+      <span class="data-state-badge state-${escapeHtml(card.state)}">${escapeHtml(labels[card.state] || card.state)}</span>
+      <strong>${escapeHtml(card.value)}</strong>
+      <em>${escapeHtml(card.title)}</em>
+      <p>${escapeHtml(card.detail)}</p>
+    </article>
   `;
 }
 

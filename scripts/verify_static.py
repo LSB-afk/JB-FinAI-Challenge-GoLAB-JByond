@@ -36,6 +36,7 @@ required = [
     ROOT / "app/styles.css",
     ROOT / "app/app.js",
     ROOT / "scripts/README.md",
+    ROOT / "산출/final-product-stabilization-report-20260613.md",
 ]
 
 missing = [path for path in required if not path.exists()]
@@ -110,6 +111,8 @@ js_needles = [
     "dashboardCostView",
     "scenarioCompletionView",
     "dataStatusView",
+    "dataReliabilityView",
+    "dataStateCard",
     "lastSavedAt",
     "jeonse-diagnosis-form",
     "analysisResultMarkup",
@@ -121,6 +124,10 @@ js_needles = [
     "toast-root",
     "사용자 입력 데이터",
     "저장된 분석 결과",
+    "샘플·실제·오류 상태",
+    'state: "sample"',
+    'state: "error"',
+    'state: "stale"',
 ]
 for needle in js_needles:
     if needle not in js:

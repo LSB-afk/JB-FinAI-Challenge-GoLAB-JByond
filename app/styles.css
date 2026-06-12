@@ -3368,13 +3368,15 @@ body {
 }
 
 .scenario-cycle,
-.data-status {
+.data-status,
+.data-reliability {
   display: grid;
   gap: 12px;
 }
 
 .cycle-kpis,
-.data-source-grid {
+.data-source-grid,
+.data-state-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
@@ -3386,7 +3388,8 @@ body {
 }
 
 .scenario-result-list article,
-.data-source-grid article {
+.data-source-grid article,
+.data-state-card {
   display: grid;
   gap: 6px;
   min-width: 0;
@@ -3397,7 +3400,8 @@ body {
 }
 
 .scenario-result-list article strong,
-.data-source-grid article strong {
+.data-source-grid article strong,
+.data-state-card strong {
   min-width: 0;
   overflow: hidden;
   color: var(--ink);
@@ -3416,11 +3420,55 @@ body {
 }
 
 .scenario-result-list article p,
-.data-source-grid article p {
+.data-source-grid article p,
+.data-state-card p {
   margin: 0;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.45;
+}
+
+.data-state-card em {
+  color: var(--ink);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.data-state-badge {
+  justify-self: start;
+  padding: 4px 7px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.state-sample,
+.state-real {
+  color: var(--blue-700);
+  background: var(--surface-blue);
+}
+
+.state-success {
+  color: #16703a;
+  background: #e7f7ec;
+}
+
+.state-loading {
+  color: #6d4ac4;
+  background: #efe9ff;
+}
+
+.state-empty,
+.state-stale {
+  color: #9a5b00;
+  background: #fff2d8;
+}
+
+.state-error {
+  color: var(--danger);
+  background: var(--danger-bg);
 }
 
 .cost-kpi span {
@@ -3832,7 +3880,8 @@ body {
   }
 
   .cycle-kpis,
-  .data-source-grid {
+  .data-source-grid,
+  .data-state-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -25,10 +25,16 @@ test("home and dashboard render without console errors", async ({ page }) => {
   await expect(page.getByText("지역별 위험도")).toBeVisible();
   await expect(page.getByText("완료된 사용자 가치")).toBeVisible();
   await expect(page.getByText("데이터 출처와 저장 상태")).toBeVisible();
+  await expect(page.getByText("샘플·실제·오류 상태")).toBeVisible();
+  await expect(page.locator('[data-state="sample"]')).toContainText("Sample");
+  await expect(page.locator('[data-state="error"]')).toContainText("미연결");
+  await expect(page.locator('[data-state="stale"]')).toContainText("샘플 스냅샷");
   await expect(page.getByText("이번 세션에서 아직 저장 없음")).toBeVisible();
 
   await saveShot(page, "home.png");
   await saveShot(page, "dashboard.png");
+  await saveShot(page, "home-desktop.png");
+  await saveShot(page, "dashboard-desktop.png");
   expect(errors).toEqual([]);
 });
 
@@ -115,6 +121,7 @@ test("jeonse diagnosis produces result, save, and follow-up actions", async ({ p
   await expect(page.getByText("결과를 저장했습니다.")).toBeVisible();
   await page.locator("#create-follow-up").click();
   await expect(page.getByRole("status")).toContainText("은행 상담 연결 요청과 보증보험 확인 태스크를 생성했습니다.");
+  await saveShot(page, "scenario-flow-3.png");
 });
 
 test("saved jeonse diagnosis updates dashboard service cycle", async ({ page }) => {
@@ -133,6 +140,7 @@ test("saved jeonse diagnosis updates dashboard service cycle", async ({ page }) 
   await expect(page.getByText("완성형 사이클은 1건입니다.")).toBeVisible();
   await expect(page.getByText("저장된 분석 결과")).toBeVisible();
   await expect(page.getByText("최근 저장 시각")).toBeVisible();
+  await expect(page.locator('[data-state="success"]')).toContainText("1건");
   await saveShot(page, "data-dashboard.png");
 });
 
@@ -161,6 +169,8 @@ test("mobile viewport keeps core navigation usable", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "대시보드" })).toBeVisible();
   await expect(page.locator("#page-content")).not.toBeEmpty();
   await saveShot(page, "mobile-view.png");
+  await saveShot(page, "home-mobile.png");
+  await saveShot(page, "dashboard-mobile.png");
 });
 
 test("tablet viewport keeps dashboard interpretation panels readable", async ({ page }) => {
