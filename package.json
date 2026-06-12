@@ -1,0 +1,14 @@
+{
+  "name": "jb-localguard-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "JB LocalGuard OS static MVP and Playwright verification suite.",
+  "scripts": {
+    "dev": "python3 -m http.server 8000 --directory app",
+    "test": "python3 scripts/verify_static.py",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
+  }
+}

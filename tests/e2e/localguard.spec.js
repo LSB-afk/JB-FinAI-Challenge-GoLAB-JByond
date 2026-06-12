@@ -1,0 +1,108 @@
+const { expect, test } = require("@playwright/test");
+
+const screenshotDir = "test-results/screenshots";
+
+async function saveShot(page, name) {
+  await page.screenshot({ path: `${screenshotDir}/${name}`, fullPage: true });
+}
+
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => window.localStorage.removeItem("jb-localguard-os-state-v2"));
+});
+
+test("home and dashboard render without console errors", async ({ page }) => {
+  const errors = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+
+  await page.goto("/index.html");
+  await expect(page.getByRole("heading", { name: "JB LocalGuard OS" })).toBeVisible();
+  await expect(page.locator("#page-content")).not.toBeEmpty();
+  await expect(page.locator("#context-panel")).not.toBeEmpty();
+  await expect(page.getByText("오늘 우선 처리 기준")).toBeVisible();
+  await expect(page.getByText("운영 비용 해석")).toBeVisible();
+  await expect(page.getByText("지역별 위험도")).toBeVisible();
+
+  await saveShot(page, "home.png");
+  await saveShot(page, "dashboard.png");
+  expect(errors).toEqual([]);
+});
+
+test("scenario flow runs a selected case and reaches approval state", async ({ page }) => {
+  await page.goto("/index.html#cases");
+  await page.locator('button.case-row[data-case-id="gwangju-wholesale"]').click();
+  await saveShot(page, "scenario-flow-1.png");
+
+  await page.locator('[data-collapse-key="case-approval"]').click();
+  await page.locator("#run-agents").click();
+  await expect(page.locator("#context-panel")).toContainText("실행 중");
+  await expect(page.locator("#context-panel")).toContainText("승인 대기", { timeout: 5_000 });
+  await expect(page.locator("#context-panel")).toContainText("생성 산출물", { timeout: 5_000 });
+  await saveShot(page, "scenario-flow-2.png");
+});
+
+test("approval queue can approve a pending action", async ({ page }) => {
+  await page.goto("/index.html#approvals");
+  await page.locator("button[data-approve-case]:not([disabled])").first().click();
+  await expect(page.getByText("승인 완료")).toBeVisible();
+});
+
+test("jeonse protection workflow is visible", async ({ page }) => {
+  await page.goto("/index.html#jeonse");
+  const features = page.locator(".feature-grid");
+  await expect(features.getByText("전세가율 탐지", { exact: true })).toBeVisible();
+  await expect(features.getByText("권리관계 위험", { exact: true })).toBeVisible();
+  await expect(features.getByText("은행 연계", { exact: true })).toBeVisible();
+  await expect(page.locator("#jeonse-diagnosis-form")).toBeVisible();
+});
+
+test("new case form validates input and registers user data", async ({ page }) => {
+  await page.goto("/index.html");
+  await page.locator("#new-case-button").click();
+  await expect(page.getByRole("dialog", { name: "금융 위험 케이스 등록" })).toBeVisible();
+
+  await page.locator("#new-case-form").getByRole("button", { name: "케이스 등록", exact: true }).click();
+  await expect(page.getByText("고객명과 지역은 필수입니다.")).toBeVisible();
+
+  await page.locator('select[name="riskType"]').selectOption("jeonse");
+  await page.locator('input[name="customerName"]').fill("부산 신혼부부 전세 예정");
+  await page.locator('input[name="region"]').fill("부산 해운대구");
+  await page.locator('textarea[name="exposure"]').fill("전세보증금 2.1억, 등기부 근저당 확인 필요");
+  await page.locator("#new-case-form").getByRole("button", { name: "케이스 등록", exact: true }).click();
+
+  await expect(page.locator("#context-panel")).toContainText("부산 신혼부부 전세 예정");
+  await expect(page.locator("#context-panel")).toContainText("사용자 입력 데이터");
+});
+
+test("jeonse diagnosis produces result, save, and follow-up actions", async ({ page }) => {
+  await page.goto("/index.html#jeonse");
+  await page.locator('input[name="deposit"]').fill("210000000");
+  await page.locator('input[name="market"]').fill("240000000");
+  await page.locator('input[name="assets"]').fill("260000000");
+  await page.locator('input[name="income"]').fill("3200000");
+  await page.locator('select[name="rights"]').selectOption("근저당 있음");
+  await page.locator("#jeonse-diagnosis-form").getByRole("button", { name: "진단 실행" }).click();
+
+  await expect(page.getByText("진단 결과 · 위험도")).toBeVisible();
+  await expect(page.locator("#context-panel")).toContainText("분석 결과");
+  await page.locator("#save-case-result").click();
+  await expect(page.getByText("결과를 저장했습니다.")).toBeVisible();
+  await page.locator("#create-follow-up").click();
+  await expect(page.getByRole("status")).toContainText("은행 상담 연결 요청과 보증보험 확인 태스크를 생성했습니다.");
+});
+
+test("case search empty state works", async ({ page }) => {
+  await page.goto("/index.html#cases");
+  await page.locator("#case-search").fill("존재하지않는검색어");
+  await expect(page.getByText("검색 조건에 맞는 케이스 없음")).toBeVisible();
+  await saveShot(page, "error-state.png");
+});
+
+test("mobile viewport keeps core navigation usable", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/index.html");
+  await expect(page.getByRole("heading", { name: "대시보드" })).toBeVisible();
+  await expect(page.locator("#page-content")).not.toBeEmpty();
+  await saveShot(page, "mobile-view.png");
+});

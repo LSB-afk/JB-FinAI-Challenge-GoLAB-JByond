@@ -93,6 +93,15 @@ js_needles = [
     "Fraud Shield Agent",
     "Approval Pending",
     "audit",
+    "buildDashboardData",
+    "dashboardCostView",
+    "jeonse-diagnosis-form",
+    "analysisResultMarkup",
+    "saveCaseResult",
+    "createFollowUpTask",
+    "renderModal",
+    "toast-root",
+    "사용자 입력 데이터",
 ]
 for needle in js_needles:
     if needle not in js:

@@ -661,6 +661,20 @@ const jeonseFeatures = [
   },
 ];
 
+const appStorageKey = "jb-localguard-os-state-v2";
+const monthlyCostTrend = [
+  ["3월", 218000],
+  ["4월", 246000],
+  ["5월", 292000],
+  ["6월", 318000],
+];
+const costByWorkType = [
+  ["위험 점검", 0.42],
+  ["근거 수집", 0.24],
+  ["승인·감사", 0.19],
+  ["고객 안내", 0.15],
+];
+
 let cases = JSON.parse(JSON.stringify(initialCases));
 let selectedCaseId = "jeonju-cafe";
 let selectedAgentId = null;
@@ -679,6 +693,11 @@ let caseSequence = 201;
 let runSequence = 1;
 let propertiesOpen = true;
 let collapsedPanelKeys = new Set(["case-agents", "case-approval", "case-evidence", "case-audit"]);
+let modalState = null;
+let modalError = "";
+let toastMessage = "";
+let toastTimer = null;
+let scenarioResults = [];
 let agentRuns = [
   {
     id: "run-001",
@@ -703,6 +722,8 @@ let activity = [
   ["11:23", "Fraud Shield Agent", "blocked outbound action", "JBG-127"],
   ["10:02", "Policy Match Agent", "created document checklist", "JBG-118"],
 ];
+
+loadPersistedState();
 
 const statusLabels = {
   New: "신규",
@@ -861,6 +882,8 @@ const actionLabels = {
   "dispatched command": "지시 실행",
   "registered case": "케이스 등록",
   "changed status": "상태 변경",
+  "saved result": "결과 저장",
+  "created follow-up task": "후속 작업 생성",
 };
 
 function escapeHtml(value) {
@@ -899,6 +922,7 @@ function iconSvg(name) {
     "panel-close": '<rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M15 4v16"></path><path d="m10 9-3 3 3 3"></path>',
     "panel-open": '<rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M15 4v16"></path><path d="m7 9 3 3-3 3"></path>',
     alert: '<path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>',
+    x: '<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>',
     users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.9"></path><path d="M16 3.1a4 4 0 0 1 0 7.8"></path>',
     key: '<circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M12 12l9-9"></path><path d="M16 7l3 3"></path>',
     folder: '<path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>',
@@ -1217,16 +1241,12 @@ function selectDefaultCaseForView(view) {
 function renderMetrics() {
   const metricGrid = document.getElementById("metric-grid");
   if (!metricGrid) return;
-  const scoped = visibleCases();
-  const highRisk = scoped.filter((item) => item.riskScore >= 85).length;
-  const pending = scoped.filter((item) => item.status === "Approval Pending").length;
-  const running = scoped.filter((item) => item.status === "Agent Running").length;
-  const jeonse = scoped.filter((item) => item.pains.includes("jeonse-fraud")).length;
+  const data = buildDashboardData();
   const cards = [
-    ["실행 중 에이전트", running, "현재 에이전트 실행과 승인 전 처리 흐름"],
-    ["활성 케이스", scoped.length, `${highRisk}건은 고위험 이상`],
-    ["전세 보호", jeonse, "전세가율, 권리관계, 보증보험 점검"],
-    ["승인 대기", pending, "RM 또는 준법 승인 대기"],
+    ["고위험 전세", `${data.jeonseRisk.filter((item) => item.riskScore >= 85).length}건`, "전세가율·권리관계·보증 가능성을 우선 확인"],
+    ["승인 대기", `${data.pending.length}건`, "고객 대상 행동 전 RM/준법 검토 필요"],
+    ["외부 행동 차단", `${data.blocked.length}건`, "사기·준법 리스크로 자동 발송 차단"],
+    ["근거 연결률", `${data.evidenceRate}%`, "판단 근거가 연결된 케이스 비율"],
   ];
   metricGrid.innerHTML = cards
     .map(
@@ -1244,10 +1264,10 @@ function renderMetrics() {
 
 function metricIcon(label) {
   return {
-    "실행 중 에이전트": "activity",
-    "활성 케이스": "file-text",
-    "전세 보호": "shield",
+    "고위험 전세": "shield",
     "승인 대기": "check-square",
+    "외부 행동 차단": "lock",
+    "근거 연결률": "database",
   }[label] || "layout-dashboard";
 }
 
@@ -1455,9 +1475,17 @@ function bindPageActions() {
       if (!routine) return;
       routine[3] = routine[3] === "enabled" ? "paused" : "enabled";
       activity.unshift([timestamp(), routine[2], routine[3] === "enabled" ? "resumed routine" : "paused routine", routine[1]]);
+      persistState();
       render();
     });
   });
+  const jeonseForm = document.getElementById("jeonse-diagnosis-form");
+  if (jeonseForm) {
+    jeonseForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      runJeonseDiagnosis(jeonseForm);
+    });
+  }
   bindDragTargets();
 }
 
@@ -1527,9 +1555,14 @@ function dashboardPage() {
     ${commandMarkup()}
     ${dispatchResultMarkup()}
     <section id="metric-grid" class="metric-grid" aria-label="metrics"></section>
+    ${panelMarkup("의사결정 요약", "오늘 우선 처리 기준", dashboardDecisionView(), "decision-panel")}
     <section class="dashboard-grid">
       ${panelMarkup("실시간 실행", "실시간 실행", '<div id="live-runs" class="live-runs"></div><span id="live-count" class="count-pill ghost-count">0</span>', "live-panel")}
       ${panelMarkup("처리 흐름", "처리 흐름 상태", dashboardView(), "process-panel")}
+      ${panelMarkup("비용과 효과", "운영 비용 해석", dashboardCostView(), "cost-panel")}
+      ${panelMarkup("추세", "월별 비용 추이", dashboardTrendView(), "trend-panel")}
+      ${panelMarkup("지역 비교", "지역별 위험도", dashboardRegionView(), "region-panel")}
+      ${panelMarkup("우선순위", "위험도 순위", dashboardRankingView(), "ranking-panel")}
       ${panelMarkup("최근 케이스", "최근 케이스", recentCasesView(), "recent-panel")}
       ${panelMarkup("활동 이력", "최근 처리 이력", activityView(), "activity-panel")}
     </section>
@@ -1640,7 +1673,9 @@ function activityPage() {
 
 function budgetPage() {
   return `
-    ${pageHeader("비용", "API 비용", "에이전트별 월 예산과 사용률을 추적합니다.")}
+    ${pageHeader("비용", "비용과 효과", "에이전트별 예산뿐 아니라 예상 비용, 절감 가능 비용, 비용 대비 효과를 함께 봅니다.")}
+    ${panelMarkup("비용 요약", "월간 비용 판단", dashboardCostView(), "cost-panel")}
+    ${panelMarkup("월별 추세", "비용 변화", dashboardTrendView(), "trend-panel")}
     ${panelMarkup("비용 사용률", "에이전트별 사용률", budgetView())}
   `;
 }
@@ -1673,6 +1708,140 @@ function dashboardView() {
             </article>
           `,
         )
+        .join("")}
+    </div>
+  `;
+}
+
+function dashboardDecisionView() {
+  const data = buildDashboardData();
+  const topCase = data.scoped.slice().sort((a, b) => b.riskScore - a.riskScore)[0];
+  const jeonseCount = data.jeonseRisk.length;
+  const pendingCount = data.pending.length;
+  const blockedCount = data.blocked.length;
+  const summary = topCase
+    ? `${topCase.code} ${topCase.customerName}이 위험도 ${topCase.riskScore}점으로 최우선입니다. 승인 대기 ${pendingCount}건, 외부 행동 차단 ${blockedCount}건을 먼저 정리해야 합니다.`
+    : "현재 표시 범위에 케이스가 없습니다.";
+  return `
+    <div class="decision-summary">
+      <article>
+        <span class="decision-icon">${iconSvg("target")}</span>
+        <strong>오늘의 판단</strong>
+        <p>${escapeHtml(summary)}</p>
+      </article>
+      <article>
+        <span class="decision-icon">${iconSvg("shield")}</span>
+        <strong>전세 보호</strong>
+        <p>전세 위험 케이스 ${jeonseCount}건은 전세가율, 권리관계, 보증보험 가능성을 확인한 뒤 은행 상담으로 연결합니다.</p>
+      </article>
+      <article>
+        <span class="decision-icon">${iconSvg("database")}</span>
+        <strong>데이터 기준</strong>
+        <p>현재 화면은 데모 데이터와 사용자 입력 데이터를 구분해 표시하며, 저장된 분석 결과는 브라우저 로컬 저장소에 남깁니다.</p>
+      </article>
+    </div>
+  `;
+}
+
+function dashboardCostView() {
+  const data = buildDashboardData();
+  const usedRate = data.budget ? Math.round((data.spent / data.budget) * 100) : 0;
+  const expectedRate = data.budget ? Math.round((data.expected / data.budget) * 100) : 0;
+  return `
+    <div class="cost-summary">
+      <div class="cost-kpis">
+        ${costKpi("현재 사용", formatWon(data.spent), `${usedRate}% 사용`)}
+        ${costKpi("월말 예상", formatWon(data.expected), `${expectedRate}% 예상`)}
+        ${costKpi("절감 가능 위험", formatWon(data.avoidableLoss), `비용 대비 ${data.roi}배 효과`)}
+      </div>
+      <p class="insight-copy">
+        현재 예상 비용은 ${formatWon(data.expected)}입니다. 이 중 위험 점검 항목이 ${Math.round(costByWorkType[0][1] * 100)}%를 차지하므로
+        고위험 전세와 승인 대기 케이스부터 처리하는 것이 비용 대비 효과가 가장 큽니다.
+      </p>
+      <div class="cost-bars" aria-label="항목별 비용 비중">
+        ${costByWorkType
+          .map(([label, ratio]) => {
+            const value = Math.round(data.expected * ratio);
+            return `
+              <div class="cost-bar-row">
+                <span>${escapeHtml(label)}</span>
+                <div class="progress-track"><i style="width:${Math.round(ratio * 100)}%"></i></div>
+                <strong>${escapeHtml(formatWon(value))}</strong>
+              </div>
+            `;
+          })
+          .join("")}
+      </div>
+    </div>
+  `;
+}
+
+function costKpi(label, value, detail) {
+  return `
+    <article class="cost-kpi">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value)}</strong>
+      <p>${escapeHtml(detail)}</p>
+    </article>
+  `;
+}
+
+function dashboardTrendView() {
+  const max = Math.max(...monthlyCostTrend.map(([, value]) => value));
+  const latestTrend = monthlyCostTrend[monthlyCostTrend.length - 1];
+  return `
+    <div class="trend-chart" role="img" aria-label="월별 비용 추이">
+      ${monthlyCostTrend
+        .map(([month, value]) => `
+          <div class="trend-column">
+            <div class="trend-bar" style="height:${Math.max(18, Math.round((value / max) * 118))}px"></div>
+            <strong>${escapeHtml(formatWon(value))}</strong>
+            <span>${escapeHtml(month)}</span>
+          </div>
+        `)
+        .join("")}
+    </div>
+    <p class="insight-copy">${escapeHtml(latestTrend[0])} 비용은 ${formatWon(latestTrend[1])}이며, 전세 위험 점검과 승인 로그 생성 비중이 증가했습니다.</p>
+  `;
+}
+
+function dashboardRegionView() {
+  const regions = buildDashboardData().regions.sort((a, b) => b.average - a.average);
+  if (!regions.length) return '<div class="empty-state">표시할 지역 데이터 없음</div>';
+  return `
+    <div class="region-table" role="table" aria-label="지역별 위험도 비교">
+      <div class="region-row region-head" role="row">
+        <span>지역</span><span>케이스</span><span>고위험</span><span>평균</span><span>승인 대기</span>
+      </div>
+      ${regions
+        .map((entry) => `
+          <div class="region-row" role="row">
+            <strong>${escapeHtml(entry.region)}</strong>
+            <span>${entry.total}건</span>
+            <span>${entry.high}건</span>
+            <span>${entry.average}점</span>
+            <span>${entry.pending}건</span>
+          </div>
+        `)
+        .join("")}
+    </div>
+  `;
+}
+
+function dashboardRankingView() {
+  const ranked = visibleCases().slice().sort((a, b) => b.riskScore - a.riskScore).slice(0, 5);
+  if (!ranked.length) return '<div class="empty-state">표시할 우선순위 없음</div>';
+  return `
+    <div class="ranking-list">
+      ${ranked
+        .map((item, index) => `
+          <button class="ranking-row" type="button" data-case-id="${escapeHtml(item.id)}">
+            <span>${index + 1}</span>
+            <strong>${escapeHtml(item.code)} · ${escapeHtml(item.customerName)}</strong>
+            <small>${escapeHtml(item.primaryPain)}</small>
+            <em>${item.riskScore}점</em>
+          </button>
+        `)
         .join("")}
     </div>
   `;
@@ -1844,6 +2013,15 @@ function jeonseView() {
         <p>${escapeHtml(jeonseCase.primaryPain)} · ${escapeHtml(jeonseCase.exposure)}</p>
         <div class="tag-row">${jeonseCase.rootCauses.map((cause) => `<span class="tag">${escapeHtml(cause)}</span>`).join("")}</div>
       </article>
+      <section class="diagnosis-panel">
+        <div class="diagnosis-copy">
+          <p class="eyebrow">실제 입력 흐름</p>
+          <h3>전세 위험 진단 실행</h3>
+          <p>보증금, 주변 매매가, 고객 자산, 월소득, 권리관계 신호를 입력하면 전세가율·자산노출·주거비 부담을 계산해 승인 대기 리포트로 연결합니다.</p>
+        </div>
+        ${jeonseDiagnosisFormMarkup(jeonseCase)}
+        ${jeonseDiagnosticResultMarkup(jeonseCase)}
+      </section>
       <div class="feature-grid">
         ${jeonseFeatures
           .map((feature) => {
@@ -1861,6 +2039,72 @@ function jeonseView() {
           })
           .join("")}
       </div>
+    </div>
+  `;
+}
+
+function jeonseDiagnosisFormMarkup(item) {
+  const inputs = item.jeonseInputs || {
+    deposit: 235000000,
+    market: 260000000,
+    assets: 300000000,
+    income: 3600000,
+    rights: "근저당 있음",
+  };
+  return `
+    <form id="jeonse-diagnosis-form" class="diagnosis-form">
+      <label>
+        <span>전세보증금</span>
+        <input name="deposit" inputmode="numeric" value="${escapeHtml(inputs.deposit)}" aria-label="전세보증금" />
+      </label>
+      <label>
+        <span>주변 매매가</span>
+        <input name="market" inputmode="numeric" value="${escapeHtml(inputs.market)}" aria-label="주변 매매가" />
+      </label>
+      <label>
+        <span>고객 총자산</span>
+        <input name="assets" inputmode="numeric" value="${escapeHtml(inputs.assets)}" aria-label="고객 총자산" />
+      </label>
+      <label>
+        <span>월 소득</span>
+        <input name="income" inputmode="numeric" value="${escapeHtml(inputs.income)}" aria-label="월 소득" />
+      </label>
+      <label>
+        <span>권리관계 신호</span>
+        <select name="rights" aria-label="권리관계 신호">
+          ${["확인 필요", "근저당 있음", "신탁등기 의심", "특이사항 낮음"].map((option) => `<option value="${escapeHtml(option)}" ${inputs.rights === option ? "selected" : ""}>${escapeHtml(option)}</option>`).join("")}
+        </select>
+      </label>
+      <button class="primary-button" type="submit">
+        <span aria-hidden="true">${iconSvg("activity")}</span>
+        진단 실행
+      </button>
+    </form>
+  `;
+}
+
+function jeonseDiagnosticResultMarkup(item) {
+  if (!item.jeonseInputs) {
+    return `
+      <div class="diagnosis-result empty-diagnosis">
+        <strong>아직 계산된 진단 없음</strong>
+        <p>입력값으로 진단을 실행하면 전세가율, 자산노출, 월 부담률, 다음 행동이 표시됩니다.</p>
+      </div>
+    `;
+  }
+  const inputs = item.jeonseInputs;
+  return `
+    <div class="diagnosis-result">
+      <div class="diagnosis-result-head">
+        <strong>진단 결과 · 위험도 ${item.riskScore}점</strong>
+        <span class="status-pill ${statusClass(item.status)}">${escapeHtml(statusLabel(item.status))}</span>
+      </div>
+      <div class="diagnosis-kpis">
+        ${costKpi("전세가율", `${inputs.ratio}%`, inputs.ratio >= 80 ? "과다 후보" : "주의")}
+        ${costKpi("자산노출", `${inputs.exposureRatio}%`, inputs.exposureRatio >= 70 ? "손실 민감도 높음" : "중간")}
+        ${costKpi("월 부담률", `${inputs.housingBurden}%`, inputs.housingBurden >= 25 ? "상환 부담 확인" : "관리 가능")}
+      </div>
+      <p class="insight-copy">${escapeHtml(item.analysisResult ? item.analysisResult.recommendation : item.nextAction)}</p>
     </div>
   `;
 }
@@ -2460,6 +2704,7 @@ function caseContextMarkup() {
           ${propertyRow("케이스 코드", item.code)}
           ${propertyRow("계열사", item.affiliate)}
           ${propertyRow("지역/업종", `${item.region} · ${item.industry}`)}
+          ${propertyRow("데이터 출처", caseDataSource(item))}
         </div>`,
         "file-text",
       )}
@@ -2520,6 +2765,14 @@ function caseContextMarkup() {
     )}
 
     ${collapsiblePanel(
+      "case-result",
+      "분석 결과",
+      "생성 산출물과 다음 행동",
+      analysisResultMarkup(item),
+      item.analysisResult ? `${item.analysisResult.confidence}% 신뢰도` : "미생성",
+    )}
+
+    ${collapsiblePanel(
       "case-agents",
       "담당 에이전트",
       "업무와 스킬",
@@ -2538,6 +2791,52 @@ function caseContextMarkup() {
     ${collapsiblePanel("case-evidence", "근거", "근거 피드", '<div id="evidence-feed" class="evidence-feed"></div>', `${item.evidenceIds.length}개 출처`)}
 
     ${collapsiblePanel("case-audit", "감사 로그", "처리 기록", '<div id="audit-log" class="audit-log"></div>', `${item.audit.length}개 기록`)}
+  `;
+}
+
+function analysisResultMarkup(item) {
+  if (!item.analysisResult) {
+    return `
+      <div class="result-empty">
+        <span class="detail-group-icon" aria-hidden="true">${iconSvg("activity")}</span>
+        <strong>아직 분석 결과가 없습니다.</strong>
+        <p>실행 버튼이나 전세 진단 폼을 사용하면 에이전트가 판단 결과, 생성 산출물, 다음 행동을 이 영역에 기록합니다.</p>
+      </div>
+    `;
+  }
+  const result = item.analysisResult;
+  return `
+    <div class="analysis-result">
+      <div class="result-summary">
+        <span class="source-badge">${escapeHtml(result.source)} · ${escapeHtml(result.createdAt)}</span>
+        <strong>${escapeHtml(result.summary)}</strong>
+        <p>${escapeHtml(result.recommendation)}</p>
+      </div>
+      <div class="result-lists">
+        ${detailGroup(
+          "생성 산출물",
+          "저장하면 케이스 처리 기록에 남습니다.",
+          `<div class="tag-row">${result.deliverables.map((entry) => `<span class="tag">${escapeHtml(entry)}</span>`).join("")}</div>`,
+          "file-text",
+        )}
+        ${detailGroup(
+          "체크리스트",
+          "다음 행동 전에 확인할 항목입니다.",
+          `<ol class="check-list">${result.checklist.map((entry) => `<li>${escapeHtml(entry)}</li>`).join("")}</ol>`,
+          "check-square",
+        )}
+      </div>
+      <div class="action-row result-actions">
+        <button id="save-case-result" class="secondary-button" type="button" ${item.resultSaved ? "disabled" : ""}>
+          <span aria-hidden="true">${iconSvg("database")}</span>
+          ${item.resultSaved ? "저장 완료" : "결과 저장"}
+        </button>
+        <button id="create-follow-up" class="primary-button" type="button" ${item.nextTaskCreated ? "disabled" : ""}>
+          <span aria-hidden="true">${iconSvg("link")}</span>
+          ${item.nextTaskCreated ? "작업 생성됨" : "다음 행동 생성"}
+        </button>
+      </div>
+    </div>
   `;
 }
 
@@ -2706,6 +3005,424 @@ function timestamp() {
   }).format(new Date());
 }
 
+function persistState() {
+  try {
+    window.localStorage.setItem(
+      appStorageKey,
+      JSON.stringify({
+        cases,
+        agentRuns,
+        activity,
+        scenarioResults,
+        caseSequence,
+        runSequence,
+      }),
+    );
+  } catch (error) {
+    console.warn("LocalGuard state could not be saved", error);
+  }
+}
+
+function loadPersistedState() {
+  try {
+    const raw = window.localStorage.getItem(appStorageKey);
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    if (Array.isArray(state.cases) && state.cases.length) cases = state.cases;
+    if (Array.isArray(state.agentRuns)) agentRuns = state.agentRuns;
+    if (Array.isArray(state.activity)) activity = state.activity;
+    if (Array.isArray(state.scenarioResults)) scenarioResults = state.scenarioResults;
+    if (Number.isFinite(state.caseSequence)) caseSequence = state.caseSequence;
+    if (Number.isFinite(state.runSequence)) runSequence = state.runSequence;
+    if (!cases.some((item) => item.id === selectedCaseId) && cases[0]) selectedCaseId = cases[0].id;
+  } catch (error) {
+    console.warn("LocalGuard state could not be loaded", error);
+  }
+}
+
+function notify(message) {
+  toastMessage = message;
+  window.clearTimeout(toastTimer);
+  toastTimer = window.setTimeout(() => {
+    toastMessage = "";
+    renderToast();
+  }, 2600);
+  renderToast();
+}
+
+function formatWon(value) {
+  return `₩${Math.round(value).toLocaleString("ko-KR")}`;
+}
+
+function safeNumber(value, fallback = 0) {
+  const parsed = Number(String(value || "").replace(/,/g, ""));
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function caseDataSource(item) {
+  if (item.sourceLabel) return item.sourceLabel;
+  return item.id && item.id.startsWith("manual-") ? "사용자 입력 데이터" : "데모 데이터";
+}
+
+function buildDashboardData() {
+  const scoped = visibleCases();
+  const highRisk = scoped.filter((item) => item.riskScore >= 85);
+  const jeonseRisk = scoped.filter((item) => item.pains.includes("jeonse-fraud"));
+  const blocked = scoped.filter((item) => item.status === "Escalated" || item.gates.some((gate) => gate[1] === "blocked"));
+  const pending = scoped.filter((item) => item.status === "Approval Pending");
+  const evidenceLinked = scoped.filter((item) => item.evidenceIds && item.evidenceIds.length).length;
+  const evidenceRate = scoped.length ? Math.round((evidenceLinked / scoped.length) * 100) : 0;
+  const spent = agents.reduce((sum, agent) => sum + agent.spent, 0);
+  const budget = agents.reduce((sum, agent) => sum + agent.budget, 0);
+  const expected = Math.round(spent * 1.18);
+  const avoidableLoss = scoped.reduce((sum, item) => {
+    if (item.pains.includes("jeonse-fraud")) return sum + 2350000;
+    if (item.status === "Escalated") return sum + 900000;
+    if (item.riskScore >= 85) return sum + 620000;
+    return sum + 180000;
+  }, 0);
+  const roi = spent ? Math.round(avoidableLoss / spent) : 0;
+  const regions = Object.values(
+    scoped.reduce((acc, item) => {
+      const key = item.region.split(" ")[0];
+      if (!acc[key]) acc[key] = { region: key, total: 0, high: 0, pending: 0, score: 0 };
+      acc[key].total += 1;
+      acc[key].high += item.riskScore >= 85 ? 1 : 0;
+      acc[key].pending += item.status === "Approval Pending" ? 1 : 0;
+      acc[key].score += item.riskScore;
+      return acc;
+    }, {}),
+  ).map((entry) => ({ ...entry, average: Math.round(entry.score / entry.total) }));
+  return {
+    scoped,
+    highRisk,
+    jeonseRisk,
+    blocked,
+    pending,
+    evidenceRate,
+    spent,
+    budget,
+    expected,
+    avoidableLoss,
+    roi,
+    regions,
+  };
+}
+
+function createAnalysisResult(item, mode = "agent") {
+  const isJeonse = item.pains.includes("jeonse-fraud");
+  const blocked = item.status === "Escalated" || item.gates.some((gate) => gate[1] === "blocked");
+  const confidence = Math.min(96, Math.max(68, item.riskScore + (item.evidenceIds.length * 2) - (blocked ? 3 : 0)));
+  const checklist = isJeonse
+    ? [
+        "등기부 원문에서 근저당, 압류, 신탁등기 여부를 확인",
+        "보증보험 가입 가능성 확인 전 계약금 지급 보류",
+        "특약 문구는 근저당 말소, 보증보험, 잔금 조건을 초안으로만 사용",
+        "전세대출 상담 연결 전 고객 동의 기록",
+      ]
+    : blocked
+      ? ["고객 대상 발송 차단", "보안팀 상위 검토", "콜백 URL과 통화 기록 보존", "RM 안내 전 준법 확인"]
+      : ["매출·상환 스트레스 확인", "정책금융 후보 검토", "필요 서류 체크리스트 전달", "RM 콜백 초안 승인 요청"];
+  return {
+    mode,
+    confidence,
+    createdAt: timestamp(),
+    source: caseDataSource(item),
+    summary: isJeonse
+      ? "전세가율, 권리관계, 보증보험 가능성, 고객 자산노출을 종합해 계약 전 사람 검토가 필요합니다."
+      : blocked
+        ? "외부 발송은 차단하고 내부 보안·준법 검토만 허용하는 고위험 케이스입니다."
+        : "상담 메모와 근거 피드가 같은 방향을 가리켜 RM 확인 후 고객 안내가 가능한 상태입니다.",
+    recommendation: isJeonse
+      ? "등기부·보증보험 원문 확인 후 안전 계약 체크리스트와 은행 상담 안내를 승인 큐에서 확정하세요."
+      : blocked
+        ? "고객 접촉 없이 보안팀 보고 메모를 먼저 생성하고 차단 근거를 감사 로그에 남기세요."
+        : "정책금융 후보와 필요 서류를 RM이 검토한 뒤 콜백 태스크로 연결하세요.",
+    deliverables: isJeonse
+      ? ["위험 진단 리포트", "계약 전 체크리스트", "특약 문구 초안", "은행 상담 연결 카드"]
+      : blocked
+        ? ["보안팀 보고 메모", "고객 발송 차단 기록", "준법 검토 메모"]
+        : ["RM 콜백 초안", "정책금융 후보 요약", "서류 체크리스트", "상환 스트레스 요약"],
+    checklist,
+  };
+}
+
+function saveCaseResult(item) {
+  if (!item || !item.analysisResult) return;
+  item.resultSaved = true;
+  item.resultSavedAt = timestamp();
+  item.audit.push([timestamp(), "분석 결과와 생성 산출물을 케이스 기록에 저장했습니다."]);
+  activity.unshift([timestamp(), "LocalGuard Orchestrator", "saved result", item.code]);
+  scenarioResults.unshift({
+    time: timestamp(),
+    caseCode: item.code,
+    title: item.customerName,
+    value: item.analysisResult.recommendation,
+  });
+  persistState();
+  notify(`${item.code} 결과를 저장했습니다.`);
+  render();
+}
+
+function createFollowUpTask(item) {
+  if (!item || !item.analysisResult) return;
+  item.nextTaskCreated = true;
+  item.nextTaskAt = timestamp();
+  const nextTask = item.pains.includes("jeonse-fraud")
+    ? "은행 상담 연결 요청과 보증보험 확인 태스크를 생성했습니다."
+    : item.status === "Escalated"
+      ? "보안팀 상위 검토 태스크를 생성했습니다."
+      : "RM 콜백 태스크와 서류 안내 태스크를 생성했습니다.";
+  item.audit.push([timestamp(), nextTask]);
+  activity.unshift([timestamp(), item.owner, "created follow-up task", item.code]);
+  persistState();
+  notify(nextTask);
+  render();
+}
+
+function buildManualCase(form) {
+  const formData = new FormData(form);
+  const riskType = formData.get("riskType") || "smallbiz";
+  const customerName = String(formData.get("customerName") || "").trim();
+  const region = String(formData.get("region") || "").trim();
+  const exposureInput = String(formData.get("exposure") || "").trim();
+  if (!customerName || !region) {
+    modalError = "고객명과 지역은 필수입니다.";
+    renderModal();
+    return null;
+  }
+
+  caseSequence += 1;
+  const code = `JBG-${caseSequence}`;
+  const affiliate = String(formData.get("affiliate") || "전북은행");
+  const base = {
+    id: `manual-${caseSequence}`,
+    code,
+    customerName,
+    affiliate,
+    region,
+    sourceLabel: "사용자 입력 데이터",
+    status: "New",
+    stage: "todo",
+    due: "오늘 18:00",
+    sla: "오늘",
+    resultSaved: false,
+    nextTaskCreated: false,
+    transcript: [],
+    audit: [[timestamp(), "사용자 입력 폼으로 케이스를 등록했습니다."]],
+  };
+
+  if (riskType === "jeonse") {
+    return {
+      ...base,
+      segment: "전세대출 고객",
+      industry: "주거 · 전세계약",
+      riskScore: 82,
+      priority: "urgent",
+      zeroHuman: "L3 분석 + 사람 결정",
+      owner: "Jeonse Shield Lead",
+      exposure: exposureInput || "전세보증금 입력 필요 · 등기부 확인 필요",
+      primaryPain: "전세사기 위험 사전 점검",
+      nextAction: "전세 진단 실행 후 보증보험·은행 상담 연결",
+      approvalTitle: "전세 위험 진단 리포트와 안전 계약 체크리스트",
+      pains: ["jeonse-fraud", "price-ratio", "registry-risk", "guarantee-feasibility"],
+      rootCauses: ["전세가율 확인 필요", "권리관계 원문 확인 필요", "보증보험 가능성 확인"],
+      evidenceIds: ["hug-safe-jeonse", "molit-jeonse-policy", "jb-network"],
+      gates: [["등기부/보증보험 원문 확인", "pending"], ["고객 동의 후 은행 상담 연결", "pending"], ["특약 문구는 초안으로만 제공", "passed"]],
+      agents: ["jeonse-lead", "deposit-ratio", "registry-rights", "tenant-asset", "contract-check", "bank-linkage", "compliance"],
+    };
+  }
+
+  if (riskType === "fraud") {
+    return {
+      ...base,
+      segment: "법인사업자",
+      industry: "사기 의심",
+      riskScore: 93,
+      priority: "critical",
+      zeroHuman: "L4 정보 제공만",
+      owner: "Fraud Shield Agent",
+      exposure: exposureInput || "의심 콜백 URL · 긴급 송금 요청",
+      primaryPain: "외부 접촉 차단 필요",
+      nextAction: "고객 발송 차단과 보안팀 상위 검토",
+      approvalTitle: "보안팀 상위 보고 메모",
+      pains: ["fraud", "callback-risk", "do-not-contact"],
+      rootCauses: ["외부 URL", "긴급 송금 요청", "통화 위변조 의심"],
+      evidenceIds: ["fraud-ai", "jb-network"],
+      gates: [["고객 대상 자동 발송 금지", "blocked"], ["보안팀 내부 상위 검토만 허용", "passed"]],
+      agents: ["fraud", "compliance", "orchestrator"],
+    };
+  }
+
+  return {
+    ...base,
+    segment: "개인사업자",
+    industry: "상담 접수",
+    riskScore: 70,
+    priority: "high",
+    zeroHuman: "L1 초안 + 원클릭 승인",
+    owner: "Policy Match Agent",
+    exposure: exposureInput || "정책금융 상담 후보 · 서류 확인 필요",
+    primaryPain: "정책금융 탐색과 상환 부담",
+    nextAction: "정책금융 후보와 서류 체크리스트 생성",
+    approvalTitle: "정책금융 상담 전 필요 서류 안내",
+    pains: ["policy-match", "documentation", "digital-barrier"],
+    rootCauses: ["지원제도 탐색 비용", "서류 누락", "디지털 신청 장벽"],
+    evidenceIds: ["jb-network", "smallbiz-burden", "digital-gap"],
+    gates: [["지원 가능성 확정 표현 금지", "pending"], ["필요 서류 안내만 허용", "passed"], ["RM 승인 후 안내", "pending"]],
+    agents: ["pain-radar", "policy", "rm-copilot", "compliance"],
+  };
+}
+
+function runJeonseDiagnosis(form) {
+  const item = cases.find((entry) => entry.id === selectedCaseId && entry.pains.includes("jeonse-fraud")) || cases.find((entry) => entry.pains.includes("jeonse-fraud"));
+  if (!item) return;
+  const formData = new FormData(form);
+  const deposit = safeNumber(formData.get("deposit"), 235000000);
+  const market = Math.max(1, safeNumber(formData.get("market"), 260000000));
+  const assets = Math.max(1, safeNumber(formData.get("assets"), 300000000));
+  const income = Math.max(1, safeNumber(formData.get("income"), 3600000));
+  const rights = String(formData.get("rights") || "확인 필요");
+  const ratio = Math.round((deposit / market) * 100);
+  const exposureRatio = Math.round((deposit / assets) * 100);
+  const housingBurden = Math.round(((deposit * 0.045) / 12 / income) * 100);
+  const rightsRisk = rights === "근저당 있음" || rights === "신탁등기 의심";
+  const score = Math.min(99, Math.max(55, ratio + (exposureRatio > 70 ? 8 : 0) + (housingBurden > 25 ? 6 : 0) + (rightsRisk ? 10 : 0)));
+
+  item.status = "Approval Pending";
+  item.stage = "pending_approval";
+  item.riskScore = score;
+  item.priority = score >= 90 ? "critical" : score >= 80 ? "urgent" : "high";
+  item.jeonseInputs = { deposit, market, assets, income, rights, ratio, exposureRatio, housingBurden };
+  item.exposure = `전세보증금 ${formatWon(deposit)} · 총자산 대비 ${exposureRatio}%`;
+  item.primaryPain = `전세가율 ${ratio}% · ${rights}`;
+  item.rootCauses = [
+    `전세가율 ${ratio}%`,
+    `보증금/자산 ${exposureRatio}%`,
+    `주거비 부담 ${housingBurden}%`,
+    rights,
+  ];
+  item.gates = [
+    ["등기부/보증보험 원문 확인", rightsRisk ? "pending" : "passed"],
+    ["고객 동의 후 은행 상담 연결", "pending"],
+    ["특약 문구는 초안으로만 제공", "passed"],
+  ];
+  item.analysisResult = createAnalysisResult(item, "jeonse-diagnosis");
+  item.audit.push([timestamp(), `전세 진단 실행: 전세가율 ${ratio}%, 자산노출 ${exposureRatio}%, 주거비 부담 ${housingBurden}%.`]);
+  activity.unshift([timestamp(), "Jeonse Shield Lead", "created approval", item.code]);
+  selectedCaseId = item.id;
+  activeDetailType = "case";
+  persistState();
+  notify("전세 위험 진단 리포트를 생성했습니다.");
+  render();
+}
+
+function openNewCaseModal() {
+  modalState = "new-case";
+  modalError = "";
+  renderModal();
+}
+
+function closeModal() {
+  modalState = null;
+  modalError = "";
+  renderModal();
+}
+
+function renderModal() {
+  const root = document.getElementById("modal-root");
+  if (!root) return;
+  if (modalState !== "new-case") {
+    root.innerHTML = "";
+    return;
+  }
+  root.innerHTML = `
+    <div class="modal-backdrop" role="presentation">
+      <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="new-case-title">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">사용자 입력 데이터</p>
+            <h2 id="new-case-title">금융 위험 케이스 등록</h2>
+            <p>고객 상황을 입력하면 위험 유형에 맞는 에이전트, 스킬, 승인 게이트가 배정됩니다.</p>
+          </div>
+          <button id="modal-close" class="icon-only-button" type="button" aria-label="닫기">${iconSvg("x")}</button>
+        </div>
+        ${modalError ? `<p class="form-error">${escapeHtml(modalError)}</p>` : ""}
+        <form id="new-case-form" class="case-form">
+          <label>
+            <span>위험 유형</span>
+            <select name="riskType">
+              <option value="jeonse">전세사기 위험</option>
+              <option value="smallbiz">소상공인 금융 부담</option>
+              <option value="fraud">사기 의심 콜백</option>
+            </select>
+          </label>
+          <label>
+            <span>고객/케이스명</span>
+            <input name="customerName" placeholder="예: 부산 신혼부부 전세 예정" />
+          </label>
+          <label>
+            <span>계열사</span>
+            <select name="affiliate">
+              <option>전북은행</option>
+              <option>광주은행</option>
+              <option>JB우리캐피탈</option>
+            </select>
+          </label>
+          <label>
+            <span>지역</span>
+            <input name="region" placeholder="예: 부산 해운대구" />
+          </label>
+          <label class="case-form-wide">
+            <span>노출 위험/상담 메모</span>
+            <textarea name="exposure" rows="3" placeholder="예: 전세보증금 2.1억, 등기부 근저당 확인 필요"></textarea>
+          </label>
+          <div class="modal-actions">
+            <button id="modal-cancel" class="ghost-button" type="button">
+              <span aria-hidden="true">${iconSvg("panel-close")}</span>
+              취소
+            </button>
+            <button class="primary-button" type="submit">
+              <span aria-hidden="true">${iconSvg("check-square")}</span>
+              케이스 등록
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  `;
+  const form = document.getElementById("new-case-form");
+  const closeButton = document.getElementById("modal-close");
+  const cancelButton = document.getElementById("modal-cancel");
+  if (closeButton) closeButton.addEventListener("click", closeModal);
+  if (cancelButton) cancelButton.addEventListener("click", closeModal);
+  if (form) {
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const fresh = buildManualCase(form);
+      if (!fresh) return;
+      cases.push(fresh);
+      activity.unshift([timestamp(), "LocalGuard Orchestrator", "registered case", fresh.code]);
+      selectedCaseId = fresh.id;
+      activeView = fresh.pains.includes("jeonse-fraud") ? "jeonse" : "cases";
+      activeDetailType = "case";
+      modalState = null;
+      modalError = "";
+      persistState();
+      notify(`${fresh.code} 케이스를 등록했습니다.`);
+      render();
+    });
+  }
+}
+
+function renderToast() {
+  const root = document.getElementById("toast-root");
+  if (!root) return;
+  root.innerHTML = toastMessage
+    ? `<div class="toast-message" role="status"><span aria-hidden="true">${iconSvg("check-square")}</span>${escapeHtml(toastMessage)}</div>`
+    : "";
+}
+
 function startAgentRun(item, command) {
   runSequence += 1;
   const run = {
@@ -2724,6 +3441,7 @@ function startAgentRun(item, command) {
   item.stage = "in_progress";
   item.audit.push([timestamp(), `에이전트 실행 ${run.id} 시작: ${command}`]);
   activity.unshift([timestamp(), item.owner, "checked out", item.code]);
+  persistState();
 
   window.setTimeout(() => {
     if (run.status !== "running") return;
@@ -2734,6 +3452,7 @@ function startAgentRun(item, command) {
         ? "등기 권리 분석 에이전트: 등기부 권리관계와 전세가율 신호를 교차 확인 중."
         : "근거 수집: 출처와 상담 메모를 케이스 맥락에 연결 중.",
     ]);
+    persistState();
     render();
   }, 700);
 
@@ -2757,9 +3476,11 @@ function startAgentRun(item, command) {
           ? "사기 차단: 고객 대상 행동은 계속 차단하고 내부 상위 검토만 허용합니다."
           : "승인 게이트: 조치 초안이 사람 검토 단계에 들어갔습니다.",
       );
+      target.analysisResult = createAnalysisResult(target, "agent-run");
       target.audit.push([timestamp(), `에이전트 실행 ${run.id} 완료 및 승인 정책을 검토했습니다.`]);
       activity.unshift([timestamp(), "Approval Gate", escalate ? "escalated case" : "created approval", target.code]);
     }
+    persistState();
     render();
   }, 1600);
 
@@ -2789,6 +3510,7 @@ function approveCase(item) {
   item.audit.push([timestamp(), "RM 담당자가 제안 조치를 승인했고 데모 후속 작업을 기록했습니다."]);
   activity.unshift([timestamp(), "Human RM", "approved action", item.code]);
   closeRunsForCase(item, "completed", "RM 담당자가 조치를 승인했고 실행을 종료했습니다.");
+  persistState();
   render();
 }
 
@@ -2799,6 +3521,7 @@ function rejectCase(item) {
   item.audit.push([timestamp(), "검토 담당자가 초안을 반려하고 수정을 요청했습니다."]);
   activity.unshift([timestamp(), "Human reviewer", "rejected draft", item.code]);
   closeRunsForCase(item, "rejected", "검토 담당자가 초안을 반려했고 실행을 종료했습니다.");
+  persistState();
   render();
 }
 
@@ -2826,6 +3549,7 @@ function dispatchCommand() {
   };
   activeView = "dashboard";
   activeDetailType = "case";
+  persistState();
   render();
 }
 
@@ -2924,6 +3648,7 @@ function moveCaseToColumn(caseId, column) {
   activity.unshift([timestamp(), "LocalGuard Orchestrator", "changed status", item.code]);
   selectedCaseId = item.id;
   activeDetailType = "case";
+  persistState();
   render();
 }
 
@@ -2982,7 +3707,7 @@ function bindSelectionTargets() {
 }
 
 function bindActions() {
-  document.getElementById("new-case-button").addEventListener("click", newCaseDemo);
+  document.getElementById("new-case-button").addEventListener("click", openNewCaseModal);
   const propertiesToggle = document.getElementById("properties-toggle");
   if (propertiesToggle) {
     propertiesToggle.addEventListener("click", () => {
@@ -3056,6 +3781,10 @@ function bindContextActions() {
   if (runButton) runButton.addEventListener("click", runAgents);
   if (approveButton) approveButton.addEventListener("click", approveAction);
   if (rejectButton) rejectButton.addEventListener("click", rejectAction);
+  const saveResultButton = document.getElementById("save-case-result");
+  const followUpButton = document.getElementById("create-follow-up");
+  if (saveResultButton) saveResultButton.addEventListener("click", () => saveCaseResult(currentCase()));
+  if (followUpButton) followUpButton.addEventListener("click", () => createFollowUpTask(currentCase()));
 
   const backButton = document.getElementById("back-to-case");
   if (backButton) {
@@ -3075,6 +3804,7 @@ function bindContextActions() {
       if (!target) return;
       selectedCaseId = target.id;
       startAgentRun(target, `${agentLabel(agent)} 단독 실행: ${target.nextAction}`);
+      persistState();
       render();
     });
   }
@@ -3103,6 +3833,8 @@ function render() {
   renderLiveRuns();
   renderEvidence();
   renderAudit();
+  renderModal();
+  renderToast();
   bindSelectionTargets();
 }
 
