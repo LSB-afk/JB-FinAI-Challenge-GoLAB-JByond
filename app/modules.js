@@ -60,23 +60,25 @@ const dataGovernance = {
     article: "public", policy: "public", news: "public",
   },
   classify(field) { return this.tiers[field] || "internal"; },
-  // 외부 모델 전송 전 PII 토큰화 (주민번호/전화/계좌/성명 패턴)
+  // 외부 모델 전송 전 PII 토큰화 (성명/주민번호/전화/계좌/주소 패턴)
   tokenizePII(text) {
     let masked = String(text || "");
     const map = [];
-    const subs = [
-      [/(\d{6})-?[1-4]\d{6}/g, "RRN"],
-      [/01[016789]-?\d{3,4}-?\d{4}/g, "PHONE"],
-      [/\b\d{2,6}-\d{2,6}-\d{2,7}\b/g, "ACCT"],
-    ];
-    subs.forEach(([re, kind]) => {
+    const counters = {};
+    const sub = (re, kind) => {
       masked = masked.replace(re, () => {
-        const token = `{{${kind}_${map.length + 1}}}`;
+        counters[kind] = (counters[kind] || 0) + 1;
+        const token = `{{${kind}_${counters[kind]}}}`;
         map.push({ token, kind });
         return token;
       });
-    });
-    // 성명(2~4자 한글 + 직함/조사 휴리스틱은 생략) — 데모용 명시 치환
+    };
+    // 순서 중요: 주민번호(마스킹 포함)·전화·계좌 → 주소 → 성명(괄호 앞)
+    sub(/\d{6}-?[1-4][\d*]{6}/g, "RRN");
+    sub(/01[016789]-?\d{3,4}-?\d{4}/g, "PHONE");
+    sub(/\b\d{2,6}-\d{2,6}-\d{2,7}\b/g, "ACCT");
+    sub(/[가-힣]+시\s*[가-힣]+구\s*[가-힣0-9]+(로|길)/g, "ADDR");
+    sub(/[가-힣]{2,4}(?=\s*\()/g, "NAME");
     return { masked, map };
   },
   // 작업 민감도에 따른 모델 라우팅
