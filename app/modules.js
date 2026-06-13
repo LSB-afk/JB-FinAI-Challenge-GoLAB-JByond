@@ -691,3 +691,76 @@ function restoreSkillContent() {
   } catch (e) { console.warn("skillContent 복원 실패", e); }
 }
 restoreSkillContent();
+
+/* =========================================================================
+ * M2 · SVG/CSS 차트 헬퍼 (라이브러리 없음). 호출 시점에 escapeHtml 사용.
+ * ========================================================================= */
+function chartColorByScore(v) { return v >= 85 ? "#c0322a" : v >= 70 ? "#b76700" : "#07569d"; }
+
+function svgDonut(value, total, opts) {
+  opts = opts || {};
+  const pct = total > 0 ? Math.min(100, Math.round((value / total) * 100)) : 0;
+  const r = 42, c = 2 * Math.PI * r, off = c * (1 - pct / 100);
+  const color = opts.color || (pct >= 90 ? "#c0322a" : pct >= 70 ? "#b76700" : "#07569d");
+  return `<div class="donut-wrap">
+    <svg viewBox="0 0 100 100" class="donut" role="img" aria-label="${escapeHtml(opts.aria || (pct + "퍼센트"))}">
+      <circle cx="50" cy="50" r="${r}" fill="none" stroke="#e8eef6" stroke-width="11"/>
+      <circle cx="50" cy="50" r="${r}" fill="none" stroke="${color}" stroke-width="11" stroke-linecap="round"
+        stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 50 50)"/>
+      <text x="50" y="50" class="donut-pct" text-anchor="middle" dominant-baseline="central">${pct}%</text>
+    </svg>
+    ${opts.label ? `<div class="donut-label"><strong>${escapeHtml(opts.label)}</strong>${opts.sub ? `<span>${escapeHtml(opts.sub)}</span>` : ""}</div>` : ""}
+  </div>`;
+}
+
+function svgArea(series, opts) {
+  opts = opts || {};
+  const w = opts.w || 320, h = opts.h || 120, pad = 10;
+  const vals = series.map((s) => s.y);
+  const max = Math.max(...vals), min = Math.min(...vals, 0);
+  const n = series.length, span = (max - min) || 1, base = h - 24;
+  const X = (i) => pad + (n > 1 ? (i / (n - 1)) * (w - 2 * pad) : 0);
+  const Y = (v) => base - ((v - min) / span) * (base - pad);
+  const pts = series.map((s, i) => `${X(i).toFixed(1)},${Y(s.y).toFixed(1)}`);
+  const area = `${pad},${base} ${pts.join(" ")} ${(w - pad).toFixed(1)},${base}`;
+  const anchor = (i) => (i === 0 ? "start" : i === n - 1 ? "end" : "middle");
+  const dots = series.map((s, i) => `<circle cx="${X(i).toFixed(1)}" cy="${Y(s.y).toFixed(1)}" r="3.2" fill="#07569d"/>`).join("");
+  const labels = series.map((s, i) => `<text x="${X(i).toFixed(1)}" y="${h - 6}" class="chart-ax" text-anchor="${anchor(i)}">${escapeHtml(s.x)}</text>`).join("");
+  const valLabels = series.map((s, i) => `<text x="${X(i).toFixed(1)}" y="${(Y(s.y) - 7).toFixed(1)}" class="chart-val" text-anchor="${anchor(i)}">${escapeHtml(s.label || "")}</text>`).join("");
+  return `<svg viewBox="0 0 ${w} ${h}" class="area-chart" preserveAspectRatio="none" role="img" aria-label="${escapeHtml(opts.aria || "추세")}">
+    <polygon points="${area}" fill="rgba(7,86,157,0.10)"/>
+    <polyline points="${pts.join(" ")}" fill="none" stroke="#07569d" stroke-width="2.2"/>
+    ${dots}${valLabels}${labels}
+  </svg>`;
+}
+
+function riskHistogram(caseList) {
+  const buckets = [
+    { label: "0–24", min: 0, max: 24, color: "#15803d" },
+    { label: "25–49", min: 25, max: 49, color: "#5a9e52" },
+    { label: "50–74", min: 50, max: 74, color: "#b76700" },
+    { label: "75–100", min: 75, max: 100, color: "#c0322a" },
+  ];
+  const counts = buckets.map((b) => caseList.filter((c) => c.riskScore >= b.min && c.riskScore <= b.max).length);
+  const max = Math.max(...counts, 1);
+  return `<div class="histo" role="img" aria-label="위험도 점수 분포">
+    ${buckets.map((b, i) => `
+      <div class="histo-col">
+        <b class="histo-count">${counts[i]}</b>
+        <div class="histo-bar-wrap"><i class="histo-bar" style="height:${Math.round((counts[i] / max) * 100)}%;background:${b.color}"></i></div>
+        <span class="histo-label">${escapeHtml(b.label)}</span>
+      </div>`).join("")}
+  </div>`;
+}
+
+function rankingBars(items) {
+  return `<div class="rankbars">${items.map((it) => {
+    const color = chartColorByScore(it.value);
+    const open = it.caseId ? ` data-case-id="${escapeHtml(it.caseId)}" role="button" tabindex="0"` : "";
+    return `<div class="rankbar-row${it.caseId ? " is-clickable" : ""}"${open}>
+      <div class="rankbar-meta"><strong>${escapeHtml(it.label)}</strong>${it.sub ? `<span>${escapeHtml(it.sub)}</span>` : ""}</div>
+      <div class="rankbar-track"><i style="width:${Math.min(100, Math.max(3, it.value))}%;background:${color}"></i></div>
+      <em>${escapeHtml(String(it.value))}${escapeHtml(it.unit || "점")}</em>
+    </div>`;
+  }).join("")}</div>`;
+}

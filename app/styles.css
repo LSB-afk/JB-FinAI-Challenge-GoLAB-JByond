@@ -4771,3 +4771,46 @@ body {
   border-radius: 10px;
   padding: 12px;
 }
+
+/* =========================================================================
+ * M2 · 데이터 시각화 (SVG/CSS 차트)
+ * ========================================================================= */
+.viz-label { font-size: 11px; font-weight: 700; color: var(--muted); margin: 10px 0 6px; }
+.viz-label:first-child { margin-top: 0; }
+
+/* 도넛 */
+.donut-wrap { display: flex; align-items: center; gap: 14px; }
+.donut { width: 96px; height: 96px; flex: none; }
+.donut-pct { font-size: 22px; font-weight: 800; fill: var(--ink); }
+.donut-label { display: flex; flex-direction: column; }
+.donut-label strong { font-size: 14px; color: var(--ink); }
+.donut-label span { font-size: 12px; color: var(--muted); }
+
+/* 영역 차트 */
+.area-chart { width: 100%; height: auto; display: block; }
+.area-chart .chart-ax { font-size: 9px; fill: var(--muted); }
+.area-chart .chart-val { font-size: 9px; font-weight: 700; fill: var(--blue-700); }
+
+/* 위험도 히스토그램 */
+.histo { display: flex; align-items: flex-end; gap: 12px; height: 110px; padding: 4px 0; }
+.histo-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 3px; }
+.histo-count { font-size: 13px; font-weight: 800; color: var(--ink); }
+.histo-bar-wrap { width: 100%; flex: 1; display: flex; align-items: flex-end; }
+.histo-bar { display: block; width: 100%; border-radius: 5px 5px 0 0; min-height: 4px; }
+.histo-label { font-size: 10px; color: var(--muted); }
+
+/* 랭킹 바 */
+.rankbars { display: flex; flex-direction: column; gap: 8px; }
+.rankbar-row { display: grid; grid-template-columns: minmax(0,1.1fr) 1.4fr auto; gap: 10px; align-items: center; }
+.rankbar-row.is-clickable { cursor: pointer; padding: 3px 4px; margin: 0 -4px; border-radius: 6px; }
+.rankbar-row.is-clickable:hover { background: #f4f7fb; }
+.rankbar-meta { display: flex; flex-direction: column; min-width: 0; }
+.rankbar-meta strong { font-size: 12px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rankbar-meta span { font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rankbar-track { height: 9px; background: #eef2f8; border-radius: 999px; overflow: hidden; }
+.rankbar-track i { display: block; height: 100%; border-radius: 999px; min-width: 4px; }
+.rankbar-row em { font-size: 12px; font-weight: 800; color: var(--ink); font-style: normal; white-space: nowrap; }
+
+/* 비용 헤더 (도넛 + KPI) */
+.cost-head { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.cost-head .cost-kpis { flex: 1; min-width: 240px; }

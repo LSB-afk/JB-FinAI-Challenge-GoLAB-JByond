@@ -1977,10 +1977,13 @@ function dashboardCostView() {
   const expectedRate = data.budget ? Math.round((data.expected / data.budget) * 100) : 0;
   return `
     <div class="cost-summary">
-      <div class="cost-kpis">
-        ${costKpi("현재 사용", formatWon(data.spent), `${usedRate}% 사용`)}
-        ${costKpi("월말 예상", formatWon(data.expected), `${expectedRate}% 예상`)}
-        ${costKpi("절감 가능 위험", formatWon(data.avoidableLoss), `비용 대비 ${data.roi}배 효과`)}
+      <div class="cost-head">
+        ${svgDonut(data.spent, data.budget, { label: "예산 사용률", sub: `${formatWon(data.spent)} / ${formatWon(data.budget)}` })}
+        <div class="cost-kpis">
+          ${costKpi("현재 사용", formatWon(data.spent), `${usedRate}% 사용`)}
+          ${costKpi("월말 예상", formatWon(data.expected), `${expectedRate}% 예상`)}
+          ${costKpi("절감 가능 위험", formatWon(data.avoidableLoss), `비용 대비 ${data.roi}배 효과`)}
+        </div>
       </div>
       <p class="insight-copy">${escapeHtml(generateCostInsight(data))}</p>
       <div class="cost-bars" aria-label="항목별 비용 비중">
@@ -2028,18 +2031,9 @@ function costKpi(label, value, detail) {
 function dashboardTrendView() {
   const max = Math.max(...monthlyCostTrend.map(([, value]) => value));
   const latestTrend = monthlyCostTrend[monthlyCostTrend.length - 1];
+  const series = monthlyCostTrend.map(([month, value]) => ({ x: month, y: value, label: formatWon(value) }));
   return `
-    <div class="trend-chart" role="img" aria-label="월별 비용 추이">
-      ${monthlyCostTrend
-        .map(([month, value]) => `
-          <div class="trend-column">
-            <div class="trend-bar" style="height:${Math.max(18, Math.round((value / max) * 118))}px"></div>
-            <strong>${escapeHtml(formatWon(value))}</strong>
-            <span>${escapeHtml(month)}</span>
-          </div>
-        `)
-        .join("")}
-    </div>
+    ${svgArea(series, { w: 340, h: 130, aria: "월별 비용 추이" })}
     <p class="insight-copy">${escapeHtml(latestTrend[0])} 비용은 ${formatWon(latestTrend[1])}이며, 전세 위험 점검과 승인 로그 생성 비중이 증가했습니다.</p>
   `;
 }
@@ -2047,43 +2041,28 @@ function dashboardTrendView() {
 function dashboardRegionView() {
   const regions = buildDashboardData().regions.sort((a, b) => b.average - a.average);
   if (!regions.length) return '<div class="empty-state">표시할 지역 데이터 없음</div>';
+  const bars = rankingBars(regions.map((e) => ({
+    label: e.region,
+    sub: `${e.total}건 · 고위험 ${e.high} · 승인대기 ${e.pending}`,
+    value: e.average,
+  })));
   return `
-    <div class="region-table" role="table" aria-label="지역별 위험도 비교">
-      <div class="region-row region-head" role="row">
-        <span>지역</span><span>케이스</span><span>고위험</span><span>평균</span><span>승인 대기</span>
-      </div>
-      ${regions
-        .map((entry) => `
-          <div class="region-row" role="row">
-            <strong>${escapeHtml(entry.region)}</strong>
-            <span>${entry.total}건</span>
-            <span>${entry.high}건</span>
-            <span>${entry.average}점</span>
-            <span>${entry.pending}건</span>
-          </div>
-        `)
-        .join("")}
-    </div>
+    <div class="viz-label">위험도 점수 분포</div>
+    ${riskHistogram(visibleCases())}
+    <div class="viz-label">지역별 평균 위험도</div>
+    ${bars}
   `;
 }
 
 function dashboardRankingView() {
   const ranked = visibleCases().slice().sort((a, b) => b.riskScore - a.riskScore).slice(0, 5);
   if (!ranked.length) return '<div class="empty-state">표시할 우선순위 없음</div>';
-  return `
-    <div class="ranking-list">
-      ${ranked
-        .map((item, index) => `
-          <button class="ranking-row" type="button" data-case-id="${escapeHtml(item.id)}">
-            <span>${index + 1}</span>
-            <strong>${escapeHtml(item.code)} · ${escapeHtml(item.customerName)}</strong>
-            <small>${escapeHtml(item.primaryPain)}</small>
-            <em>${item.riskScore}점</em>
-          </button>
-        `)
-        .join("")}
-    </div>
-  `;
+  return rankingBars(ranked.map((item) => ({
+    label: `${item.code} · ${item.customerName}`,
+    sub: item.primaryPain,
+    value: item.riskScore,
+    caseId: item.id,
+  })));
 }
 
 function dispatchResultMarkup() {
