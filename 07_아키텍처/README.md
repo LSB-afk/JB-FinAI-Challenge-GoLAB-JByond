@@ -264,6 +264,30 @@ flowchart LR
   Send --> Audit
 ```
 
+## 데이터 거버넌스 아키텍처 (PII 비반출 — 최대 차별점)
+
+외부 LLM을 쓰되 고객 원본 PII는 외부로 나가지 않는 4중 방어 관문. 모든 외부 LLM·플러그인 조회는 이 게이트를 통과한다.
+
+```mermaid
+flowchart LR
+  Case["Case 필드"] --> Tier{"① 데이터 등급제<br/>public/internal/confidential/restricted(PII)"}
+  Tier -->|restricted PII| Token["② 토큰화/가명처리"]
+  Tier -->|public/비식별| Pass["원문 통과"]
+  Token --> Vault[("국내 PII 볼트<br/>토큰↔원본 매핑")]
+  Token --> Route{"③ 모델 라우팅"}
+  Pass --> Route
+  Route -->|원본 PII 필요| OnPrem["국내·온프레 모델"]
+  Route -->|비식별 요약·분류| Ext["외부 프런티어 LLM<br/>(토큰 입력만)"]
+  OnPrem --> Scan{"④ 외부 반출 스캔<br/>주민번호/계좌/전화 패턴 + 토큰 검증"}
+  Ext --> Scan
+  Scan -->|통과| Result["판단/초안 결과"]
+  Scan -->|차단| Block["반출 차단 + 경보"]
+  Result --> Audit["감사 원장(무결성 해시)<br/>접근·전송·재식별 기록"]
+  Block --> Audit
+```
+
+**법적 근거(검증)**: 은행은 **신용정보법 §40조의2**(특별법 우선, §3조의2)로 분리보관·재식별 금지, **개인정보보호법 §28조의4(안전조치)·§28조의5(재식별 금지)** 보충. 환경: **전자금융감독규정 §15조①(망분리)**, 금융위 **망분리 개선 로드맵(2024-08-13, 다층보안체계·생성형 AI 클라우드 허용)**, 금융보안원 **클라우드 가이드(2025)**. 상세: [`docs/05_evidence/legal-citation-verification.md`](../docs/05_evidence/legal-citation-verification.md) · [`docs/02_product/element-specs/07-data-governance-pii.md`](../docs/02_product/element-specs/07-data-governance-pii.md)
+
 ## 구현 추적성
 
 | 화면/기능 | 구현 위치 | 아키텍처 노드 |
