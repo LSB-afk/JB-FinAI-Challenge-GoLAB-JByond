@@ -2263,6 +2263,13 @@ function runsView() {
 
 function jeonseView() {
   const jeonseCase = cases.find((item) => item.pains.includes("jeonse-fraud"));
+  if (!jeonseCase) {
+    return `
+      <div class="empty-state">
+        <p>전세사기 위험 케이스가 없습니다. 케이스를 등록한 뒤 다시 시도하세요.</p>
+      </div>
+    `;
+  }
   return `
     <div class="jeonse-summary">
       <article class="work-item featured is-clickable ${jeonseCase.id === selectedCaseId && activeDetailType === "case" ? "is-selected" : ""}" data-case-id="${escapeHtml(jeonseCase.id)}" role="button" tabindex="0">
@@ -3294,6 +3301,10 @@ function renderAudit() {
   const item = currentCase();
   const auditLog = document.getElementById("audit-log");
   if (!auditLog) return;
+  if (!item) {
+    auditLog.innerHTML = `<div class="empty-state"><p>선택된 케이스가 없어 감사 로그를 표시할 수 없습니다.</p></div>`;
+    return;
+  }
   const records = auditChainRecords(item);
   auditLog.innerHTML = `
     <div class="audit-toolbar">
@@ -3341,12 +3352,14 @@ function simpleHash(value) {
 }
 
 function auditChainRecords(item) {
+  if (!item) return [];
   let previousHash = "GENESIS";
+  const evidenceIds = item.evidenceIds || [];
   return (item.audit || []).map((entry, index) => {
     const time = Array.isArray(entry) ? entry[0] : entry.time;
     const action = Array.isArray(entry) ? entry[1] : entry.action;
     const actor = Array.isArray(entry) ? inferAuditActor(action) : entry.actor;
-    const evidenceId = Array.isArray(entry) ? item.evidenceIds[index % Math.max(1, item.evidenceIds.length)] || "internal-event" : entry.evidenceId;
+    const evidenceId = Array.isArray(entry) ? evidenceIds[index % Math.max(1, evidenceIds.length)] || "internal-event" : entry.evidenceId;
     const payload = JSON.stringify({ seq: index + 1, time, actor, action, target: item.code, evidenceId, previousHash });
     const hash = simpleHash(payload);
     const record = { seq: index + 1, time, actor, action, target: item.code, evidenceId, previousHash, hash };
@@ -3456,7 +3469,7 @@ function buildDashboardData() {
   const scoped = visibleCases();
   const highRisk = scoped.filter((item) => item.riskScore >= 85);
   const jeonseRisk = scoped.filter((item) => item.pains.includes("jeonse-fraud"));
-  const blocked = scoped.filter((item) => item.status === "Escalated" || item.gates.some((gate) => gate[1] === "blocked"));
+  const blocked = scoped.filter((item) => item.status === "Escalated" || (item.gates || []).some((gate) => gate[1] === "blocked"));
   const pending = scoped.filter((item) => item.status === "Approval Pending");
   const userInput = scoped.filter((item) => caseDataSource(item) === "사용자 입력 데이터");
   const demoData = scoped.filter((item) => caseDataSource(item) === "데모 데이터");
