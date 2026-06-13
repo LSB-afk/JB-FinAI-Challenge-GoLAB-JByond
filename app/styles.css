@@ -4814,3 +4814,16 @@ body {
 /* 비용 헤더 (도넛 + KPI) */
 .cost-head { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
 .cost-head .cost-kpis { flex: 1; min-width: 240px; }
+
+/* M4 · 페이지 직관성: 보조 정보 접기 */
+.panel-more { margin-top: 0; }
+.panel-more > summary {
+  cursor: pointer; font-size: 12px; font-weight: 700; color: var(--muted);
+  padding: 8px 10px; border: 1px dashed #d3deeb; border-radius: 8px; background: #fafcfe;
+  list-style: none; user-select: none;
+}
+.panel-more > summary::-webkit-details-marker { display: none; }
+.panel-more > summary::before { content: "▸ "; color: var(--blue-700); }
+.panel-more[open] > summary::before { content: "▾ "; }
+.panel-more[open] > summary { margin-bottom: 8px; }
+.panel-more .panel { margin-bottom: 8px; }

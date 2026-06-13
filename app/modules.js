@@ -128,7 +128,7 @@ function governancePanelMarkup(caseItem) {
     <td class="gov-note">${escapeHtml(r.note)}</td></tr>`).join("");
   const lawChips = g.laws.map((l) => `<span class="tag gov-law">${escapeHtml(l)}</span>`).join("");
   return `
-  <section class="panel gov-panel">
+  <section class="panel gov-panel panel-primary">
     <div class="panel-head"><h3>데이터 거버넌스 적용</h3><span class="status-badge gov-ok">PII 보호 활성</span></div>
     <div class="gov-block">
       <div class="gov-label">① PII 토큰화 (외부 모델 전송 전)</div>
