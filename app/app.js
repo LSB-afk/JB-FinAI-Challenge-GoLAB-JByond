@@ -4241,7 +4241,7 @@ function moveCaseToColumn(caseId, column) {
   selectedCaseId = item.id;
   activeDetailType = "case";
   // 보드 처리 훅: 승인 대기로 이동 시 산출물 생성 트리거 (04 board-hook)
-  if (column === "pending_approval" && typeof generateDeliverables === "function" && deliverableRegistry[item.id]) {
+  if (nextStatus === "Approval Pending" && typeof generateDeliverables === "function" && deliverableRegistry[item.id]) {
     generateDeliverables(item.id);
     item.audit.push([timestamp(), "보드 훅: 산출물 생성 및 승인 게이트 활성화."]);
   }

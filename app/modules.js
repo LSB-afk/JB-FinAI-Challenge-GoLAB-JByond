@@ -654,8 +654,25 @@ function bindModuleActions() {
     const slug = ta && ta.dataset.slug;
     if (ta && slug && skillContent[slug]) { skillContent[slug].body = ta.value; }
     else if (ta && slug) { skillContent[slug] = { body: ta.value, sources: [] }; }
+    persistSkillContent();
     skillEditMode = false;
     if (window.notify) notify("스킬 본문이 저장되었습니다.");
     if (window.render) render();
   });
 }
+
+/* 스킬 콘텐츠 편집 영속화 (localStorage) — 02-skill-content-engine 스펙 */
+const skillContentStorageKey = "jb-localguard-skill-content-v1";
+function persistSkillContent() {
+  try { localStorage.setItem(skillContentStorageKey, JSON.stringify(skillContent)); }
+  catch (e) { console.warn("skillContent 저장 실패", e); }
+}
+function restoreSkillContent() {
+  try {
+    const raw = localStorage.getItem(skillContentStorageKey);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    Object.keys(saved || {}).forEach((slug) => { skillContent[slug] = saved[slug]; });
+  } catch (e) { console.warn("skillContent 복원 실패", e); }
+}
+restoreSkillContent();
