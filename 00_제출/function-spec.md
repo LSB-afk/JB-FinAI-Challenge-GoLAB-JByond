@@ -1,13 +1,15 @@
 # JB LocalGuard OS — 기능명세서
 
-> JB금융그룹 Fin:AI Challenge · 자유주제 · 제출물 ②(필수) · 공식 6파트 · 본문 3페이지 권장(부록 별도)
-> 사실/수치 단일 출처: [`docs/_canon.md`](../_canon.md) · MVP 제안서와 동기화
+> JB금융그룹 Fin:AI Challenge · 자유주제 · 제출물 ②(필수) · 공식 6파트(+변경이력) · 본문 3페이지 권장(부록 별도)
+> 사실/수치 단일 출처: [`_canon.md`](../_canon.md) · MVP 제안서와 동기화
 
 ---
 
 ## 1. 서비스 개요 (Service)
 
 **JB LocalGuard OS**는 지역 금융 고객의 위험 신호를 `Case`로 모아, 14종 전문 AI Agent가 스킬을 장착해 **판단·행동 초안·검증**을 수행하고, 고객 대상 행동은 사람 승인 전까지 차단하는 **금융 AI Agent 운영 콘솔**이다.
+
+![운영 루프](../02_제품/자산/diagrams/system-loop.png)
 
 | 항목 | 내용 |
 | --- | --- |
@@ -16,6 +18,7 @@
 | 운영 계약 | `Case → AgentRun → Agent → Skill → Evidence → Approval → Audit` |
 | 핵심 원칙 | 승인 우선 자동화(완전 자동 발송 금지), 근거·감사 일급 객체, **PII 외부 비반출** |
 | 골든 패스 | `?demo=sme`(전주 카페), `?demo=jeonse`(전세), `?demo=phishing`(사기) |
+| 규모 | 에이전트 14 · 스킬 25 · 플러그인/MCP 6 · 화면 15 · E2E 19 |
 
 ---
 
@@ -39,7 +42,7 @@ flowchart LR
 ```
 
 - **4-zone UI**: Sidebar(내비) / Topbar(지시·검색) / Workbench(대시보드·케이스·승인·전세·플러그인 등) / Properties(케이스·근거·감사 맥락).
-- **거버넌스 게이트**는 모든 외부 LLM·플러그인 조회의 관문(차별점). 상세: `07_아키텍처/`, `docs/02_product/element-specs/07-data-governance-pii.md`.
+- **거버넌스 게이트**는 모든 외부 LLM·플러그인 조회의 관문(차별점). 상세: [`04_아키텍처/`](../04_아키텍처/README.md), [`02_제품/element-specs/07-data-governance-pii.md`](../02_제품/element-specs/07-data-governance-pii.md).
 - **구현 추적성**: 화면/기능 ↔ `app.js` 함수 ↔ 아키텍처 노드 1:1 매핑(부록 B).
 
 ---
@@ -79,6 +82,10 @@ flowchart TD
   K --> L["Properties/Activity 갱신 + 사후관리 큐"]
 ```
 
+외부 LLM 호출 구간의 PII 비반출 4중 방어:
+
+![데이터 거버넌스 4중 방어](../02_제품/자산/diagrams/governance-4defense.png)
+
 판단→행동→검증→(승인)→감사→후속의 **운영 루프**가 정적 분석 보고서가 아니라 실제 상태 변화로 재현된다(심사 3.1/4.2).
 
 ---
@@ -105,13 +112,25 @@ flowchart TD
 | HyperCLOVA X | 네이버클라우드 | 국내·온프레 라우팅 | 확인 필요 | — |
 | Playwright / python-pptx | OSS | 테스트/데크 | Apache-2.0 / MIT | — |
 
-> 전체 표·출처·미검증 항목: [`docs/01_research/data-api-license-inventory.md`](../05_리서치/data-api-license-inventory.md)
+> 전체 표·출처·미검증 항목: [`05_리서치/data-api-license-inventory.md`](../05_리서치/data-api-license-inventory.md)
 
 ### B. 구현 추적성 (화면 ↔ 함수 ↔ 노드)
-대시보드↔`renderDashboardView`, 케이스보드↔`moveCaseToColumn`, 승인↔`approveCase`/`rejectCase`, AgentRun↔`dispatchCommand`/`startAgentRun`, 전세↔`renderJeonseView`, 거버넌스↔`modules.js` governance. 상세: `07_아키텍처/README.md`.
+대시보드↔`renderDashboardView`, 케이스보드↔`moveCaseToColumn`, 승인↔`approveCase`/`rejectCase`, AgentRun↔`dispatchCommand`/`startAgentRun`, 전세↔`renderJeonseView`, 거버넌스↔`modules.js` governance. 상세: [`04_아키텍처/README.md`](../04_아키텍처/README.md).
 
 ### C. 용어집
 Case(작업 단위)·AgentRun(실행 기록)·Skill(장착 처리능력)·Evidence(근거·출처)·Approval Gate(사람 승인 단계)·Audit Ledger(무결성 감사 원장)·데이터 등급제/토큰화/모델 라우팅/반출 스캔(거버넌스 4중 방어).
 
 ### D. 검증 방법
-`python3 scripts/verify_static.py`, `node --check app/*.js`, Playwright e2e 19종, 골든 패스 3종 데모.
+`python3 02_제품/scripts/verify_static.py`, `node --check 02_제품/app/app.js`, Playwright E2E 19종, 골든 패스 3종 데모.
+
+---
+
+## 7. 기능 변경이력 (Change Log)
+
+예선 제출 시점 기준. 본선 단계에서 추가·수정·삭제가 발생하면 아래 형식으로 기록한다.
+
+| 버전 | 일자 | 구분 | 내용 |
+| --- | --- | --- | --- |
+| v0.1 (예선) | 2026-06-14 | 신규 | 정적 MVP — 14 에이전트·25 스킬·15 화면·골든 패스 3종·PII 비반출 거버넌스·감사 원장 |
+| (예정) 본선 | — | 추가 | 공공 데이터 API 연동, 온프레/외부 모델 라우팅 실연동, 백엔드 API 승격 |
+| (예정) 본선 | — | 추가 | RAG 근거 연결, 위험 점수 산식 고도화, 실행 실패 복구(재시도·SLA 상위보고) |
