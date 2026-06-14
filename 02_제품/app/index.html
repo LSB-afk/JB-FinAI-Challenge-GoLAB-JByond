@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JB LocalGuard OS</title>
+    <link rel="stylesheet" href="./styles.css?v=github-sync-20260614" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="org-rail" aria-label="organization rail">
+        <div class="rail-logo">JB</div>
+        <button class="rail-item" type="button" title="전북은행 케이스만 보기" data-affiliate="전북은행">전북</button>
+        <button class="rail-item" type="button" title="광주은행 케이스만 보기" data-affiliate="광주은행">광주</button>
+        <button class="rail-item" type="button" title="JB우리캐피탈 케이스만 보기" data-affiliate="JB우리캐피탈">캐피탈</button>
+        <div class="rail-spacer"></div>
+        <button id="rail-notify" class="rail-icon" type="button" title="알림: 처리 대기·긴급 케이스 보기">!</button>
+        <button id="rail-settings" class="rail-icon" type="button" title="설정">⚙</button>
+      </aside>
+
+      <aside class="sidebar" aria-label="main navigation">
+        <div class="sidebar-brand">
+          <p class="eyebrow">JB 금융 AI 운영 모델</p>
+          <h1>JB LocalGuard OS</h1>
+          <span>JB 금융안전 에이전트 운영 콘솔</span>
+        </div>
+
+        <button id="new-case-button" class="new-case-button" type="button">
+          <span aria-hidden="true">＋</span>
+          금융 위험 케이스 등록
+        </button>
+
+        <label class="sidebar-search">
+          <span>⌘K</span>
+          <input id="sidebar-search" type="search" placeholder="케이스, 에이전트, 스킬 검색" />
+        </label>
+
+        <nav id="nav-list" class="nav-list" aria-label="workspace pages"></nav>
+
+        <div class="sidebar-footer">
+          <div>
+            <strong id="system-health">정상</strong>
+            <span>상태 확인 38초 전 · 데모 런타임</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-surface">
+        <div id="page-content" class="page-content"></div>
+      </main>
+
+      <button id="properties-toggle" class="properties-toggle" type="button" aria-controls="context-panel" aria-expanded="true">
+        상세 패널 닫기
+      </button>
+
+      <aside class="properties-panel" aria-label="properties panel">
+        <div id="context-panel" class="context-panel"></div>
+      </aside>
+    </div>
+    <div id="modal-root"></div>
+    <div id="deliverable-root"></div>
+    <div id="toast-root" aria-live="polite"></div>
+    <script src="./modules.js?v=github-sync-20260614"></script>
+    <script src="./app.js?v=github-sync-20260614"></script>
+  </body>
+</html>

@@ -53,11 +53,11 @@ Case -> AgentRun -> Agent -> Skill -> Evidence -> Approval -> Audit
 
 ## 연결 문서
 
-- [Agent 시스템](../docs/03_agents/agent-system.md)
-- [Skill Registry](../docs/03_agents/skill-registry.md)
-- [기능 명세](../docs/02_product/function-spec.md)
-- [아키텍처 다이어그램](../07_아키텍처/README.md)
-- [LLM 운영 위키](../06_LLM위키/README.md)
+- [Agent 시스템](../03_에이전트/agent-system.md)
+- [Skill Registry](../03_에이전트/skill-registry.md)
+- [기능 명세](../02_제품/function-spec.md)
+- [아키텍처 다이어그램](../04_아키텍처/README.md)
+- [LLM 운영 위키](../03_에이전트/README.md)
 
 ## 다음 보강 방향
 

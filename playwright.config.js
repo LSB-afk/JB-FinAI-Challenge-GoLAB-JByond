@@ -1,7 +1,7 @@
 const { defineConfig, devices } = require("@playwright/test");
 
 module.exports = defineConfig({
-  testDir: "./tests/e2e",
+  testDir: "./02_제품/tests/e2e",
   outputDir: "./test-results/playwright",
   timeout: 30_000,
   expect: {
@@ -13,7 +13,7 @@ module.exports = defineConfig({
     screenshot: "only-on-failure",
   },
   webServer: {
-    command: "python3 -m http.server 8010 --directory app",
+    command: "python3 -m http.server 8010 --directory 02_제품/app",
     url: "http://127.0.0.1:8010/index.html",
     reuseExistingServer: !process.env.CI,
     timeout: 10_000,

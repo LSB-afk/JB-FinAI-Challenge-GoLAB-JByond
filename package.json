@@ -4,9 +4,9 @@
   "private": true,
   "description": "JB LocalGuard OS static MVP and Playwright verification suite.",
   "scripts": {
-    "dev": "python3 -m http.server 8000 --directory app",
-    "build": "python3 scripts/verify_static.py",
-    "test": "python3 scripts/verify_static.py",
+    "dev": "python3 -m http.server 8000 --directory 02_제품/app",
+    "build": "python3 02_제품/scripts/verify_static.py",
+    "test": "python3 02_제품/scripts/verify_static.py",
     "test:e2e": "playwright test"
   },
   "devDependencies": {
