@@ -1,4 +1,6 @@
-# Function Specification
+# Function Specification (내부 상세 · 참고용)
+
+> ⚠️ 제출용 **기능명세서 최종본은 [`docs/04_submission/function-spec.md`](../04_submission/function-spec.md)** (공식 6파트)입니다. 이 문서는 화면/데이터 모델 내부 상세 참고용이며, 동일 파일명이지만 제출본이 아닙니다.
 
 Product: JB LocalGuard OS  
 MVP type: static browser console

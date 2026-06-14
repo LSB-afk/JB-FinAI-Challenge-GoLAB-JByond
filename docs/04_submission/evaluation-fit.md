@@ -1,8 +1,10 @@
-# Evaluation Fit
+# Evaluation Fit  ⚠️ DEPRECATED
+
+> 이 문서는 옛 영문 초안입니다. **제출/심사에 사용하지 마세요.** 최종 평가항목 대응은 [`mvp-proposal.md` 부록 A](./mvp-proposal.md) 및 [`05_제출/02-제출-패키지-체크리스트.md`](../../05_제출/02-제출-패키지-체크리스트.md)의 25항목 매핑을 사용합니다.
 
 ## 1. Topic Fit and Problem Definition
 
-The submission uses the free topic and defines a JB-linked problem: local small-business financial safety operations. It is not an academy operations product. It only adapts the agent operating system pattern from the reference repository.
+The submission uses the free topic and defines a JB-linked problem: local small-business financial safety operations.
 
 ## 2. Finance and Business Linkage
 

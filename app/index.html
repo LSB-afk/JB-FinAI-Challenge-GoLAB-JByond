@@ -14,8 +14,8 @@
         <button class="rail-item" type="button" title="광주은행 케이스만 보기" data-affiliate="광주은행">광주</button>
         <button class="rail-item" type="button" title="JB우리캐피탈 케이스만 보기" data-affiliate="JB우리캐피탈">캐피탈</button>
         <div class="rail-spacer"></div>
-        <button class="rail-icon" type="button" title="알림">!</button>
-        <button class="rail-icon" type="button" title="설정">⚙</button>
+        <button id="rail-notify" class="rail-icon" type="button" title="알림: 처리 대기·긴급 케이스 보기">!</button>
+        <button id="rail-settings" class="rail-icon" type="button" title="설정">⚙</button>
       </aside>
 
       <aside class="sidebar" aria-label="main navigation">
@@ -58,7 +58,9 @@
       </aside>
     </div>
     <div id="modal-root"></div>
+    <div id="deliverable-root"></div>
     <div id="toast-root" aria-live="polite"></div>
+    <script src="./modules.js?v=upgrade-20260614"></script>
     <script src="./app.js?v=dashboard-pack-20260613"></script>
   </body>
 </html>

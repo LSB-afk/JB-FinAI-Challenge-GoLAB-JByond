@@ -1,4 +1,6 @@
-# MVP Proposal Draft
+# MVP Proposal Draft  ⚠️ DEPRECATED
+
+> 이 문서는 옛 영문 초안입니다. **제출/심사에 사용하지 마세요.** 최종 제출본은 공식 7섹션 한국어 [`mvp-proposal.md`](./mvp-proposal.md)이며, 에이전트 표시명·KPI·통계는 [`docs/_canon.md`](../_canon.md)를 따릅니다.
 
 ## 1. Service Name
 

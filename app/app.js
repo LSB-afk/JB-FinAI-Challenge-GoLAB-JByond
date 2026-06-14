@@ -23,6 +23,7 @@ const navigation = [
     section: "시스템 관리",
     items: [
       { id: "skills", icon: "puzzle", label: "스킬", description: "기능 묶음", countKey: "skills" },
+      { id: "plugins", icon: "database", label: "플러그인", description: "법령·정책·뉴스·DB", countKey: "plugins" },
       { id: "activity", icon: "history", label: "활동 이력", description: "처리 기록", countKey: "activity" },
       { id: "budget", icon: "wallet", label: "비용", description: "예산 사용률", countKey: "budget" },
       { id: "settings", icon: "settings", label: "설정", description: "운영 정책", countKey: "settings" },
@@ -74,7 +75,7 @@ const evidence = [
     source: "금융위원회",
     url: "https://www.fsc.go.kr/no010101/86063",
     implication:
-      "딥페이크와 음성변조 등 AI 악용 사기에 대해 사기 차단 에이전트가 외부 경보를 연결해야 한다.",
+      "딥페이크와 음성변조 등 AI 악용 사기에 대해 이상거래 탐지·차단 에이전트가 외부 경보를 연결해야 한다.",
   },
   {
     id: "digital-gap",
@@ -433,7 +434,7 @@ const initialCases = [
     riskScore: 88,
     status: "Approval Pending",
     priority: "urgent",
-    zeroHuman: "L2 초안 + 편집 후 발송",
+    zeroHuman: "초안 작성 + 편집 후 발송",
     sla: "2h",
     owner: "Cashflow Triage Agent",
     stage: "pending_approval",
@@ -473,7 +474,7 @@ const initialCases = [
     riskScore: 72,
     status: "New",
     priority: "high",
-    zeroHuman: "L1 초안 + 원클릭 승인",
+    zeroHuman: "초안 작성 + 원클릭 승인",
     sla: "1d",
     owner: "Policy Match Agent",
     stage: "todo",
@@ -508,7 +509,7 @@ const initialCases = [
     riskScore: 94,
     status: "Escalated",
     priority: "critical",
-    zeroHuman: "L4 정보 제공만",
+    zeroHuman: "정보 제공만",
     sla: "30m",
     owner: "Fraud Shield Agent",
     stage: "blocked",
@@ -527,7 +528,7 @@ const initialCases = [
     ],
     agents: ["fraud", "compliance", "orchestrator"],
     transcript: [
-      "사기 차단 에이전트: 긴급 송금 요청과 콜백 URL이 결합되어 고위험입니다.",
+      "이상거래 탐지·차단 에이전트: 긴급 송금 요청과 콜백 URL이 결합되어 고위험입니다.",
       "로컬가드 오케스트레이터: 외부 고객 접촉은 차단하고 내부 상위 검토만 허용합니다.",
     ],
     audit: [
@@ -546,7 +547,7 @@ const initialCases = [
     riskScore: 67,
     status: "Agent Running",
     priority: "medium",
-    zeroHuman: "L1 초안 + 원클릭 승인",
+    zeroHuman: "초안 작성 + 원클릭 승인",
     sla: "1d",
     owner: "Pain Radar Agent",
     stage: "in_progress",
@@ -579,7 +580,7 @@ const initialCases = [
     riskScore: 91,
     status: "Approval Pending",
     priority: "critical",
-    zeroHuman: "L3 분석 + 사람 결정",
+    zeroHuman: "분석 + 사람 결정",
     sla: "오늘 18:00",
     owner: "Jeonse Shield Lead",
     stage: "pending_approval",
@@ -624,7 +625,7 @@ const goals = [
   ["Triage time", "RM이 원인과 다음 행동을 파악하는 시간을 50% 단축", 64],
   ["Evidence traceability", "에이전트 판단 100%에 근거 링크 또는 내부 이벤트 연결", 91],
   ["Approval safety", "고객 대상 행동 100% 승인 게이트 통과", 100],
-  ["Fraud block", "고위험 사기 케이스 외부 발송 차단", 100],
+  ["Followup care", "사후관리 누락 0건 · 후속 태스크 자동 등록 (고위험 사기 외부 발송도 자동 차단)", 100],
   ["Jeonse safe-contract", "전세 위험 케이스 100%에 권리관계/보증보험/은행 연계 체크리스트 연결", 86],
 ];
 
@@ -702,7 +703,7 @@ const demoProfiles = {
     view: "inbox",
     title: "GP-2 보이스피싱 차단",
     currentStep: 3,
-    steps: ["알림 수신", "케이스 전환", "사기 신호 분석", "L4 자동 차단 제안", "사람 승인/반려", "차단 결과", "감사 기록"],
+    steps: ["알림 수신", "케이스 전환", "사기 신호 분석", "자동 차단 제안", "사람 승인/반려", "차단 결과", "감사 기록"],
     value: "고객 대상 외부 발송을 차단하고 보안팀 검토 근거를 남깁니다.",
     action: "승인 큐에서 차단 승인",
   },
@@ -797,18 +798,18 @@ const statusLabels = {
 };
 
 const agentNameLabels = {
-  "LocalGuard Orchestrator": "로컬가드 오케스트레이터",
-  "Pain Radar Agent": "위험 신호 탐지 에이전트",
-  "Cashflow Triage Agent": "상환 위험 분류 에이전트",
+  "LocalGuard Orchestrator": "운영 조율 에이전트",
+  "Pain Radar Agent": "위험신호 조기감지 에이전트",
+  "Cashflow Triage Agent": "상환위험 분류 에이전트",
   "Policy Match Agent": "정책금융 매칭 에이전트",
-  "Fraud Shield Agent": "사기 차단 에이전트",
-  "RM Copilot Agent": "RM 코파일럿 에이전트",
+  "Fraud Shield Agent": "이상거래 탐지·차단 에이전트",
+  "RM Copilot Agent": "RM 보좌 에이전트",
   "Compliance Guard Agent": "준법 검토 에이전트",
   "Analytics Agent": "포트폴리오 분석 에이전트",
-  "Jeonse Shield Lead": "전세 보호 리드 에이전트",
+  "Jeonse Shield Lead": "전세위험 관리 리드",
   "Deposit Ratio Agent": "전세가율 분석 에이전트",
   "Registry Rights Agent": "등기 권리 분석 에이전트",
-  "Tenant Asset Risk Agent": "임차인 자산위험 에이전트",
+  "Tenant Asset Risk Agent": "임차인 손실위험 에이전트",
   "Contract Checklist Agent": "계약 체크리스트 에이전트",
   "Bank Linkage Agent": "은행 연계 에이전트",
   "Human RM Lead": "RM 최종 승인자",
@@ -1029,8 +1030,8 @@ function localizeLine(text) {
     "Approval request created for RM callback draft.": "RM 콜백 초안에 대한 승인 요청을 생성했습니다.",
     "Policy match case created from branch request.": "영업점 요청에서 정책금융 매칭 케이스를 생성했습니다.",
     "Suspicious callback report converted to high-risk fraud case.": "의심 콜백 제보를 고위험 사기 케이스로 전환했습니다.",
-    "Fraud Shield blocked customer-facing action.": "사기 차단 에이전트가 고객 대상 행동을 차단했습니다.",
-    "Case assigned to Pain Radar Agent.": "위험 신호 탐지 에이전트에 케이스를 배정했습니다.",
+    "Fraud Shield blocked customer-facing action.": "이상거래 탐지·차단 에이전트가 고객 대상 행동을 차단했습니다.",
+    "Case assigned to Pain Radar Agent.": "위험신호 조기감지 에이전트에 케이스를 배정했습니다.",
     "Jeonse Shield case opened from pre-contract customer 상담.": "계약 전 고객 상담에서 전세 보호 케이스를 열었습니다.",
     "Deposit Ratio and Registry Rights Agents assigned.": "전세가율 분석과 등기 권리 분석 에이전트를 배정했습니다.",
     "Approval request created for safe-contract guide and bank 상담 연결.": "안전 계약 가이드와 은행 상담 연결 승인 요청을 생성했습니다.",
@@ -1042,7 +1043,7 @@ function localizeLine(text) {
     "Triage time": "분류 시간 단축",
     "Evidence traceability": "근거 추적성",
     "Approval safety": "승인 안전성",
-    "Fraud block": "사기 차단",
+    "Followup care": "사후관리 완결성",
     "Jeonse safe-contract": "전세 안전계약",
   };
   if (exact[value]) return exact[value];
@@ -1205,6 +1206,7 @@ function counts() {
     agents: agents.length,
     orgchart: agents.length,
     skills: skillRack.length,
+    plugins: (typeof pluginRegistry !== "undefined" ? pluginRegistry.length : 0),
     routines: routines.filter((item) => item[3] === "enabled").length,
     goals: goals.length,
     activity: activity.length,
@@ -1470,6 +1472,8 @@ function renderWorkbench() {
     activity: activityPage,
     budget: budgetPage,
     settings: settingsPage,
+    plugins: pluginsPage,
+    "case-detail": () => caseDetailPage(currentCase()),
   };
 
   pageContent.className = `page-content view-${activeView}`;
@@ -1639,22 +1643,22 @@ function dashboardPage() {
     ${commandMarkup()}
     ${dispatchResultMarkup()}
     <section id="metric-grid" class="metric-grid" aria-label="metrics"></section>
-    ${panelMarkup("의사결정 요약", "오늘 우선 처리 기준", dashboardDecisionView(), "decision-panel")}
+    ${panelMarkup("의사결정 요약", "오늘 우선 처리 기준", dashboardDecisionView(), "decision-panel panel-primary")}
     <section class="dashboard-grid">
       <div class="dashboard-column">
         ${panelMarkup("실시간 실행", "실시간 실행", '<div id="live-runs" class="live-runs"></div><span id="live-count" class="count-pill ghost-count">0</span>', "live-panel")}
+        ${panelMarkup("위험도·지역 분포", "지역별 위험도", dashboardRegionView(), "region-panel")}
         ${panelMarkup("처리 흐름", "처리 흐름 상태", dashboardView(), "process-panel")}
-        ${panelMarkup("데이터 신뢰도", "샘플·실제·오류 상태", dataReliabilityView(), "data-reliability-panel")}
-        ${panelMarkup("추세", "월별 비용 추이", dashboardTrendView(), "trend-panel")}
         ${panelMarkup("우선순위", "위험도 순위", dashboardRankingView(), "ranking-panel")}
-        ${panelMarkup("활동 이력", "최근 처리 이력", activityView(), "activity-panel")}
+        ${panelMarkup("활동 이력", "최근 처리 이력", activityView(), "activity-panel panel-secondary")}
       </div>
       <div class="dashboard-column">
-        ${panelMarkup("서비스 사이클", "완료된 사용자 가치", scenarioCompletionView(), "scenario-panel")}
-        ${panelMarkup("데이터 상태", "데이터 출처와 저장 상태", dataStatusView(), "data-panel")}
         ${panelMarkup("비용과 효과", "운영 비용 해석", dashboardCostView(), "cost-panel")}
-        ${panelMarkup("지역 비교", "지역별 위험도", dashboardRegionView(), "region-panel")}
-        ${panelMarkup("최근 케이스", "최근 케이스", recentCasesView(), "recent-panel")}
+        ${panelMarkup("서비스 사이클", "완료된 사용자 가치", scenarioCompletionView(), "scenario-panel")}
+        ${panelMarkup("추세", "월별 비용 추이", dashboardTrendView(), "trend-panel")}
+        ${panelMarkup("데이터 신뢰도", "샘플·실제·오류 상태", dataReliabilityView(), "data-reliability-panel panel-secondary")}
+        ${panelMarkup("데이터 상태", "데이터 출처와 저장 상태", dataStatusView(), "data-panel panel-secondary")}
+        ${panelMarkup("최근 케이스", "최근 케이스", recentCasesView(), "recent-panel panel-secondary")}
       </div>
     </section>
   `;
@@ -1726,11 +1730,36 @@ function goalsPage() {
   `;
 }
 
+function healthStat(label, value, kind) {
+  return `<div class="health-stat health-${kind}"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`;
+}
+
+function agentHealthView() {
+  const running = agents.filter((a) => a.status === "running").length;
+  const pending = agents.filter((a) => a.status === "pending_approval").length;
+  const idle = agents.filter((a) => a.status === "idle").length;
+  const totalQueue = agents.reduce((s, a) => s + (a.queue || 0), 0);
+  const spent = agents.reduce((s, a) => s + (a.spent || 0), 0);
+  const budget = agents.reduce((s, a) => s + (a.budget || 0), 0);
+  const donut = typeof svgDonut === "function" ? svgDonut(spent, budget, { label: "예산 사용률", sub: `${formatWon(spent)} / ${formatWon(budget)}` }) : "";
+  return `
+    <div class="agent-health">
+      <div class="health-stats">
+        ${healthStat("실행 중", `${running}개`, "running")}
+        ${healthStat("승인 대기", `${pending}개`, "pending")}
+        ${healthStat("유휴", `${idle}개`, "idle")}
+        ${healthStat("대기 큐", `${totalQueue}건`, "queue")}
+      </div>
+      ${donut}
+    </div>`;
+}
+
 function agentsPage() {
   return `
     ${pageHeader("에이전트", "에이전트 팀", "각 AI 에이전트의 상태, 역할, 장착 스킬, 보고 체계를 확인합니다.")}
+    ${panelMarkup("운영 현황", "에이전트 헬스 요약", agentHealthView(), "agent-health-panel panel-primary")}
     ${panelMarkup("에이전트 팀", "업무 범주별 에이전트 팀", agentsView(), "agent-team-panel")}
-    ${panelMarkup("보완 필요 사항", "현재 부족한 부분", agentReadinessView(), "agent-gap-panel")}
+    ${panelMarkup("보완 필요 사항", "현재 부족한 부분", agentReadinessView(), "agent-gap-panel panel-secondary")}
   `;
 }
 
@@ -1744,8 +1773,8 @@ function orgChartPage() {
 function skillsPage() {
   return `
     ${pageHeader("스킬", "스킬 저장소", "에이전트에게 장착되는 금융, 리스크, 계약, 준법 스킬 패키지를 확인합니다.")}
-    ${panelMarkup("승인 정책", "점수 × 조치 유형 라우팅", approvalMatrixView(), "approval-matrix-panel")}
     ${panelMarkup("스킬 저장소", "장착 가능 스킬", skillsView())}
+    ${panelMarkup("승인 정책", "점수 × 조치 유형 라우팅", approvalMatrixView(), "approval-matrix-panel panel-secondary")}
   `;
 }
 
@@ -1767,6 +1796,7 @@ function budgetPage() {
   return `
     ${pageHeader("비용", "비용과 효과", "에이전트별 예산뿐 아니라 예상 비용, 절감 가능 비용, 비용 대비 효과를 함께 봅니다.")}
     ${panelMarkup("비용 요약", "월간 비용 판단", dashboardCostView(), "cost-panel")}
+    ${panelMarkup("토큰 사용량", "일간·주간·월간 토큰 통계", tokenStatsView(), "token-panel")}
     ${panelMarkup("월별 추세", "비용 변화", dashboardTrendView(), "trend-panel")}
     ${panelMarkup("비용 사용률", "에이전트별 사용률", budgetView())}
   `;
@@ -1973,10 +2003,13 @@ function dashboardCostView() {
   const expectedRate = data.budget ? Math.round((data.expected / data.budget) * 100) : 0;
   return `
     <div class="cost-summary">
-      <div class="cost-kpis">
-        ${costKpi("현재 사용", formatWon(data.spent), `${usedRate}% 사용`)}
-        ${costKpi("월말 예상", formatWon(data.expected), `${expectedRate}% 예상`)}
-        ${costKpi("절감 가능 위험", formatWon(data.avoidableLoss), `비용 대비 ${data.roi}배 효과`)}
+      <div class="cost-head">
+        ${svgDonut(data.spent, data.budget, { label: "예산 사용률", sub: `${formatWon(data.spent)} / ${formatWon(data.budget)}` })}
+        <div class="cost-kpis">
+          ${costKpi("현재 사용", formatWon(data.spent), `${usedRate}% 사용`)}
+          ${costKpi("월말 예상", formatWon(data.expected), `${expectedRate}% 예상`)}
+          ${costKpi("절감 가능 위험", formatWon(data.avoidableLoss), `비용 대비 ${data.roi}배 효과`)}
+        </div>
       </div>
       <p class="insight-copy">${escapeHtml(generateCostInsight(data))}</p>
       <div class="cost-bars" aria-label="항목별 비용 비중">
@@ -2024,18 +2057,9 @@ function costKpi(label, value, detail) {
 function dashboardTrendView() {
   const max = Math.max(...monthlyCostTrend.map(([, value]) => value));
   const latestTrend = monthlyCostTrend[monthlyCostTrend.length - 1];
+  const series = monthlyCostTrend.map(([month, value]) => ({ x: month, y: value, label: formatWon(value) }));
   return `
-    <div class="trend-chart" role="img" aria-label="월별 비용 추이">
-      ${monthlyCostTrend
-        .map(([month, value]) => `
-          <div class="trend-column">
-            <div class="trend-bar" style="height:${Math.max(18, Math.round((value / max) * 118))}px"></div>
-            <strong>${escapeHtml(formatWon(value))}</strong>
-            <span>${escapeHtml(month)}</span>
-          </div>
-        `)
-        .join("")}
-    </div>
+    ${svgArea(series, { w: 340, h: 130, aria: "월별 비용 추이" })}
     <p class="insight-copy">${escapeHtml(latestTrend[0])} 비용은 ${formatWon(latestTrend[1])}이며, 전세 위험 점검과 승인 로그 생성 비중이 증가했습니다.</p>
   `;
 }
@@ -2043,43 +2067,28 @@ function dashboardTrendView() {
 function dashboardRegionView() {
   const regions = buildDashboardData().regions.sort((a, b) => b.average - a.average);
   if (!regions.length) return '<div class="empty-state">표시할 지역 데이터 없음</div>';
+  const bars = rankingBars(regions.map((e) => ({
+    label: e.region,
+    sub: `${e.total}건 · 고위험 ${e.high} · 승인대기 ${e.pending}`,
+    value: e.average,
+  })));
   return `
-    <div class="region-table" role="table" aria-label="지역별 위험도 비교">
-      <div class="region-row region-head" role="row">
-        <span>지역</span><span>케이스</span><span>고위험</span><span>평균</span><span>승인 대기</span>
-      </div>
-      ${regions
-        .map((entry) => `
-          <div class="region-row" role="row">
-            <strong>${escapeHtml(entry.region)}</strong>
-            <span>${entry.total}건</span>
-            <span>${entry.high}건</span>
-            <span>${entry.average}점</span>
-            <span>${entry.pending}건</span>
-          </div>
-        `)
-        .join("")}
-    </div>
+    <div class="viz-label">위험도 점수 분포</div>
+    ${riskHistogram(visibleCases())}
+    <div class="viz-label">지역별 평균 위험도</div>
+    ${bars}
   `;
 }
 
 function dashboardRankingView() {
   const ranked = visibleCases().slice().sort((a, b) => b.riskScore - a.riskScore).slice(0, 5);
   if (!ranked.length) return '<div class="empty-state">표시할 우선순위 없음</div>';
-  return `
-    <div class="ranking-list">
-      ${ranked
-        .map((item, index) => `
-          <button class="ranking-row" type="button" data-case-id="${escapeHtml(item.id)}">
-            <span>${index + 1}</span>
-            <strong>${escapeHtml(item.code)} · ${escapeHtml(item.customerName)}</strong>
-            <small>${escapeHtml(item.primaryPain)}</small>
-            <em>${item.riskScore}점</em>
-          </button>
-        `)
-        .join("")}
-    </div>
-  `;
+  return rankingBars(ranked.map((item) => ({
+    label: `${item.code} · ${item.customerName}`,
+    sub: item.primaryPain,
+    value: item.riskScore,
+    caseId: item.id,
+  })));
 }
 
 function dispatchResultMarkup() {
@@ -2263,6 +2272,13 @@ function runsView() {
 
 function jeonseView() {
   const jeonseCase = cases.find((item) => item.pains.includes("jeonse-fraud"));
+  if (!jeonseCase) {
+    return `
+      <div class="empty-state">
+        <p>전세사기 위험 케이스가 없습니다. 케이스를 등록한 뒤 다시 시도하세요.</p>
+      </div>
+    `;
+  }
   return `
     <div class="jeonse-summary">
       <article class="work-item featured is-clickable ${jeonseCase.id === selectedCaseId && activeDetailType === "case" ? "is-selected" : ""}" data-case-id="${escapeHtml(jeonseCase.id)}" role="button" tabindex="0">
@@ -2896,6 +2912,7 @@ function skillDetailMarkup() {
       statusLabel(skill.risk),
       "selected-case-panel",
     )}
+    ${skillBodyPanel(skill)}
     ${compactPanel(
       "장착 에이전트",
       "이 스킬을 사용하는 에이전트",
@@ -3025,6 +3042,11 @@ function caseContextMarkup() {
   `;
 
   return `
+    <button class="open-detail-button" type="button" data-open-case-detail="${escapeHtml(item.id)}">
+      <span aria-hidden="true">${iconSvg("layout-dashboard")}</span>
+      케이스 상세 페이지 열기
+    </button>
+
     ${collapsiblePanel(
       "case-summary",
       "선택 케이스",
@@ -3294,6 +3316,10 @@ function renderAudit() {
   const item = currentCase();
   const auditLog = document.getElementById("audit-log");
   if (!auditLog) return;
+  if (!item) {
+    auditLog.innerHTML = `<div class="empty-state"><p>선택된 케이스가 없어 감사 로그를 표시할 수 없습니다.</p></div>`;
+    return;
+  }
   const records = auditChainRecords(item);
   auditLog.innerHTML = `
     <div class="audit-toolbar">
@@ -3341,12 +3367,14 @@ function simpleHash(value) {
 }
 
 function auditChainRecords(item) {
+  if (!item) return [];
   let previousHash = "GENESIS";
+  const evidenceIds = item.evidenceIds || [];
   return (item.audit || []).map((entry, index) => {
     const time = Array.isArray(entry) ? entry[0] : entry.time;
     const action = Array.isArray(entry) ? entry[1] : entry.action;
     const actor = Array.isArray(entry) ? inferAuditActor(action) : entry.actor;
-    const evidenceId = Array.isArray(entry) ? item.evidenceIds[index % Math.max(1, item.evidenceIds.length)] || "internal-event" : entry.evidenceId;
+    const evidenceId = Array.isArray(entry) ? evidenceIds[index % Math.max(1, evidenceIds.length)] || "internal-event" : entry.evidenceId;
     const payload = JSON.stringify({ seq: index + 1, time, actor, action, target: item.code, evidenceId, previousHash });
     const hash = simpleHash(payload);
     const record = { seq: index + 1, time, actor, action, target: item.code, evidenceId, previousHash, hash };
@@ -3365,7 +3393,7 @@ function inferAuditActor(text) {
 function verifyAuditChain(item) {
   const records = auditChainRecords(item);
   const ok = records.every((record, index) => index === 0 || record.previousHash === records[index - 1].hash);
-  auditIntegrityResult = ok ? `정상 · ${records.length}개 레코드 해시 체인 연결` : "오류 · 이전 해시 불일치";
+  auditIntegrityResult = ok ? `정상 · ${records.length}개 레코드 무결성 검증 완료` : "오류 · 이전 해시 불일치";
   return { ok, records };
 }
 
@@ -3456,7 +3484,7 @@ function buildDashboardData() {
   const scoped = visibleCases();
   const highRisk = scoped.filter((item) => item.riskScore >= 85);
   const jeonseRisk = scoped.filter((item) => item.pains.includes("jeonse-fraud"));
-  const blocked = scoped.filter((item) => item.status === "Escalated" || item.gates.some((gate) => gate[1] === "blocked"));
+  const blocked = scoped.filter((item) => item.status === "Escalated" || (item.gates || []).some((gate) => gate[1] === "blocked"));
   const pending = scoped.filter((item) => item.status === "Approval Pending");
   const userInput = scoped.filter((item) => caseDataSource(item) === "사용자 입력 데이터");
   const demoData = scoped.filter((item) => caseDataSource(item) === "데모 데이터");
@@ -3709,7 +3737,7 @@ function buildManualCase(form) {
       industry: "주거 · 전세계약",
       riskScore: 82,
       priority: "urgent",
-      zeroHuman: "L3 분석 + 사람 결정",
+      zeroHuman: "분석 + 사람 결정",
       owner: "Jeonse Shield Lead",
       exposure: exposureInput || "전세보증금 입력 필요 · 등기부 확인 필요",
       primaryPain: "전세사기 위험 사전 점검",
@@ -3730,7 +3758,7 @@ function buildManualCase(form) {
       industry: "사기 의심",
       riskScore: 93,
       priority: "critical",
-      zeroHuman: "L4 정보 제공만",
+      zeroHuman: "정보 제공만",
       owner: "Fraud Shield Agent",
       exposure: exposureInput || "의심 콜백 URL · 긴급 송금 요청",
       primaryPain: "외부 접촉 차단 필요",
@@ -3750,7 +3778,7 @@ function buildManualCase(form) {
     industry: "상담 접수",
     riskScore: 70,
     priority: "high",
-    zeroHuman: "L1 초안 + 원클릭 승인",
+    zeroHuman: "초안 작성 + 원클릭 승인",
     owner: "Policy Match Agent",
     exposure: exposureInput || "정책금융 상담 후보 · 서류 확인 필요",
     primaryPain: "정책금융 탐색과 상환 부담",
@@ -4104,7 +4132,7 @@ function applyDemoModeFromUrl() {
     item.riskScore = 96;
     item.audit = [
       ["09:00", "데모 GP-2: 보이스피싱 의심 알림을 케이스로 전환했습니다."],
-      ["09:01", "L4 자동 차단 제안을 생성하고 사람 승인 대기 상태로 올렸습니다."],
+      ["09:01", "자동 차단 제안을 생성하고 사람 승인 대기 상태로 올렸습니다."],
     ];
   } else if (type === "sme") {
     item.status = "Approval Pending";
@@ -4136,7 +4164,7 @@ function newCaseDemo() {
     riskScore: 55,
     status: "New",
     priority: "medium",
-    zeroHuman: "L1 초안 + 원클릭 승인",
+    zeroHuman: "초안 작성 + 원클릭 승인",
     sla: "1d",
     owner: "LocalGuard Orchestrator",
     stage: "todo",
@@ -4217,6 +4245,11 @@ function moveCaseToColumn(caseId, column) {
   activity.unshift([timestamp(), "LocalGuard Orchestrator", "changed status", item.code]);
   selectedCaseId = item.id;
   activeDetailType = "case";
+  // 보드 처리 훅: 승인 대기로 이동 시 산출물 생성 트리거 (04 board-hook)
+  if (nextStatus === "Approval Pending" && typeof generateDeliverables === "function" && deliverableRegistry[item.id]) {
+    generateDeliverables(item.id);
+    item.audit.push([timestamp(), "보드 훅: 산출물 생성 및 승인 게이트 활성화."]);
+  }
   persistState();
   render();
 }
@@ -4325,6 +4358,26 @@ function bindActions() {
       render();
     });
   });
+
+  const railNotify = document.getElementById("rail-notify");
+  if (railNotify) {
+    railNotify.addEventListener("click", () => {
+      activeView = "inbox";
+      activeDetailType = defaultDetailForView(activeView);
+      selectDefaultCaseForView(activeView);
+      render();
+    });
+  }
+
+  const railSettings = document.getElementById("rail-settings");
+  if (railSettings) {
+    railSettings.addEventListener("click", () => {
+      activeView = "settings";
+      activeDetailType = defaultDetailForView(activeView);
+      selectDefaultCaseForView(activeView);
+      render();
+    });
+  }
 }
 
 function bindContextActions() {
@@ -4361,7 +4414,7 @@ function bindContextActions() {
     verifyAuditButton.addEventListener("click", () => {
       const result = verifyAuditChain(currentCase());
       const target = document.getElementById("audit-integrity-result");
-      if (target) target.textContent = result.ok ? `정상 · ${result.records.length}개 레코드 해시 체인 연결` : "오류 · 이전 해시 불일치";
+      if (target) target.textContent = result.ok ? `정상 · ${result.records.length}개 레코드 무결성 검증 완료` : "오류 · 이전 해시 불일치";
     });
   }
   if (exportAuditButton) exportAuditButton.addEventListener("click", () => exportAuditJson(currentCase()));
@@ -4417,6 +4470,8 @@ function render() {
   renderModal();
   renderToast();
   bindSelectionTargets();
+  if (typeof renderDeliverableViewer === "function") renderDeliverableViewer();
+  if (typeof bindModuleActions === "function") bindModuleActions();
 }
 
 function applyHashRoute() {
