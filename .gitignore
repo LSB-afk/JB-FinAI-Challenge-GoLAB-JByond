@@ -2,7 +2,7 @@
 *.log
 node_modules/
 dist/
-test-results/playwright/
+test-results/
 .env
 .env.*
 .omc/*
@@ -11,5 +11,5 @@ test-results/playwright/
 .omx/
 .claude/
 
-proposal/render/
-proposal/template.pptx
+발표자료/render/
+발표자료/template.pptx
