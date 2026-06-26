@@ -45,7 +45,7 @@ bash 08_본선/_system/tools/bootstrap.sh              # 실제 적용
 ## 자랑 포인트 TOP 5
 
 1. **Capture-by-default** — Stop 훅 + telemetry-aggregator 스킬이 세션 종료 시 툴/토큰/시간을 자동 기록. 사용자가 아무것도 안 해도 기록됨.
-2. **자체 구축 스킬 3종** — `telemetry-aggregator` · `canon-moc-sync` · `pii-governance-validator`가 `_system/skills/`에 버전 관리되며 bootstrap으로 `.claude/skills/`에 즉시 배포 가능.
+2. **자체 구축 스킬 4종** — `telemetry-aggregator` · `canon-moc-sync` · `pii-governance-validator` · `harness-sync`가 `_system/skills/`에 버전 관리되며 bootstrap으로 `.claude/skills/`에 즉시 배포 가능. `harness-sync`는 8단계 동기화 루틴 오케스트레이터이며, `plugin-inventory.mjs`가 settings.json → 레지스트리 재생성을 자동화.
 3. **에이전트 레지스트리 + 텔레메트리 연동** — 676,932+ 토큰 누적 집계, 에이전트별 산출물 추적. [[_agent-registry]] 참조.
 4. **MCP 풀 스택** — chrome · perplexity · figma · notion · google-calendar · google-drive · excalidraw · hwp-mcp 8종 세션 연동. 인증 정보 없이 `claude mcp add` echo만 bootstrap에 포함(보안 원칙).
 5. **웹 추천 → 검증 후 승격 파이프라인** — GitHub MCP / Obsidian MCP / Notion MCP은 상태="검증 후 사용"으로 레지스트리에 등록, 검증 완료 시 `상태=활성`으로 승격.

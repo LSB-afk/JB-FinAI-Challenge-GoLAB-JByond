@@ -86,6 +86,7 @@ up: "[[08_본선/_MOC/_MOC_HOME|본선 MOC 허브]]"
 | [[08_본선/_system/skills/telemetry-aggregator/SKILL\|telemetry-aggregator]] | intake CSV → 통계 파생 갱신(파이프라인 엔진) |
 | [[08_본선/_system/skills/canon-moc-sync/SKILL\|canon-moc-sync]] | 중복명·MOC링크·frontmatter 집행 |
 | [[08_본선/_system/skills/pii-governance-validator/SKILL\|pii-governance-validator]] | PII 비반출·승인우회 위반 스캔 |
+| [[08_본선/_system/skills/harness-sync/SKILL\|harness-sync]] | **상태 동기화** — 모든 시스템 파일을 현재 상태로(프롬프트·로그·레지스트리·MOC·메모리·텔레메트리) |
 
 ---
 

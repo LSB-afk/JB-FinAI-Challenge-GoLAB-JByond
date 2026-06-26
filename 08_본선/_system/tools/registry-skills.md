@@ -36,6 +36,7 @@ aliases:
 | **`telemetry-aggregator`** | **자체 구축 스킬** | `_system/skills/telemetry-aggregator/` → bootstrap → `.claude/skills/` | 없음 | **활성** | 세션 종료 시 텔레메트리 자동 집계·append | Claude |
 | **`canon-moc-sync`** | **자체 구축 스킬** | `_system/skills/canon-moc-sync/` → bootstrap → `.claude/skills/` | 없음 | **활성** | MOC 정합성 자동 검증·동기화 | Claude |
 | **`pii-governance-validator`** | **자체 구축 스킬** | `_system/skills/pii-governance-validator/` → bootstrap → `.claude/skills/` | 없음 | **활성** | 개인정보 거버넌스 자동 검증 | Claude |
+| **`harness-sync`** | **자체 구축 스킬** | `_system/skills/harness-sync/` → bootstrap → `.claude/skills/` | 없음 | **활성** | 세션 체크포인트·종료 시 모든 시스템 파일 동기화 (8단계 루틴) | Claude |
 
 ---
 

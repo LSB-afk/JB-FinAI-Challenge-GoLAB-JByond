@@ -29,7 +29,7 @@ aliases:
 | `google-calendar` | 세션 MCP | `claude mcp add claude.ai/Google_Calendar` | Google OAuth | 활성 | 일정 생성·조회·수정·시간 추천 | Claude |
 | `google-drive` | 세션 MCP | `claude mcp add claude.ai/Google_Drive` | Google OAuth | 활성 | 파일 업로드·다운로드·검색·권한 관리 | Claude |
 | `excalidraw` | 세션 MCP | `claude mcp add claude.ai/Excalidraw` | 없음 | 활성 | 다이어그램 생성·편집·체크포인트 저장 | Claude |
-| `hwp-mcp` | 세션 MCP | `claude mcp add hwp-mcp` | 없음 | 활성 | 한글(.hwp/.docx) 문서 읽기·편집 | Claude |
+| `hwp-mcp` | 세션 MCP (settings.json stdio) | `uvx --from hwp-mcp hwp-mcp` | 없음 | **활성** | 한글(.hwp/.hwpx/.docx) 문서 읽기·편집 | Claude |
 | `gmail` | 세션 MCP | `claude mcp add claude.ai/Gmail` | Google OAuth | 활성 | 이메일 송수신·검색 | Claude |
 | **`GitHub MCP`** | **웹 추천** | `claude mcp add github` (검증 후) | GitHub PAT | **검증 후 사용** | PR·이슈·코드 검색·Actions 연동 | Claude |
 | **`Obsidian MCP`** | **웹 추천** | `claude mcp add obsidian-mcp` (검증 후) | 없음 | **검증 후 사용** | 볼트 직접 읽기·쓰기 (플러그인 보완) | Claude |
@@ -52,6 +52,16 @@ notion:
 hwp-mcp / excalidraw / context7:
   인증 불필요 — 설치 후 즉시 사용
 ```
+
+---
+
+<!-- MCP-SETTINGS-START -->
+## settings.json 등록 MCP 서버 (자동 생성)
+
+| 서버명 | 실행 방식 | 커맨드 | 상태 | 용도 |
+|-------|---------|--------|------|------|
+| `hwp-mcp` | stdio | `uvx --from hwp-mcp hwp-mcp` | 활성 | 한글(.hwp/.hwpx/.docx) 문서 읽기·편집 |
+<!-- MCP-SETTINGS-END -->
 
 ---
 
