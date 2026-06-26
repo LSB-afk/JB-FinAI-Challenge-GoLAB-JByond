@@ -25,3 +25,11 @@ tests/results/
 00_제출/시연영상/*.mp4
 00_제출/시연영상/*.webm
 00_제출/시연영상/frames/
+
+# 본선 관련 원본 이메일 (개인정보·대외비 포함 — 6/29 공식발표 전 외부 유출 금지)
+07_원천/메일/
+
+# Syncthing / Obsidian 로컬 동기화·설정 (오픈소스 repo에 불필요)
+.stfolder/
+.stignore
+.obsidian/

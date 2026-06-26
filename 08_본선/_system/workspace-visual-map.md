@@ -1,0 +1,124 @@
+---
+tags:
+  - area/system
+  - type/reference
+  - status/active
+date: 2026-06-26
+up: "[[08_본선/_MOC/_system_tools_MOC|시스템 도구 MOC]]"
+---
+
+# 워크스페이스 비주얼 맵
+
+> `08_본선/` vault의 전체 폴더 구조와 각 레이어의 역할을 한 눈에 파악한다.
+
+---
+
+## 폴더 트리
+
+```
+08_본선/
+│
+├── HOME.md                          ← 최상위 진입점
+├── SHARE-PACKAGE.md                 ← 외부 공유용 독자 가이드
+│
+├── _MOC/                            ← MOC 허브 레이어
+│   ├── _MOC_HOME.md                 ← 6개 섹션 MOC 통합 진입점
+│   ├── _01_대회정보_MOC.md
+│   ├── _02_전략_MOC.md
+│   ├── _03_제품_MOC.md
+│   ├── _04_증빙_MOC.md
+│   ├── _05_제출_MOC.md
+│   └── _system_tools_MOC.md
+│
+├── _system/                         ← 운영 인프라 레이어
+│   ├── dashboard/
+│   │   └── project-dashboard.md    ← KPI·마일스톤 대시보드
+│   └── workspace-visual-map.md     ← (이 파일)
+│
+├── 01_대회정보/                     ← 공식 정보 색인 (원본은 _체계/)
+│   ├── 본선_공지.md
+│   ├── 본선_심사기준.md
+│   └── 본선_일정표.md
+│
+├── 02_전략/                         ← 경쟁 전략 레이어
+│   ├── 01_foundation/
+│   │   ├── 본선-마스터-플레이북.md
+│   │   └── 예선-본선-갭-분석.md
+│   ├── 02_problem-framing/
+│   │   ├── 본선-문제-고도화.md
+│   │   └── 심사위원-시뮬레이션.md
+│   ├── 03_decisions/
+│   │   ├── bet-memo.md
+│   │   ├── scope-board.md
+│   │   └── risk-register.md
+│   └── 98_archive/
+│
+├── 03_제품/                         ← 제품 설계 레이어 (핵심)
+│   ├── README.md                    ← 개발자 진입점
+│   ├── INDEX.md                     ← 제품 문서 전체 색인
+│   ├── 00_vision/
+│   │   └── core-bet.md
+│   ├── 01_prd/
+│   │   ├── prd.md
+│   │   └── mvp-scope.md
+│   ├── 02_agent-design/
+│   │   ├── agent-roster.md
+│   │   ├── orchestrator.md
+│   │   └── skill-spec.md
+│   ├── 03_ux/
+│   │   ├── ia-screen-map.md
+│   │   ├── user-journeys.md
+│   │   └── design-system.md
+│   ├── 04_tech/
+│   │   ├── architecture.md
+│   │   ├── data-model.md
+│   │   ├── api-spec.md
+│   │   └── rag-rule-engine.md
+│   ├── 05_diagrams/
+│   │   ├── 00_system-context.md
+│   │   ├── 01_agent-flow.md
+│   │   ├── 02_case-lifecycle.md
+│   │   ├── 03_approval-gate.md
+│   │   ├── 04_erd.md
+│   │   └── 99_comprehensive-architecture.md
+│   ├── app/                         ← 제품 소스코드 (개발 시 추가)
+│   └── tests/                       ← 테스트 코드 (개발 시 추가)
+│
+├── 04_증빙/                         ← 작업 기록 레이어
+│   ├── 02_분석자료/
+│   ├── 03_daily/
+│   └── 04_meetings/
+│
+├── 05_제출/                         ← 최종 제출 레이어
+│   ├── ai-report-final.md
+│   ├── submission-checklist.md
+│   ├── live-final-verification.md
+│   └── retrospective.md
+│
+└── assets/                          ← 미디어 자산
+    ├── excalidraw/
+    ├── screenshots/
+    └── pdf/
+```
+
+---
+
+## 레이어 역할 요약
+
+| 레이어 | 폴더 | 역할 |
+|-------|------|------|
+| 네비게이션 | `_MOC/` | 섹션 간 이동·색인 |
+| 운영 | `_system/` | 상태 추적·시각화 |
+| 정보 | `01_대회정보/` | 공식 대회 정보 색인 |
+| 전략 | `02_전략/` | 경쟁 전략·의사결정 |
+| 제품 | `03_제품/` | 제품 설계 전체 |
+| 증빙 | `04_증빙/` | 작업 기록·분석 |
+| 제출 | `05_제출/` | 최종 산출물 |
+| 자산 | `assets/` | 미디어 파일 |
+
+---
+
+## 탐색
+
+- [[08_본선/HOME|본선 HOME]] — 최상위 진입점
+- [[08_본선/_MOC/_MOC_HOME|MOC 허브]] — 섹션 MOC 모음
