@@ -67,8 +67,8 @@ JB금융그룹 Fin:AI Challenge · 자유주제 (JB 미래사업 AI)
 | --- | --- |
 | ![대시보드](02_제품/자산/screenshots/upgrade/01-dashboard.png) | ![케이스 상세](02_제품/자산/screenshots/upgrade/02-case-detail.png) |
 
-| 플러그인·MCP 커넥터 | 데이터 거버넌스(PII 토큰화) |
-| --- | --- |
+| 플러그인·MCP 커넥터                                         | 데이터 거버넌스(PII 토큰화)                                       |
+| ---------------------------------------------------- | ------------------------------------------------------- |
 | ![플러그인](02_제품/자산/screenshots/upgrade/04-plugins.png) | ![거버넌스](02_제품/자산/screenshots/upgrade/05-governance.png) |
 
 > 산출물(MD) 뷰어: ![산출물](02_제품/자산/screenshots/upgrade/03-deliverable.png)

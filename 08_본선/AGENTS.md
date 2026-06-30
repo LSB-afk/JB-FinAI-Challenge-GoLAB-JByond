@@ -4,7 +4,7 @@ tags:
   - type/guide
   - status/active
 date: 2026-06-27
-up: "[[HOME]]"
+up: "[[본선 HOME]]"
 aliases:
   - 에이전트협업
   - AGENTS
@@ -106,6 +106,6 @@ raw 원천을 매번 다시 읽기 전에 정제된 지식을 먼저 본다: [[_
 ---
 
 ## 6. 연결
-- [[HOME|본선 홈]] · [[project-dashboard|운영 대시보드]] · [[hagent-os-구조-청사진|구조 청사진]]
+- [[본선 HOME|본선 홈]] · [[project-dashboard|운영 대시보드]] · [[hagent-os-구조-청사진|구조 청사진]]
 - 역할 상세: [[_system/agents/roles/orchestrator|orchestrator]] · [[_system/agents/roles/finance-domain|finance-domain]] · [[_system/agents/roles/compliance-risk|compliance-risk]] · [[_system/agents/roles/research|research]] · [[_system/agents/roles/product|product]] · [[_system/agents/roles/designer|designer]] · [[_system/agents/roles/builder|builder]] · [[_system/agents/roles/judge-qa|judge-qa]] · [[_system/agents/roles/evidence|evidence]] · [[_system/agents/roles/submission|submission]]
 - 후보: [[_system/agents/candidates/red-team-judge|red-team-judge]] · [[_system/agents/candidates/data-engineer|data-engineer]] · [[_system/agents/candidates/pitch-storyteller|pitch-storyteller]] · [[_system/agents/candidates/security|security]]

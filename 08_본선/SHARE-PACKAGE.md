@@ -4,7 +4,7 @@ tags:
   - type/guide
   - status/active
 date: 2026-06-26
-up: "[[08_본선/HOME|본선 HOME]]"
+up: "[[본선 HOME|본선 HOME]]"
 ---
 
 # 공유 패키지 — JB LocalGuard OS
@@ -62,5 +62,5 @@ up: "[[08_본선/HOME|본선 HOME]]"
 
 ## 연결
 
-- [[08_본선/HOME|본선 HOME]] — 전체 진입점
+- [[본선 HOME|본선 HOME]] — 전체 진입점
 - [[08_본선/_MOC/_MOC_HOME|본선 MOC 허브]] — 섹션별 MOC 모음

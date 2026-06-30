@@ -67,6 +67,6 @@ up: "[[08_본선/_MOC/_system_tools_MOC|시스템 도구 MOC]]"
 
 ## 빠른 점프
 
-- [[08_본선/HOME|본선 HOME]]
+- [[본선 HOME|본선 HOME]]
 - [[08_본선/_MOC/_MOC_HOME|MOC 허브]]
 - [[08_본선/02_전략/03_decisions/risk-register|리스크 레지스터]]

@@ -4,7 +4,7 @@ tags:
   - type/guide
   - status/active
 date: 2026-06-27
-up: "[[HOME]]"
+up: "[[본선 HOME]]"
 aliases:
   - PLAN
   - 운영계획

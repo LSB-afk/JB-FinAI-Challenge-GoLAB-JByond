@@ -4,7 +4,7 @@ tags:
   - type/reference
   - status/active
 date: 2026-06-26
-up: "[[08_본선/HOME]]"
+up: "[[본선 HOME]]"
 aliases:
   - 청사진
   - hagent-os분석

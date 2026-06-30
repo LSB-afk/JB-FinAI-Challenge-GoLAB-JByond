@@ -120,5 +120,5 @@ up: "[[08_본선/_MOC/_system_tools_MOC|시스템 도구 MOC]]"
 
 ## 탐색
 
-- [[08_본선/HOME|본선 HOME]] — 최상위 진입점
+- [[본선 HOME|본선 HOME]] — 최상위 진입점
 - [[08_본선/_MOC/_MOC_HOME|MOC 허브]] — 섹션 MOC 모음
