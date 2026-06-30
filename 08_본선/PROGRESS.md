@@ -21,7 +21,7 @@ aliases:
 - [x] 도구 레지스트리 5 + `bootstrap.sh` (`_system/tools/`)
 - [x] 운영 SSoT (PLAN/PROGRESS) + 마스터 플레이북
 - [ ] MOC 전체 연결 + 검증(CP1) + 로컬 커밋  ← 진행 중
-- [x] **Stop 훅 활성화** — `.claude/settings.json` `hooks.Stop` 등록(`$CLAUDE_PROJECT_DIR` 이식성, 팀 동기화). dry-run 검증 + **토큰 집계 버그 수정**(cache_read 제외, 686M→12.2M). ⚠️다음 세션 로드 시 Claude Code 훅 승인 1회 필요.
+- [x] **Stop 훅 활성화·작동확인** — `hooks.Stop` 등록, 자동기록 행 생성 확인(6/30). **토큰 버그 수정**(cache_read 제외) + **누적 중복 버그 수정**(session_id upsert=세션당 1행, ~41M→10.4M) + **aggregator 자동연쇄**(매 세션 통계 무자각 갱신, 수동 실행 0). Codex 점검·구현, 격리 end-to-end 검증.
 - [x] **Excalidraw 4종 실데이터 시각화** — `viz-generator.mjs` 자동 생성기(timeline 96·contribution 33·tokens-time 28·agent-flow 71 elements)
 - [x] **협업 도구 레지스트리** — [[registry-integrations]](Discord·Syncthing 누락 보강 + GitHub·GDrive·Notion) + `_tools-index`·`bootstrap.sh`·`registry-mcp` 연결
 - [x] **인덱스 자동반영 완성** — `canon-moc-sync` [4/4] **죽은 링크 감지** 추가(생성·수정·삭제/이름변경 루프). 정밀도(NFD/NFC·비-md·basename·예시 제외)
@@ -43,9 +43,10 @@ aliases:
 
 ## 제품 — JB LocalGuard OS 재설계
 - [x] 제품 정의 §1 초안 제시 (RM용 거버넌드 운영 콘솔 / 3결합 코어베팅)
-- [ ] 제품 정의 §1 **승인 대기**
-- [ ] IA·화면 지도 (paperclip 기반)
-- [ ] 디자인 시스템
+- [x] **제품 정의 §1 팀 합의(6/30 회의)** — JB **2계열사**(은행1+JB우리캐피탈) RM 에이전트 · **차별점=확장성**(단계적 청사진) · 시연=로컬모델·조직도 메인UI·JB 웹 디자인 → [[제품-정의]]·[[회의록-2026-06-30-아이디어회의]]
+- [ ] 은행 계열사 전북/광주 택1 · 배포vs로컬 · DB 범위 확정
+- [ ] IA·화면 지도 (paperclip 기반, **조직도 시각화 메인**)
+- [ ] 디자인 시스템 (**JB 웹 차용**)
 - [ ] 백엔드 실연동 구현 (설계 확정, 미착수)
 
 ## 리서치 (워터폴) — **1차 사이클 마감 (2026-06-30)**
@@ -55,8 +56,8 @@ aliases:
 - [x] 고위험 5건 format B 적대검증(`_종합-*`) → `_canon §10` 정정(대환대출 2023·전세 39,121건·총자산 73.1조)
 - [x] 갭감사(Codex 5.5) → D16~19 신설 (`_03-리서치-갭감사`)
 - [x] **GitHub 푸시** — 브랜치 `ui-density-improvements` (LSB-afk fork·origin) → **PR #11 OPEN**(main 병합 대기)
-- [ ] (재개 대기) 추가 결과 회수 + **총정리본(D3e+D3f) 7레이어 조립 + Excalidraw 시각화**
-- [ ] 리서치 결과 → 제품 정의·설계 반영(워터폴 다음 단계)
+- [~] (재개 대기) 추가 결과 회수 + **총정리본(D3e+D3f) 7레이어 조립** ✅(2026-07-01 야간, 오프라인 → [[_총정리본-7레이어-검증]]·[[_적대검증-리포트]]·[[_canon-정합-정리안]]) / **Excalidraw 시각화** 잔여
+- [ ] 리서치 결과 → 제품 정의·설계 반영(워터폴 다음 단계) — 정합감사 [[submission-consistency-report]]: ai-report-final 미작성·히어로 프레이밍 미갱신 등 15건(고7)
 
 ## 발표·시연
 - [x] 발표 덱 아웃라인 초안 / 시연 시나리오 초안
