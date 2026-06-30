@@ -43,7 +43,7 @@ harness-sync/sync.mjs
   │        ├─ frontmatter tags/date/up 누락 자동 보정
   │        ├─ [4/5] 죽은 링크(삭제·이름변경) 감지
   │        └─ [5/5] 도달성: 루트→자식 BFS·up 사이클 (조상에서 못 닿는 고아 검출)
-  ├─ [5] visualization-cycle → VISUALIZATION-PLAN 기준 Excalidraw 재생성·검증
+  ├─ [5] visualization-cycle → VISUALIZATION-PLAN 기준 Excalidraw 재생성·간트 갭·5초 가독성 검증
   └─ [6] pii-governance-validator → 위반 경고 (블로킹 없음)
 ```
 
@@ -68,7 +68,7 @@ bash 08_본선/_system/tools/bootstrap.sh              # 실제 적용
 ## 자랑 포인트 TOP 5
 
 1. **Capture-by-default** — Stop 훅 + telemetry-aggregator 스킬이 세션 종료 시 툴/토큰/시간을 자동 기록. 사용자가 아무것도 안 해도 기록됨.
-2. **자체 구축 스킬 8종** — `telemetry-aggregator` · `canon-moc-sync` · `pii-governance-validator` · `visualization-cycle` · `meeting-intake` · `harness-sync` · `prompt-capture` · `tool-intake`가 `_system/skills/`에 버전 관리되며 bootstrap으로 `.claude/skills/`에 즉시 배포 가능. `harness-sync`는 9단계 동기화 루틴 오케스트레이터이며, `plugin-inventory.mjs`가 settings.json → 레지스트리 재생성을 자동화. `prompt-capture`·`tool-intake`로 **프롬프트 기록·도구 도입까지 자동 시행**(AGENTS §4-A).
+2. **자체 구축 스킬 10종** — `telemetry-aggregator` · `canon-moc-sync` · `pii-governance-validator` · `visualization-cycle` · `meeting-intake` · `harness-sync` · `prompt-capture` · `tool-intake` · `submission-consistency-check` · `session-boot`(새 세션 오리엔테이션 부팅)가 `_system/skills/`에 버전 관리되며 bootstrap으로 `.claude/skills/`에 즉시 배포 가능. `harness-sync`는 9단계 동기화 루틴 오케스트레이터이며, `plugin-inventory.mjs`가 settings.json → 레지스트리 재생성을 자동화. `prompt-capture`·`tool-intake`로 **프롬프트 기록·도구 도입까지 자동 시행**, `submission-consistency-check`로 **제출물 내용 정합 감사**(AGENTS §4-A). `visualization-cycle`은 `workflow-gap-audit` 후보와 `visual-brief-audit` 기각 항목을 흡수해 **간트 갭·5초 가독성·사람/AI/기여 레이어**를 검증한다. 후보 2종(`workflow-gap-audit`·`demo-readiness-audit`)은 트리거 대기 → [[registry-skills]].
 3. **에이전트 레지스트리 + 텔레메트리 연동** — 676,932+ 토큰 누적 집계, 에이전트별 산출물 추적. [[_agent-registry]] 참조.
 4. **MCP 풀 스택** — chrome · perplexity · figma · notion · google-calendar · google-drive · excalidraw · hwp-mcp 8종 세션 연동. 인증 정보 없이 `claude mcp add` echo만 bootstrap에 포함(보안 원칙).
 5. **웹 추천 → 검증 후 승격 파이프라인** — GitHub MCP / Obsidian MCP / Notion MCP은 상태="검증 후 사용"으로 레지스트리에 등록, 검증 완료 시 `상태=활성`으로 승격.

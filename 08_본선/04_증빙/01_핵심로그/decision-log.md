@@ -144,4 +144,15 @@ aliases:
 - **검증**: extract-prompts `--self-test` 통과(툴결과·명령 래퍼 제외 확인)·`node --check` OK. canon-moc-sync [5/5] 도달성 ✓(두 SKILL.md frontmatter·up 정합). 갱신: [[registry-skills]](2행)·[[AGENTS]] §4-A(트리거 2행)·bootstrap STEP3 SKILL_DIRS·[[_tools-index]] 8종·메모리 [[본선-운영-하네스]].
 - **상태**: 완료, 미커밋. 안 한 것(YAGNI): prompt-capture를 sync.mjs 자동단계로 흡수 안 함(분류=AI판단이라 반자동 유지). plugin-inventory 개인환경 혼입은 별건(스크립트 1줄 수정 영역).
 
+### 2026-07-01 · 시각화 Codex 제안 5스킬 판정 — 1채택·2후보·2기각
+- **선택**: 신규 스킬 후보 5종을 "기존 비중복 + 감사대상 실재"로 선별. ✅**채택 1**: [[submission-consistency-check]](제출·발표 문서 간 히어로시나리오·MVP범위·검증기준·제품정의 불일치 감사 — 6/30 제품정의 변경으로 예선 SME↔본선 2계열사 충돌 위험 현존, 비중복). 🔶**후보 등록 2**(트리거 대기): `workflow-gap-audit`(visualization-cycle 영역 근접 → cycle 검증 확장 권장), `demo-readiness-audit`(실구동 시연 부재 = YAGNI, 리허설 7/3+ 시 구축). ❌**기각 2(중복)**: `product-decision-ledger`→[[decision-log]], `visual-brief-audit`→[[visualization-cycle]] 검증 흡수.
+- **이유**: Codex 자체 원칙("기존과 겹치면 신규 금지, 기존은 개선만")을 엄격 적용 + YAGNI(감사 대상 산출물이 충분히 존재·비중복인 것만 신규). 스킬 sprawl 방지.
+- **상태**: submission-consistency-check 생성·registry·AGENTS §4-A·bootstrap 등록. 후보 2종은 registry-skills "후보 스킬" 섹션에 트리거와 함께 보존(미구현). 미커밋. (cf. 프롬프트로그 S23)
+
+### 2026-07-01 · 자체 스킬 신설 — session-boot (새 세션 오리엔테이션)
+- **선택**: 복잡한 하네스에 새 세션이 빠르게 진입하도록 **[[session-boot]]** 신설(자체구축 9→**10종**). `boot.mjs`(git 브랜치·미커밋·HEAD + PLAN 현재페이즈 + 마지막 session/decision 블록 + 진입점·자동스킬·게이트 스냅샷, `--self-test`) + SKILL.md(부팅 순서·항상-적용 규칙). **자동 호출 와이어링 = 프로젝트 `CLAUDE.md`에 "본선 작업 시작 시 session-boot 먼저" 1줄**(매 세션 자동 로드되는 유일 지점).
+- **이유**: 사용자 "새 세션 열릴 때 이걸 들어가야 하는데 시스템이 복잡하니 스킬로 열어달라". 진입점·열린일·자동규약을 매번 더듬는 비용 제거.
+- **검증**: `boot.mjs --self-test` 통과·실출력 확인(미커밋 220·페이즈·로그 블록 정상). canon-moc-sync [5/5] ✓. 전파: registry-skills·AGENTS §4-A(트리거 최상단 행)·bootstrap SKILL_DIRS·_tools-index(10종)·CLAUDE.md·메모리.
+- **상태**: 완료, 미커밋. 안 한 것: SessionStart 훅으로의 완전 자동화는 보류(CLAUDE.md 지시로 충분·훅은 승인 게이트). 다음: 커밋·푸시.
+
 <!-- 새 결정은 이 줄 아래에 추가 -->

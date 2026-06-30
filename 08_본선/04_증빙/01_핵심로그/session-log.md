@@ -199,4 +199,23 @@ aliases:
 
 **다음**: 두 스킬 커밋·푸시. 미적용 잔여=EXAONE 7.8B 로컬 셋업(시연), Cytoscape/Hono/PII는 각 워크스트림 착수 시 메모리 트리거로 재제안.
 
+### 2026-07-01 · 시각화 스킬 맵·메모리 갱신
+**한 일**
+- [[visualization-cycle]]을 신규 스킬 생성 없이 확장: `workflow-gap-audit` 후보와 `visual-brief-audit` 기각 항목을 검증 단계에 흡수.
+- 메모리 [[본선-운영-하네스]] 신설: 자체 스킬 9종, `submission-consistency-check` 활성, `visualization-cycle` 강화 검증, 후보/기각 스킬 판정 기록.
+- 스킬맵 전파: [[_tools-index]]·[[AGENTS]]·[[_HARNESS-SYSTEM]]·[[harness-sync]]에 간트 갭·5초 가독성·사람/AI/기여 레이어 검증 문구 반영.
+
+**검증**: `visualization-cycle` quick_validate 및 `run.mjs` 통과. `canon-moc-sync` dry-run 기준 frontmatter·MOC·죽은링크·도달성 정합.
+
+### 2026-07-01 · session-boot 스킬 신설 (세션 오리엔테이션)
+**한 일**
+- [[session-boot]] 신설(자체 9→10종): `boot.mjs` 컴팩트 스냅샷(git·페이즈·마지막 로그·자동스킬·게이트, `--self-test`) + SKILL.md.
+- **자동 호출**: `CLAUDE.md`에 "본선 작업 시작 시 session-boot 먼저 실행" 1줄 추가(매 세션 자동 로드).
+- 전파: registry-skills·AGENTS §4-A(최상단 트리거)·bootstrap SKILL_DIRS·_tools-index(10종)·메모리(본선-운영-하네스).
+
+**결과물**: `_system/skills/session-boot/{SKILL.md,boot.mjs}`, CLAUDE.md, 로그 3종(T10).
+
+**검증**: boot.mjs self-test·실출력 ✓, canon-moc-sync [5/5] ✓.
+**다음**: 커밋·푸시.
+
 <!-- 새 세션은 이 줄 아래에 추가 -->

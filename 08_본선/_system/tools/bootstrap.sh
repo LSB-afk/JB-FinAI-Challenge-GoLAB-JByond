@@ -136,7 +136,7 @@ fi
 head "STEP 3 — 자체 구축 스킬 배포"
 # _system/skills/* → 루트 .claude/skills/
 
-SKILL_DIRS=(telemetry-aggregator canon-moc-sync pii-governance-validator harness-sync visualization-cycle meeting-intake prompt-capture tool-intake)
+SKILL_DIRS=(telemetry-aggregator canon-moc-sync pii-governance-validator harness-sync visualization-cycle meeting-intake prompt-capture tool-intake submission-consistency-check session-boot)
 
 if $DRY_RUN; then
   info "[DRY-RUN] 다음 스킬을 $CLAUDE_SKILLS/ 로 복사 예정:"

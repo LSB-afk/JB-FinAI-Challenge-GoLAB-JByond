@@ -55,6 +55,7 @@ The top level holds the **예선** workspace as Korean-numbered folders plus `_�
 | `_체계/` | operating rules, judging criteria, finals prep plans. |
 
 `08_본선/` is a **self-contained Obsidian vault for the active finals work** with its own `HOME.md`, `AGENTS.md`, `PLAN.md`, `PROGRESS.md`, and a `_system/` operations harness (shared in-vault memory, telemetry, team/agent registries, dashboards, Excalidraw visualizations). Inside `08_본선/`:
+- **When starting finals (`08_본선`) work, run the `session-boot` skill first** (`node 08_본선/_system/skills/session-boot/boot.mjs`) — it loads entry points, current state (uncommitted / open / next), the auto-run skill triggers (AGENTS §4-A), and approval gates, so a fresh session orients into the complex harness in one step.
 - Use Obsidian conventions: wikilinks `[[ ]]`, required frontmatter, **no duplicate filenames** across the vault.
 - `08_본선/AGENTS.md` is the collaboration contract: role split (orchestrator, finance-domain, compliance-risk, research, product, designer, builder, judge-qa, evidence, submission), a 3-way decision model (자율 / 제안→승인 / 사람만), and a **Capture-by-default** logging rule — every meaningful action appends a line under `08_본선/04_증빙/01_핵심로그/` before finishing.
 - Decisions that are 외부 제출/공개/고객 대상 (external submission, publishing, customer-facing) require **explicit user approval** — never self-authorize them.

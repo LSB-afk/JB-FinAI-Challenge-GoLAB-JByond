@@ -107,12 +107,14 @@ aliases:
 
 | 트리거(이 상황이면) | 시행 스킬 | 무엇을 |
 |---|---|---|
+| **본선(08_본선) 작업 세션 시작·인수인계** | [[session-boot]] | 진입점·현재상태(미커밋·미해결·다음)·자동스킬·게이트를 `boot.mjs` 스냅샷으로 로드 → 3~5줄 브리핑. CLAUDE.md가 자동 호출. |
 | **파일을 새로 만들거나 이동/이름변경** | [[canon-moc-sync]] | 부모(up)·태그·MOC링크·**죽은링크([4/5])·도달성([5/5] 조상→자식 네비)** 검증. 누락 시 `--apply` 또는 부모 인덱스에 링크. **새 노트는 frontmatter(area/type/status)+up 필수.** |
 | **세션 체크포인트·종료** | [[harness-sync]] | 텔레메트리 집계·레지스트리·MOC·시각화·PII를 일괄 동기화(자동 단계). |
 | **회의 녹취(.txt) 공유·"회의록 기록"** | [[meeting-intake]] | 원문(gitignore)+회의록(추적)+INDEX·메모리·거버넌스 일관 기록. |
 | **세션 종료·"프롬프트 기록/남겨라"** | [[prompt-capture]] | 세션 사용자 프롬프트를 분기코드(S/R/T…)로 분류해 [[프롬프트-로그]]에 멱등 append. |
 | **새 도구(플러그인·CLI·MCP·스킬) 추가·설치·검토** | [[tool-intake]] | 출처검증→**SkillSpector 보안스캔**→레지스트리 등록→bootstrap 게이트→AI 메모리 트리거→로그. settings.json·bootstrap은 승인 게이트. |
-| **문서·원장 변경이 보드에 영향** | [[visualization-cycle]] | VISUALIZATION-PLAN 선행 갱신 후 Excalidraw 재생성·검증. |
+| **제품정의·MVP범위·시나리오 변경 / 제출물 갱신 전** | [[submission-consistency-check]] | 제출·발표 문서 간 히어로 시나리오·범위·검증기준·제품정의 불일치 교차 감사(보고만, 제출은 사람 승인). |
+| **문서·원장 변경이 보드에 영향 / 시각화 가독성 피드백** | [[visualization-cycle]] | VISUALIZATION-PLAN 선행 갱신 후 Excalidraw 재생성·간트 갭·5초 가독성·사람/AI/기여 레이어 검증. |
 | **로그·산출물에 PII 유입 우려** | [[pii-governance-validator]] / `pii-scan.mjs`(Stop훅) | 한국 PII 패턴 스캔·마스킹 경고. |
 
 **핵심 규칙(부모-자식 정합)**: 새로 생성되는 **모든** 파일은 부모(up)와 자식이 잘 연결되어 **조상(본선 HOME)에서부터 타고 내려갈 수 있어야** 한다. 작업 끝에 `canon-moc-sync`의 `[5/5] 도달성`이 ✓인지 확인한다(고아=`✗`로 표시됨).
