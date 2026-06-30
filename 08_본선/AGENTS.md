@@ -22,7 +22,7 @@ aliases:
 
 ---
 
-## 2. 역할 분담 (10역할 — 읽는 파일 / 쓰는 파일 / 의사결정)
+## 2. 역할 분담 (11역할 — 읽는 파일 / 쓰는 파일 / 의사결정)
 
 > 역할 상세 정의: `_system/agents/roles/*.md`
 > ★ = 이번 본선에서 1급으로 승격/신설 (금융·준법·디자인)
@@ -40,6 +40,7 @@ aliases:
 | **research** | 사실·근거·출처·법규 확인(perplexity/context7 우선) | `07_원천`, 웹 | `02_전략`, `04_증빙/02_분석자료` | 자율(증빙) | Sonnet |
 | **product** | 제품 정의·스코프·25항목 매핑·우선순위 | `02_전략`, `심사기준` | `03_제품/01_prd` | 제안→승인 | Sonnet |
 | **designer** ★ | paperclip 기준 디자인시스템·IA·화면맵·발표 비주얼·Excalidraw | paperclip 분석, `03_제품/03_ux` | `03_제품/03_ux`, `assets`, `visualizations` | 제안→승인 | Sonnet |
+| **visualization** ★ | 시각화 기획 선행·Excalidraw 자동생성·업그레이드 사이클·보드 데이터 품질 관리 | `VISUALIZATION-PLAN`, `PROGRESS`, 원장 CSV, 레지스트리 | `visualizations`, `viz-generator.mjs`, 원장 CSV | 자율(시각화 갱신), 새 보드 기획 선행 | Sonnet |
 | **builder** | 백엔드+프론트 구현·TDD·오프라인 구동(승인 후 코드) | `03_제품/04_tech`, `app` | `03_제품/app`, `tests` | 제안→승인; 버그 자율 | Sonnet |
 | **judge-qa** | 25항목 적합성·verify-implementation·심사 시뮬 | `05_제출`, `심사기준` | `04_증빙`, `05_제출/live-final-verification` | 자율(검증) | Sonnet |
 | **evidence** | Capture-by-default 집행·intake append·기여 통계 | 전체 | `04_증빙/*`, `_system/telemetry`, `team` | 자율(증빙) | **Haiku** |
@@ -71,7 +72,7 @@ aliases:
 | **슬롯 C** (디자인·기획) | 기획·디자인 | designer + product | — |
 | **슬롯 D** (금융·준법·리서치) | 금융 도메인 | finance-domain + compliance-risk + research | — |
 
-> evidence · judge-qa · red-team = AI 주도 + 팀 공유 (특정 슬롯에 고정하지 않음)
+> evidence · visualization · judge-qa · red-team = AI 주도 + 팀 공유 (특정 슬롯에 고정하지 않음)
 
 ---
 
@@ -95,8 +96,28 @@ aliases:
 - 세션 요약(한 일·결과·다음) → [[session-log]]
 - 위 3종의 인덱스/상태 → [[master-evidence-ledger]]
 - **텔레메트리 1행** → `_system/telemetry/ai-session-intake.csv` (컬럼: ts, engine, agent, member_slot, domain, task, tokens_in, tokens_out, duration, tools, exact|estimate, prompt_ref)
+- **시각화 갱신** → 새 문서·원장·로그 변화가 보드에 영향을 주면 [[VISUALIZATION-PLAN]]을 먼저 갱신하고 [[visualization-cycle]]로 재생성·검증한다.
 
 > **완전 자동화(선택)**: Claude Code Stop 훅으로 세션 종료 시 `session-log`에 타임스탬프 항목을 자동 append 가능. 와이어링은 `update-config`로 settings.json에 등록(사용자 승인 후). 미적용 시에도 위 규약을 수동 준수.
+
+---
+
+## 4-A. 운영 자동화 스킬 — AI 자동 시행 규약
+> ⚠️ **사용자가 지시하지 않아도** 아래 트리거에 해당하면 AI(Claude/Codex)는 **스스로 해당 스킬을 시행**한다. 팀원은 바뀐 사실을 몰라도, AI를 쓰는 한 문서·기록이 일관되게 누적·정합된다. 스킬 목록·상태 = [[registry-skills]].
+
+| 트리거(이 상황이면) | 시행 스킬 | 무엇을 |
+|---|---|---|
+| **파일을 새로 만들거나 이동/이름변경** | [[canon-moc-sync]] | 부모(up)·태그·MOC링크·**죽은링크([4/5])·도달성([5/5] 조상→자식 네비)** 검증. 누락 시 `--apply` 또는 부모 인덱스에 링크. **새 노트는 frontmatter(area/type/status)+up 필수.** |
+| **세션 체크포인트·종료** | [[harness-sync]] | 텔레메트리 집계·레지스트리·MOC·시각화·PII를 일괄 동기화(자동 단계). |
+| **회의 녹취(.txt) 공유·"회의록 기록"** | [[meeting-intake]] | 원문(gitignore)+회의록(추적)+INDEX·메모리·거버넌스 일관 기록. |
+| **세션 종료·"프롬프트 기록/남겨라"** | [[prompt-capture]] | 세션 사용자 프롬프트를 분기코드(S/R/T…)로 분류해 [[프롬프트-로그]]에 멱등 append. |
+| **새 도구(플러그인·CLI·MCP·스킬) 추가·설치·검토** | [[tool-intake]] | 출처검증→**SkillSpector 보안스캔**→레지스트리 등록→bootstrap 게이트→AI 메모리 트리거→로그. settings.json·bootstrap은 승인 게이트. |
+| **문서·원장 변경이 보드에 영향** | [[visualization-cycle]] | VISUALIZATION-PLAN 선행 갱신 후 Excalidraw 재생성·검증. |
+| **로그·산출물에 PII 유입 우려** | [[pii-governance-validator]] / `pii-scan.mjs`(Stop훅) | 한국 PII 패턴 스캔·마스킹 경고. |
+
+**핵심 규칙(부모-자식 정합)**: 새로 생성되는 **모든** 파일은 부모(up)와 자식이 잘 연결되어 **조상(본선 HOME)에서부터 타고 내려갈 수 있어야** 한다. 작업 끝에 `canon-moc-sync`의 `[5/5] 도달성`이 ✓인지 확인한다(고아=`✗`로 표시됨).
+
+**링크 측정 규율**: 링크·부모·도달성이 "깨졌다"는 판단은 **직접 grep으로 단정하지 말고 `canon-moc-sync`로** 한다. 직접 스캐너를 짜면 **NFC·이스케이프파이프(`\|`)·볼트루트 절대경로·중복 basename**을 반드시 처리하라 — 이 함정으로 Codex·Sonnet·BFS가 "65% 깨짐"·"유령 부모"를 반복 오판했다(전부 측정오류). 결과가 기준(깨진 부모 0)과 크게 다르면 **파일이 아니라 스캐너를 의심**하라.
 
 ---
 
@@ -107,5 +128,5 @@ raw 원천을 매번 다시 읽기 전에 정제된 지식을 먼저 본다: [[_
 
 ## 6. 연결
 - [[본선 HOME|본선 홈]] · [[project-dashboard|운영 대시보드]] · [[hagent-os-구조-청사진|구조 청사진]]
-- 역할 상세: [[_system/agents/roles/orchestrator|orchestrator]] · [[_system/agents/roles/finance-domain|finance-domain]] · [[_system/agents/roles/compliance-risk|compliance-risk]] · [[_system/agents/roles/research|research]] · [[_system/agents/roles/product|product]] · [[_system/agents/roles/designer|designer]] · [[_system/agents/roles/builder|builder]] · [[_system/agents/roles/judge-qa|judge-qa]] · [[_system/agents/roles/evidence|evidence]] · [[_system/agents/roles/submission|submission]]
+- 역할 상세: [[_system/agents/roles/orchestrator|orchestrator]] · [[_system/agents/roles/finance-domain|finance-domain]] · [[_system/agents/roles/compliance-risk|compliance-risk]] · [[_system/agents/roles/research|research]] · [[_system/agents/roles/product|product]] · [[_system/agents/roles/designer|designer]] · [[_system/agents/roles/visualization|visualization]] · [[_system/agents/roles/builder|builder]] · [[_system/agents/roles/judge-qa|judge-qa]] · [[_system/agents/roles/evidence|evidence]] · [[_system/agents/roles/submission|submission]]
 - 후보: [[_system/agents/candidates/red-team-judge|red-team-judge]] · [[_system/agents/candidates/data-engineer|data-engineer]] · [[_system/agents/candidates/pitch-storyteller|pitch-storyteller]] · [[_system/agents/candidates/security|security]]

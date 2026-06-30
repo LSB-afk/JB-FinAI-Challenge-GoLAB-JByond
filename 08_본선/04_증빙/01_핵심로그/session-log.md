@@ -189,4 +189,14 @@ aliases:
 - 산출물: [[도구-확장-리서치-20260701]](6종 결정표·설치명령·라이선스·한계), decision-log 1행.
 - 다음: (사람 승인) settings.json enabledPlugins(humanize-korean) · bootstrap SkillSpector 게이트 · registry-cli/plugins 반영(harness-sync) · 시연 EXAONE 7.8B 로컬 셋업.
 
+### 2026-07-01 · 도구셋 확장 적용 + 자체 스킬 2종 신설
+**한 일**
+- 승인 4종 적용: settings.json `humanize-korean@im-not-ai`(+마켓), registry-cli `skillspector` 행 + bootstrap STEP3.5 보안 스캔 게이트, harness-sync 정합, 스코프 커밋 `bbd3203`→origin·fork 푸시. (plugin-inventory 개인환경 혼입분 revert, SSOT=settings.json)
+- 자체 스킬 **2종 신설**(6→8): [[prompt-capture]](프롬프트 분기분류 append, extract-prompts.mjs+`--self-test`) · [[tool-intake]](신규 도구 도입 6단계·SkillSpector 게이트 내장).
+- 스킬맵·거버넌스 전파: registry-skills·AGENTS §4-A(트리거 2)·bootstrap SKILL_DIRS·_tools-index(8종)·메모리(본선-운영-하네스).
+
+**결과물**: `_system/skills/{prompt-capture,tool-intake}/`, [[도구-확장-리서치-20260701]], 프롬프트 로그 T1~T9, decision 2건.
+
+**다음**: 두 스킬 커밋·푸시. 미적용 잔여=EXAONE 7.8B 로컬 셋업(시연), Cytoscape/Hono/PII는 각 워크스트림 착수 시 메모리 트리거로 재제안.
+
 <!-- 새 세션은 이 줄 아래에 추가 -->

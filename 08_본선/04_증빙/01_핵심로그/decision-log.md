@@ -133,4 +133,15 @@ aliases:
 - **대안**: 새 vault-coherence 스킬 신설(기각 — canon-moc-sync 확장이 재사용·신뢰성, 기존 원칙과 일관).
 - **상태**: 완료, 미커밋. SKILL.md 2종(meeting-intake 신규, canon-moc-sync 확장) + AGENTS §4-A + 레지스트리·메모리. 검증: canon-moc-sync 5단계 통과·verify_static OK.
 
+### 2026-07-01 · 세션 회고 → 스킬 문서·등록 갭 반영 (신규 스킬 아님)
+- **선택**: 이번 세션 과정을 검토해 **수정/추가할 스킬**을 반영. 결론=신규 스킬 불요, **문서·등록·가드 갭**이 본질 → ① [[canon-moc-sync]] SKILL.md를 구현과 동기화(누락된 [5/5] 도달성·[4/5] 죽은링크 문서화 + description 갱신) + **"링크 측정 원칙"** 추가(NFC·이스케이프파이프 함정, 직접 grep 금지). ② [[AGENTS]] §4-A에 **링크 측정 규율** 한 줄(측정오판 반복 방지). ③ automation/ 스크립트 6종(session-telemetry·pii-scan·git-contribution·backfill-frontmatter·test-telemetry·viz-generator)을 [[registry-cli]]에 등록(발견 가능화).
+- **이유**: `\|`·NFC 링크측정 함정이 Agent·Codex·BFS에서 **4회+ 반복 오판**("65% 깨짐"·"유령 부모"=전부 측정오류) → 가드 문서화가 최고 ROI. SKILL.md가 [5/5]를 누락해 AI가 도달성 검증 존재를 모르던 doc↔impl 드리프트 해소. 미등록 스크립트=AI 미발견.
+- **상태**: 완료, 미커밋. 검증: canon-moc-sync 5단계(도달성 ✓·죽은링크 0)·verify_static 통과. [5/5]가 병행 세션 신규 고아(B1·D23)를 자동 검출→연결로 가치 재실증.
+
+### 2026-07-01 · 자체 스킬 2종 신설 — prompt-capture · tool-intake (도구셋 확장 후속)
+- **선택**: T 트랙에서 반복된 수작업 2흐름을 스킬화(자체구축 6→**8종**). ① **[[prompt-capture]]** — `extract-prompts.mjs`(트랜스크립트→사용자 프롬프트 결정론 추출, 명령/툴결과/리마인더 제외, `--self-test` 동봉) + SKILL.md(AI가 분기코드 분류·산출요약·멱등 append). Capture-by-default의 **유일한 수동 잔여**(토큰·PII·기여는 이미 자동)를 자동화 — 사용자 반복 지적(S7·S11·R10·T8) 해소. ② **[[tool-intake]]** — 신규 도구 도입 6단계(출처검증→**SkillSpector 보안스캔**→레지스트리 분류·등록→bootstrap 게이트→AI 메모리 트리거→로그), S14·S15·T 반복 워크플로 고정 + 검증없는 설치 구조적 차단.
+- **이유**: 사용자 "제안대로 진행, 스킬맵·메모리·decision 등 수정". 반복·자동화 가능·신뢰성 갭(누락 재발)인 두 흐름이 스킬 1순위였음.
+- **검증**: extract-prompts `--self-test` 통과(툴결과·명령 래퍼 제외 확인)·`node --check` OK. canon-moc-sync [5/5] 도달성 ✓(두 SKILL.md frontmatter·up 정합). 갱신: [[registry-skills]](2행)·[[AGENTS]] §4-A(트리거 2행)·bootstrap STEP3 SKILL_DIRS·[[_tools-index]] 8종·메모리 [[본선-운영-하네스]].
+- **상태**: 완료, 미커밋. 안 한 것(YAGNI): prompt-capture를 sync.mjs 자동단계로 흡수 안 함(분류=AI판단이라 반자동 유지). plugin-inventory 개인환경 혼입은 별건(스크립트 1줄 수정 영역).
+
 <!-- 새 결정은 이 줄 아래에 추가 -->

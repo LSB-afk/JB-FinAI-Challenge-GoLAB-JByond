@@ -34,9 +34,13 @@ aliases:
 | `example-skills:*` | 보유 스킬 (묶음) | `~/.claude/skills/` 전역 등록 | 없음 | 활성 | 알고리즘 아트·웹앱·슬랙 GIF 등 참조 예시 | Claude |
 | `skill-creator` | 보유 스킬 | `~/.claude/skills/` 전역 등록 | 없음 | 활성 | 새 스킬 정의·생성 | Claude |
 | **`telemetry-aggregator`** | **자체 구축 스킬** | `_system/skills/telemetry-aggregator/` → bootstrap → `.claude/skills/` | 없음 | **활성** | 세션 종료 시 텔레메트리 자동 집계·append | Claude |
-| **`canon-moc-sync`** | **자체 구축 스킬** | `_system/skills/canon-moc-sync/` → bootstrap → `.claude/skills/` | 없음 | **활성** | MOC 정합성 자동 검증·동기화 | Claude |
+| **`canon-moc-sync`** | **자체 구축 스킬** | `_system/skills/canon-moc-sync/` → bootstrap → `.claude/skills/` | 없음 | **활성** | MOC·**부모(up)·태그·죽은링크·도달성(조상→자식 네비) 5단계** 정합성 검증·동기화 | Claude |
+| **`meeting-intake`** | **자체 구축 스킬** | `_system/skills/meeting-intake/` → bootstrap → `.claude/skills/` | 없음 | **활성** | 회의 STT → 원문(gitignore)+회의록(추적)+인덱스·메모리·거버넌스 일관 기록 | Claude |
 | **`pii-governance-validator`** | **자체 구축 스킬** | `_system/skills/pii-governance-validator/` → bootstrap → `.claude/skills/` | 없음 | **활성** | 개인정보 거버넌스 자동 검증 | Claude |
-| **`harness-sync`** | **자체 구축 스킬** | `_system/skills/harness-sync/` → bootstrap → `.claude/skills/` | 없음 | **활성** | 세션 체크포인트·종료 시 모든 시스템 파일 동기화 (8단계 루틴) | Claude |
+| **`visualization-cycle`** | **자체 구축 스킬** | `_system/skills/visualization-cycle/` → bootstrap → `.claude/skills/` | 없음 | **활성** | 시각화 기획 선행·Excalidraw 재생성·JSON/인덱스 검증 | Claude/Codex |
+| **`harness-sync`** | **자체 구축 스킬** | `_system/skills/harness-sync/` → bootstrap → `.claude/skills/` | 없음 | **활성** | 세션 체크포인트·종료 시 모든 시스템 파일 동기화 (9단계 루틴) | Claude |
+| **`prompt-capture`** | **자체 구축 스킬** | `_system/skills/prompt-capture/` → bootstrap → `.claude/skills/` | 없음 | **활성** | 세션 프롬프트를 분기코드(S/R/T)로 분류해 [[프롬프트-로그]] 멱등 append (extract-prompts.mjs + AI 판단). Capture-by-default 완성 | Claude |
+| **`tool-intake`** | **자체 구축 스킬** | `_system/skills/tool-intake/` → bootstrap → `.claude/skills/` | 없음 | **활성** | 신규 도구 도입 6단계(출처검증→SkillSpector 스캔→레지스트리→bootstrap 게이트→메모리 트리거→로그) | Claude/Codex |
 
 ---
 
@@ -44,11 +48,11 @@ aliases:
 
 > 외부 GitHub repo에서 설치하는 스킬. **소스를 우리 repo에 커밋하지 않고**(런타임은 `.agents/`·`.claude/` = gitignored), 팀원은 **bootstrap.sh STEP 3.5** 또는 `npx skills install`(락파일 기반)로 각자 설치한다. ⚠️ *코드를 전 권한으로 실행*하므로 설치 전 출처 확인 필수.
 
-| 스킬 | 출처(검증) | 설치 | 인증/주의 | 상태 | 용도(본선) |
-|------|-----------|------|----------|------|-----------|
-| `design-taste-frontend` (Taste) | `Leonxlnx/taste-skill` (51.7k★, MIT, skills.sh: Safe/Low) | `npx skills add https://github.com/Leonxlnx/taste-skill --skill "design-taste-frontend"` | 없음 | **설치됨** | MVP 재설계 — 레이아웃·타이포·모션 감각, generic UI 탈피 |
-| `notebooklm` (skill) | `teng-lin/notebooklm-py` (16.9k★, MIT) | `notebooklm skill install --scope project` (CLI 선설치 필요) | ⚠️ **비공식**·구글 NotebookLM로 **데이터 외부전송** | **설치됨** | 리서치 리포트 grounded Q&A·요약(외부 출처 전용) |
-| `impeccable` | `pbakaus/impeccable` (41.7k★, Apache-2.0) | `npx impeccable install` → `/impeccable init` (**대화식·프로젝트 훅 설치**) | 프로젝트 훅 추가(전역 하네스 무관) | **미설치(수동)** | 프론트엔드 결과물 디자인 마감 정제 |
+| 스킬                              | 출처(검증)                                                    | 설치                                                                                       | 인증/주의                                  | 상태          | 용도(본선)                                  |
+| ------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------- | ----------- | --------------------------------------- |
+| `design-taste-frontend` (Taste) | `Leonxlnx/taste-skill` (51.7k★, MIT, skills.sh: Safe/Low) | `npx skills add https://github.com/Leonxlnx/taste-skill --skill "design-taste-frontend"` | 없음                                     | **설치됨**     | MVP 재설계 — 레이아웃·타이포·모션 감각, generic UI 탈피 |
+| `notebooklm` (skill)            | `teng-lin/notebooklm-py` (16.9k★, MIT)                    | `notebooklm skill install --scope project` (CLI 선설치 필요)                                  | ⚠️ **비공식**·구글 NotebookLM로 **데이터 외부전송** | **설치됨**     | 리서치 리포트 grounded Q&A·요약(외부 출처 전용)       |
+| `impeccable`                    | `pbakaus/impeccable` (41.7k★, Apache-2.0)                 | `npx impeccable install` → `/impeccable init` (**대화식·프로젝트 훅 설치**)                        | 프로젝트 훅 추가(전역 하네스 무관)                   | **미설치(수동)** | 프론트엔드 결과물 디자인 마감 정제                     |
 
 > **`design-taste-frontend`는 `skills-lock.json`에 잠금** → 팀원은 repo clone 후 `npx skills install` 한 줄로 동일 버전 재현.
 > **`impeccable`은 대화식 설치**(비대화 플래그 미동작·2분 타임아웃 확인)라 자동화 제외. 각자 터미널에서 위 명령 실행.
