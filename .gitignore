@@ -44,3 +44,16 @@ tests/results/
 .agents/
 .impeccable/
 .gitmodules
+
+# 완전-파생 통계 (aggregator가 매 세션 전체 재생성 → git 노이즈). SSoT=intake.csv는 추적.
+# 재생성: node 08_본선/_system/skills/telemetry-aggregator/aggregate.mjs · Syncthing으로도 공유됨.
+# ⚠️ _telemetry-log·_agent-registry·_contribution-stats는 수동내용 혼재라 추적 유지.
+08_본선/_system/telemetry/ai-usage-stats.md
+08_본선/_system/telemetry/_pii-scan-report.md
+08_본선/_system/telemetry/ai-session-intake.csv.bak
+
+# 캡처 스크린샷 비트맵 — 얼굴 사진·Syncthing 장치ID·repo URL(개인정보) + 대용량(paperclip 레퍼런스 42MB).
+# 메타제목·분류 인덱스(_캡처-맵.md)만 추적, 이미지는 Syncthing/로컬 공유. 외부 공개는 사람만 결정.
+08_본선/assets/screenshots/*.png
+08_본선/assets/screenshots/*.jpeg
+08_본선/assets/screenshots/paperclip/

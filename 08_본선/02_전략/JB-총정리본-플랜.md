@@ -4,7 +4,7 @@ tags:
   - type/plan
   - status/active
 date: 2026-06-30
-up: "[[08_본선/_MOC/_02_전략_MOC|전략 MOC]]"
+up: "[[_02_전략_MOC|전략 MOC]]"
 aliases:
   - JB-총정리본-플랜
   - JB-compendium-plan

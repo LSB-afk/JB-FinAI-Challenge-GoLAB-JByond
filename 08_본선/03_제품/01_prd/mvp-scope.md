@@ -4,7 +4,7 @@ tags:
   - type/stub
   - status/draft
 date: 2026-06-26
-up: "[[08_본선/03_제품/INDEX|제품 인덱스]]"
+up: "[[INDEX|제품 인덱스]]"
 ---
 
 # MVP Scope — 본선 최소 기능 범위

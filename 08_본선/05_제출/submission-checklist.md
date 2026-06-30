@@ -4,7 +4,7 @@ tags:
   - type/task
   - status/active
 date: 2026-06-26
-up: "[[08_본선/_MOC/_05_제출_MOC|제출 MOC]]"
+up: "[[_05_제출_MOC|제출 MOC]]"
 ---
 
 # 제출 체크리스트

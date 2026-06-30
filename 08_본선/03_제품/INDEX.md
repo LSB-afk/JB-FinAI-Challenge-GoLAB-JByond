@@ -4,7 +4,7 @@ tags:
   - type/moc
   - status/active
 date: 2026-06-26
-up: "[[08_본선/_MOC/_03_제품_MOC|제품 MOC]]"
+up: "[[_03_제품_MOC]]"
 ---
 
 # 제품 문서 인덱스

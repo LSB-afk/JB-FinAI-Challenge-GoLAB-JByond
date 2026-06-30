@@ -4,7 +4,7 @@ tags:
   - type/moc
   - status/active
 date: 2026-06-27
-up: "[[08_본선/_MOC/_MOC_HOME|본선 MOC 허브]]"
+up: "[[_MOC_HOME|본선 MOC 허브]]"
 ---
 
 # 시스템 도구 MOC
@@ -67,13 +67,14 @@ up: "[[08_본선/_MOC/_MOC_HOME|본선 MOC 허브]]"
 
 ---
 
-## 에이전트 로스터 (다학제 10 + 후보 4)
+## 에이전트 로스터 (다학제 11 + 후보 4)
 
 | 파일 | 역할 |
 |-----|------|
 | [[08_본선/_system/agents/_agent-registry\|에이전트 레지스트리]] | 운영·개발 AI 에이전트 정의·기여·토큰 추적 |
 | [[08_본선/_system/agents/roles/orchestrator\|orchestrator]] · [[08_본선/_system/agents/roles/finance-domain\|finance-domain]] · [[08_본선/_system/agents/roles/compliance-risk\|compliance-risk]] · [[08_본선/_system/agents/roles/research\|research]] · [[08_본선/_system/agents/roles/product\|product]] | 활성 역할 (1) |
 | [[08_본선/_system/agents/roles/designer\|designer]] · [[08_본선/_system/agents/roles/builder\|builder]] · [[08_본선/_system/agents/roles/judge-qa\|judge-qa]] · [[08_본선/_system/agents/roles/evidence\|evidence]] · [[08_본선/_system/agents/roles/submission\|submission]] | 활성 역할 (2) |
+| [[08_본선/_system/agents/roles/visualization\|visualization]] | 활성 역할 (시각화 PM + 데이터 품질 관리자) |
 | [[08_본선/_system/agents/candidates/red-team-judge\|red-team-judge]] · [[08_본선/_system/agents/candidates/data-engineer\|data-engineer]] · [[08_본선/_system/agents/candidates/pitch-storyteller\|pitch-storyteller]] · [[08_본선/_system/agents/candidates/security\|security]] | 후보(대비) |
 
 ---
@@ -86,6 +87,7 @@ up: "[[08_본선/_MOC/_MOC_HOME|본선 MOC 허브]]"
 | [[08_본선/_system/skills/telemetry-aggregator/SKILL\|telemetry-aggregator]] | intake CSV → 통계 파생 갱신(파이프라인 엔진) |
 | [[08_본선/_system/skills/canon-moc-sync/SKILL\|canon-moc-sync]] | 중복명·MOC링크·frontmatter 집행 |
 | [[08_본선/_system/skills/pii-governance-validator/SKILL\|pii-governance-validator]] | PII 비반출·승인우회 위반 스캔 |
+| [[08_본선/_system/skills/visualization-cycle/SKILL\|visualization-cycle]] | VISUALIZATION-PLAN 기준 Excalidraw 재생성·검증 |
 | [[08_본선/_system/skills/harness-sync/SKILL\|harness-sync]] | **상태 동기화** — 모든 시스템 파일을 현재 상태로(프롬프트·로그·레지스트리·MOC·메모리·텔레메트리) |
 
 ---
@@ -113,6 +115,7 @@ up: "[[08_본선/_MOC/_MOC_HOME|본선 MOC 허브]]"
 | 파일 | 역할 |
 |-----|------|
 | [[08_본선/_system/visualizations/_viz-index\|시각화 인덱스]] | 다이어그램 목록·데이터 스펙 |
+| [[08_본선/_system/visualizations/VISUALIZATION-PLAN\|시각화 기획안]] | Excalidraw 생성 전 목적·독자·데이터·갱신 조건을 고정하는 상위 SSoT |
 | [[08_본선/_system/visualizations/timeline\|타임라인]] | 대회 전체 타임라인 Excalidraw |
 | [[08_본선/_system/visualizations/contribution\|기여도]] | 팀원×분야 기여 히트맵 Excalidraw |
 | [[08_본선/_system/visualizations/tokens-time\|토큰/시간]] | 세션별 토큰 사용량 추이 Excalidraw |

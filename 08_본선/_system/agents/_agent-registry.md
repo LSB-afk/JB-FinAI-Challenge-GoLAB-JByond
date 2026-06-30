@@ -31,6 +31,7 @@ aliases:
 | **구조 청사진** | 시스템 아키텍처·컴포넌트 설계 문서 작성 | claude-sonnet-4-6 (Sonnet) | 71,470 | 시스템 아키텍처 청사진 | 완료 |
 | **paperclip 분석** | paperclip 레퍼런스 역엔지니어링 분석 | claude-sonnet-4-6 (Sonnet) | 74,125 | paperclip 패턴 분석 문서 | 완료 |
 | **스캐폴드 빌더** | 볼트 폴더 구조·초기 파일 생성 | claude-sonnet-4-6 (Sonnet) | 78,428 | 볼트 스캐폴드 | 완료 |
+| **visualization** | 시각화 기획 선행·Excalidraw 자동생성·업그레이드 사이클·데이터 품질 관리 | Sonnet/Codex | estimate | VISUALIZATION-PLAN, visualization-cycle, Excalidraw 보드 | 활성 |
 
 ---
 
@@ -38,10 +39,10 @@ aliases:
 
 | 항목 | 값 |
 |------|----|
-| 등록 에이전트 수 | 10 (Orchestrator 포함) |
-| 서브에이전트 수 | 9 |
+| 등록 에이전트 수 | 11 (Orchestrator 포함) |
+| 서브에이전트 수 | 10 |
 | 총 누적 토큰 | 676,932+ |
-| 활성 에이전트 | 1 (Orchestrator) |
+| 활성 에이전트 | 2 (Orchestrator, visualization) |
 | 완료 에이전트 | 9 |
 
 ---
@@ -53,7 +54,7 @@ Orchestrator (Opus)
 ├── 리서치 계열: 대회개요탐색, 원천인벤토리, paperclip분석
 ├── 문서 계열: 대회정본작성, 발표덱아웃라인, 시연시나리오
 ├── 개발 계열: MVP점검, 구조청사진
-└── 운영 계열: 스캐폴드빌더, [이 세션]
+└── 운영 계열: 스캐폴드빌더, visualization, [이 세션]
 ```
 
 시각화: [[08_본선/_system/visualizations/agent-flow|에이전트 흐름 다이어그램]]
@@ -66,13 +67,17 @@ Orchestrator (Opus)
 - [[_HARNESS-SYSTEM|하네스 시스템]]
 - [[08_본선/_system/telemetry/_telemetry-log|텔레메트리 로그]]
 - [[08_본선/_system/team/_contribution-stats|기여 통계]]
+- [[08_본선/_system/visualizations/VISUALIZATION-PLAN|시각화 기획안]]
+- [[08_본선/_system/skills/visualization-cycle/SKILL|시각화 사이클 스킬]]
 
 <!-- AGGREGATOR:AGENT-STATS -->
 ## AI 사용 통계 (자동 집계)
 
 | 에이전트 | 세션 수 | 입력 토큰 | 출력 토큰 |
 |---------|--------|---------|---------|
-| orchestrator | 2 | NaN | NaN |
-| direct | 1 | 0 | 0 |
-| gpt-5.3-codex-spark | 1 | NaN | NaN |
+| direct | 6 | 29,086,247 | 7,281,183 |
+| orchestrator | 2 | 50,000 | 570,000 |
+| via-claude | 2 | 0 | 0 |
+| gpt-5.3-codex-spark | 1 | 0 | 0 |
+| gpt-5.5-xhigh | 1 | 0 | 0 |
 <!-- /AGGREGATOR:AGENT-STATS -->

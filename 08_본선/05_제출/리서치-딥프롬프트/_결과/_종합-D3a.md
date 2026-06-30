@@ -1,9 +1,15 @@
 ---
+tags:
+  - area/strategy
+  - type/reference
+  - status/active
 title: "_종합-D3a: JB금융그룹 계열사·재무·여신포트폴리오 적대적 검증"
 source: "D3a-결과.md"
 검증일: 2026-06-30
 분류: 대외비
 format: B
+date: 2026-06-30
+up: "[[_00-회수현황]]"
 ---
 
 ## 핵심 발견 (검증 표시)

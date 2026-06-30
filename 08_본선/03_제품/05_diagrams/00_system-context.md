@@ -4,7 +4,7 @@ tags:
   - type/stub
   - status/draft
 date: 2026-06-26
-up: "[[08_본선/03_제품/INDEX|제품 인덱스]]"
+up: "[[INDEX|제품 인덱스]]"
 ---
 
 # 시스템 컨텍스트 다이어그램 (C4 L1)

@@ -1,0 +1,11 @@
+date,tool_name,tool_type,source,usage_count,used_by,evidence_path
+2026-06-27,Claude Code,AI coding agent,telemetry,5,AI,08_본선/_system/telemetry/ai-session-intake.csv
+2026-06-27,Codex,AI coding agent,telemetry,2,AI,08_본선/_system/telemetry/ai-session-intake.csv
+2026-06-30,ChatGPT GPT-5.5 Deep Research,research engine,model-record,1,AI,08_본선/05_제출/리서치-딥프롬프트/_결과/_모델기록.md
+2026-06-30,Gemini Deep Research,research engine,model-record,11,AI,08_본선/05_제출/리서치-딥프롬프트/_결과/_모델기록.md
+2026-06-29,GitHub,collaboration,registry,1,team,08_본선/_system/tools/registry-integrations.md
+2026-06-29,Google Drive,collaboration,registry,1,team,08_본선/_system/tools/registry-integrations.md
+2026-06-29,Discord,collaboration,registry,1,team,08_본선/_system/tools/registry-integrations.md
+2026-06-29,Syncthing,file sync,registry,1,team,08_본선/_system/tools/registry-integrations.md
+2026-06-29,Obsidian,knowledge base,registry,1,team,08_본선/_system/tools/_tools-index.md
+2026-07-01,Excalidraw,visualization,visualization-plan,13,team,08_본선/_system/visualizations/_viz-index.md

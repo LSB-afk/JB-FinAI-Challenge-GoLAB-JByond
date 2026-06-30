@@ -1,10 +1,16 @@
 ---
+tags:
+  - area/strategy
+  - type/reference
+  - status/active
 classification: 대외비
 created: 2026-06-30
 domain: D1b — 전세사기·보이스피싱 피해규모
 runs: [D1b-결과.md, D1b-결과-2.md]
 reconciler: research-role
 status: reconciled
+date: 2026-06-30
+up: "[[_00-회수현황]]"
 ---
 
 # _종합-D1b: 전세사기·보이스피싱 피해규모 2-run 합의

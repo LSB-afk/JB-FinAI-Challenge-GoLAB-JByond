@@ -4,7 +4,7 @@ tags:
   - type/stub
   - status/draft
 date: 2026-06-26
-up: "[[08_본선/03_제품/INDEX|제품 인덱스]]"
+up: "[[INDEX|제품 인덱스]]"
 ---
 
 # 종합 아키텍처 — 심사용 시스템 구성도

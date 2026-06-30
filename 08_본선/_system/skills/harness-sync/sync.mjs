@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * harness-sync/sync.mjs
- * 자동 단계(2·3·4·5)를 순서대로 실행하는 동기화 오케스트레이터.
+ * 자동 단계(2·3·4·5·6)를 순서대로 실행하는 동기화 오케스트레이터.
  * 표준 라이브러리만 사용. 외부 전송 없음.
  *
  * Usage:
@@ -24,7 +24,7 @@ const SYSTEM_DIR = resolve(__dirname, '..', '..')
 const SKILLS_DIR = resolve(SYSTEM_DIR, 'skills')
 
 // 각 단계별 스크립트 경로
-// 맵 자동화 순서: (a) 레지스트리 재생성 → (b) 텔레메트리 집계 → (c) MOC/frontmatter --apply
+// 맵 자동화 순서: (a) 레지스트리 재생성 → (b) 텔레메트리 집계 → (c) MOC/frontmatter --apply → (d) 시각화 사이클
 const STEPS = [
   {
     id: 2,
@@ -50,6 +50,13 @@ const STEPS = [
   },
   {
     id: 5,
+    name: '시각화 사이클 재생성·검증',
+    script: resolve(SKILLS_DIR, 'visualization-cycle', 'scripts', 'run.mjs'),
+    args: [],
+    // [자동] VISUALIZATION-PLAN → viz-generator → Excalidraw JSON 검증
+  },
+  {
+    id: 6,
     name: '거버넌스 스캔 (PII)',
     script: resolve(SKILLS_DIR, 'pii-governance-validator', 'validate.mjs'),
     args: DRY_RUN ? ['--dry-run'] : [],
@@ -118,7 +125,7 @@ console.log(`\n[harness-sync] 자동 단계 완료 (${elapsed}s)`)
 if (failed.length) {
   console.log(`  ⚠ 경고 ${failed.length}건: ${failed.map(r => r.name).join(', ')}`)
 }
-console.log(`  에이전트 판단 단계(1·6·7)는 Claude가 별도 수행.`)
+console.log(`  에이전트 판단 단계(1·7·8)는 Claude가 별도 수행.`)
 if (DRY_RUN) {
   console.log(`  [dry-run] 실제 파일은 변경되지 않았습니다.`)
 }

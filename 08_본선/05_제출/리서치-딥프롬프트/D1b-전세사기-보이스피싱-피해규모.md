@@ -4,7 +4,7 @@ tags:
   - type/prompt
   - status/active
 date: 2026-06-27
-up: "[[_00-도메인-분해-점검]]"
+up: "[[08_본선/05_제출/리서치-딥프롬프트/README]]"
 aliases:
   - D1b-전세사기-보이스피싱-피해규모
   - jeonse-fraud-voice-phishing-damage-research

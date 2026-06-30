@@ -4,7 +4,7 @@ tags:
   - type/log
   - status/draft
 date: 2026-06-26
-up: "[[08_본선/_MOC/_02_전략_MOC|전략 MOC]]"
+up: "[[_02_전략_MOC|전략 MOC]]"
 ---
 
 # Scope Board

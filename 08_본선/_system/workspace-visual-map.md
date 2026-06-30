@@ -4,7 +4,7 @@ tags:
   - type/reference
   - status/active
 date: 2026-06-26
-up: "[[08_본선/_MOC/_system_tools_MOC|시스템 도구 MOC]]"
+up: "[[_system_tools_MOC|시스템 도구 MOC]]"
 ---
 
 # 워크스페이스 비주얼 맵

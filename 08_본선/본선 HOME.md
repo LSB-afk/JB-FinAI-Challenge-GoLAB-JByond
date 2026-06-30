@@ -4,6 +4,7 @@ tags:
   - type/moc
   - status/active
 date: 2026-06-26
+up: "[[_MOC_HOME|본선 MOC 허브]]"
 aliases:
   - 본선HOME
   - 본선홈
@@ -29,6 +30,7 @@ aliases:
 | AI 리포트 최종본 | [[08_본선/05_제출/ai-report-final\|AI 리포트 최종]] |
 | 종합 아키텍처 다이어그램 | [[08_본선/03_제품/05_diagrams/99_comprehensive-architecture\|종합 아키텍처]] |
 | 프로젝트 대시보드 | [[08_본선/_system/dashboard/project-dashboard\|대시보드]] |
+| 시각화 기획·청사진 | [[08_본선/_system/visualizations/VISUALIZATION-PLAN\|시각화 기획안]] |
 
 ---
 
@@ -41,7 +43,7 @@ aliases:
 | 03 | 제품 | [[08_본선/_MOC/_03_제품_MOC\|제품 MOC]] | PRD·에이전트·UX·기술·다이어그램 |
 | 04 | 증빙 | [[08_본선/_MOC/_04_증빙_MOC\|증빙 MOC]] | 로그·분석·데일리·회의록 |
 | 05 | 제출 | [[08_본선/_MOC/_05_제출_MOC\|제출 MOC]] | 체크리스트·최종 검증·회고 |
-| — | 시스템 도구 | [[08_본선/_MOC/_system_tools_MOC\|시스템 도구 MOC]] | 대시보드·비주얼 맵 |
+| — | 시스템 도구 | [[08_본선/_MOC/_system_tools_MOC\|시스템 도구 MOC]] | 대시보드·비주얼 맵·시각화 자동화 |
 
 ---
 

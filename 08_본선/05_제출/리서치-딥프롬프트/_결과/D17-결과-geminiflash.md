@@ -1,3 +1,11 @@
+---
+tags:
+  - area/strategy
+  - type/reference
+  - status/active
+date: 2026-06-30
+up: "[[_00-회수현황]]"
+---
 > 원본 파일: `D17. gemini flash. 20260630_금융_데이터_클린룸_운영_모델.md`
 > 회수 2026-06-30 · ⚠️ 대외비 · **사용 모델: gemini flash (Deep Research)**
 

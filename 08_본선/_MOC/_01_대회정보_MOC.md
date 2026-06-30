@@ -4,7 +4,7 @@ tags:
   - type/moc
   - status/active
 date: 2026-06-26
-up: "[[08_본선/_MOC/_MOC_HOME|본선 MOC 허브]]"
+up: "[[_MOC_HOME|본선 MOC 허브]]"
 ---
 
 # 01 대회정보 MOC

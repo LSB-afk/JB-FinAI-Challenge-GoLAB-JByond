@@ -1,4 +1,8 @@
 ---
+tags:
+  - area/strategy
+  - type/reference
+  - status/active
 title: "_종합-D7a 공공·금융 데이터 API 통합 조달표"
 classification: 대외비
 source_runs:
@@ -6,6 +10,8 @@ source_runs:
   - D7a-결과-2.md # run 2
 synthesized: 2026-06-30
 status: research-합의본
+date: 2026-06-30
+up: "[[_00-회수현황]]"
 ---
 
 ## 핵심 발견

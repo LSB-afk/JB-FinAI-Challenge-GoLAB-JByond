@@ -4,7 +4,7 @@ tags:
   - type/prompt
   - status/active
 date: 2026-06-27
-up: "[[_00-도메인-분해-점검]]"
+up: "[[08_본선/05_제출/리서치-딥프롬프트/README]]"
 aliases:
   - D10-금융LLM-보안-망분리기술
   - D10-financial-LLM-security-network-isolation-tech

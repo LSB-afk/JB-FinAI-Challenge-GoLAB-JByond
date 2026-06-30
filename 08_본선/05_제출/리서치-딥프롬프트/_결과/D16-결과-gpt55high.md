@@ -1,3 +1,11 @@
+---
+tags:
+  - area/strategy
+  - type/reference
+  - status/active
+date: 2026-06-30
+up: "[[_00-회수현황]]"
+---
 > 원본 파일: `D16. gpt 5.5 high. 20260630_한국_은행권_RM_업무량·생산성·원가_베이스라인.docx`
 > 회수 2026-06-30 · ⚠️ 대외비 · **사용 모델: GPT-5.5 high (Deep Research)**
 > 수식·도표는 원문 이미지 → `_media/`에 추출(Obsidian 인라인).

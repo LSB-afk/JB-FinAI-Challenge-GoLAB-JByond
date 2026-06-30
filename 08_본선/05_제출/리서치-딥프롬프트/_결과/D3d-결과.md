@@ -1,3 +1,11 @@
+---
+tags:
+  - area/strategy
+  - type/reference
+  - status/active
+date: 2026-06-30
+up: "[[_00-회수현황]]"
+---
 > 원본 파일: `D3d. 20260630_JB금융그룹_심층_해부_보고서.docx`
 > 회수 2026-06-30 · ⚠️ 대외비 · 엔진(GPT) 산출 원문
 

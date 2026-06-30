@@ -1,0 +1,7 @@
+phase_id,phase_name,start_date,end_date,done_count,total_count,completion_pct,evidence_path,data_quality
+P1,예선 MVP 구축·제출,2026-06-11,2026-06-15,8,8,100,00_제출/function-spec.md,mixed
+P2,본선 하네스·협업 시스템,2026-06-26,2026-06-29,14,15,93,08_본선/PROGRESS.md,estimate
+P3,리서치 워터폴 1차 사이클,2026-06-27,2026-06-30,8,10,80,08_본선/05_제출/리서치-딥프롬프트/_결과/_00-회수현황.md,estimate
+P4,제품 정의·MVP 고도화,2026-06-30,2026-07-02,3,5,60,08_본선/PROGRESS.md,estimate
+P5,발표·시연·영상 준비,2026-07-01,2026-07-04,2,3,67,00_제출/본선-시연-시나리오.md,estimate
+P6,본선 현장 시연·제출,2026-07-04,2026-07-05,0,4,0,_체계/본선-안내.md,estimate

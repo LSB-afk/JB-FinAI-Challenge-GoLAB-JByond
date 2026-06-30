@@ -23,13 +23,14 @@ up: "[[_tools-index]]"
 | 텔레메트리 집계 | CSV → 4개 MD 갱신 | 없음 |
 | MOC 링크 추가 | 경로 기반 섹션 라우팅 → `<!-- AUTO-LINKS -->` 마커에 삽입 | 파이프 뒤 `\|설명` 텍스트, 테이블 인라인 삽입 |
 | frontmatter 보정 | 누락 필드 자동 삽입 | 루트 허브(`HOME`·`PLAN`) `up` 값은 Claude 설정 |
+| 시각화 사이클 | VISUALIZATION-PLAN → Excalidraw 재생성·간트 갭·5초 가독성 검증 | 보드 기획·메시지 품질 판단 |
 | 거버넌스 스캔 | regex 탐지 → 경고만 | 위반 심각성 판단 + 대응 |
 | 프롬프트 로그 | — | Claude가 세션 내용 요약·append |
 | 메모리·SSoT 갱신 | — | Claude가 맥락 이해 후 서술 |
 
 ---
 
-## 8단계 동기화 루틴
+## 9단계 동기화 루틴
 
 > 단계 표기: **[에이전트]** = Claude가 판단해 narrative 작성 / **[스크립트]** = `.mjs` 자동 실행
 
@@ -74,7 +75,15 @@ node 08_본선/_system/skills/canon-moc-sync/sync.mjs --apply
 - 섹션 MOC 테이블에 행 인라인 삽입 — AUTO-LINKS 마커 기반 자동 추가와 별도로, 표 안에 넣으려면 Claude가 판단
 - 루트 허브 파일의 `up` 값 — Claude가 맥락에 맞게 설정
 
-### 5. 거버넌스 스캔 **[스크립트]** `[자동]`
+### 5. 시각화 사이클 재생성·검증 **[스크립트]** `[자동]`
+
+```bash
+node 08_본선/_system/skills/visualization-cycle/scripts/run.mjs
+```
+
+[[VISUALIZATION-PLAN]]을 기준으로 `_system/automation/viz-generator.mjs`를 실행하고, `.excalidraw` JSON, `_viz-index` 등록 상태, 간트 갭 링크, 발표용 5초 가독성, 사람/AI/기여 레이어를 검증한다. 새 보드나 큰 변경은 먼저 [[VISUALIZATION-PLAN]]에 등록되어 있어야 한다.
+
+### 6. 거버넌스 스캔 **[스크립트]** `[자동]`
 
 ```bash
 node 08_본선/_system/skills/pii-governance-validator/validate.mjs 2>/dev/null || true
@@ -82,14 +91,14 @@ node 08_본선/_system/skills/pii-governance-validator/validate.mjs 2>/dev/null 
 
 대외비·PII 위반 0건 확인. 위반 발견 시 경고 출력 후 계속 진행(블로킹 없음).
 
-### 6. 인-볼트 메모리 갱신 **[에이전트]**
+### 7. 인-볼트 메모리 갱신 **[에이전트]**
 
 `_system/memory/context/` 내 파일들을 현재 상태로 갱신:
 - `본선-현황.md` — 현재 진행 단계·완료 항목 반영
 - `제품-정의.md` — 제품 정의 변경 사항 반영
 - 전역 메모리(`~/.claude/projects/.../MEMORY.md`) 미러 안내 출력
 
-### 7. SSoT 문서 갱신 **[에이전트]**
+### 8. SSoT 문서 갱신 **[에이전트]**
 
 아래 파일들을 현재 상태로 갱신:
 - `PROGRESS.md` — 완료 태스크·다음 단계
@@ -97,10 +106,10 @@ node 08_본선/_system/skills/pii-governance-validator/validate.mjs 2>/dev/null 
 - `_system/telemetry/` 내 `session-log.md`(있으면) — 세션 요약 행 추가
 - `decision-log.md`(있으면) — 이번 세션 주요 결정 기록
 
-### 8. 동기화 요약 출력 **[에이전트 + 스크립트]**
+### 9. 동기화 요약 출력 **[에이전트 + 스크립트]**
 
-`sync.mjs`가 자동 단계(2·3·4·5) 결과를 1개 블록으로 출력 후,
-에이전트가 판단 단계(1·6·7) 완료 여부를 합쳐 최종 요약 출력:
+`sync.mjs`가 자동 단계(2·3·4·5·6) 결과를 1개 블록으로 출력 후,
+에이전트가 판단 단계(1·7·8) 완료 여부를 합쳐 최종 요약 출력:
 
 ```
 [harness-sync] 동기화 완료 — 2026-06-27
@@ -108,9 +117,10 @@ node 08_본선/_system/skills/pii-governance-validator/validate.mjs 2>/dev/null 
   ✓ 2. 플러그인·MCP 레지스트리 재생성 (활성 N, 비활성 M)
   ✓ 3. 텔레메트리 집계 (intake X행 → 4파일 갱신)
   ✓ 4. MOC 정합성 (중복 0 · frontmatter 누락 0 · 신규 링크 K건)
-  ✓ 5. 거버넌스 스캔 (PII 위반 0)
-  ✓ 6. 인-볼트 메모리 갱신 (context/ N파일)
-  ✓ 7. SSoT 문서 갱신 (PROGRESS·대시보드·session-log)
+  ✓ 5. 시각화 사이클 (VISUALIZATION-PLAN 기준 Excalidraw 재생성·검증)
+  ✓ 6. 거버넌스 스캔 (PII 위반 0)
+  ✓ 7. 인-볼트 메모리 갱신 (context/ N파일)
+  ✓ 8. SSoT 문서 갱신 (PROGRESS·대시보드·session-log)
 ```
 
 ---
@@ -155,6 +165,7 @@ harness sync 해줘
 - [[registry-mcp|MCP 레지스트리]] — 2단계 재생성 대상
 - [[telemetry-aggregator|텔레메트리 집계기]] — 3단계 호출
 - [[canon-moc-sync|MOC 정합성 동기화]] — 4단계 호출
-- [[pii-governance-validator|거버넌스 검증기]] — 5단계 호출
+- [[visualization-cycle|시각화 사이클]] — 5단계 호출
+- [[pii-governance-validator|거버넌스 검증기]] — 6단계 호출
 - [[_tools-index|도구 인덱스]]
 - [[_HARNESS-SYSTEM|하네스 시스템]]

@@ -1,9 +1,15 @@
 ---
+tags:
+  - area/strategy
+  - type/reference
+  - status/active
 classification: 대외비
 expires: 2026-06-29
 source: Dplus-a-결과.md (엔진 산출 원문)
 role: research — 적대적 검증 + format B 종합
 verified: 2026-06-30
+date: 2026-06-30
+up: "[[_00-회수현황]]"
 ---
 
 # _종합 D+a: 경쟁·시장·ROI 적대적 검증 보고서

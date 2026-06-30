@@ -16,6 +16,12 @@ const PATHS = {
   usageStats:   path.join(BASE, "telemetry/ai-usage-stats.md"),
 };
 
+function atomicWriteFile(filePath, content) {
+  const tmp = filePath + ".tmp";
+  fs.writeFileSync(tmp, content);
+  fs.renameSync(tmp, filePath);
+}
+
 // ── CSV 파싱 ──────────────────────────────────────────────────────────────
 function parseCSV(text) {
   const lines = text.trim().split("\n").filter(Boolean);
@@ -32,12 +38,48 @@ function splitCSVRow(row) {
   let cur = "", inQ = false;
   for (let i = 0; i < row.length; i++) {
     const ch = row[i];
-    if (ch === '"') { inQ = !inQ; }
+    if (ch === '"') {
+      if (inQ && row[i + 1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    }
     else if (ch === "," && !inQ) { result.push(cur.trim()); cur = ""; }
     else cur += ch;
   }
   result.push(cur.trim());
   return result;
+}
+
+function tokenCount(v) {
+  const n = parseInt(String(v || "0").replace(/^~/, ""), 10);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function dedupeSessionRows(rows) {
+  const kept = [];
+  const bySession = new Map();
+
+  for (const r of rows) {
+    const sessionId = r.session_id || "";
+    if (!sessionId || sessionId === "manual") {
+      kept.push(r);
+      continue;
+    }
+
+    const prev = bySession.get(sessionId);
+    if (!prev) {
+      bySession.set(sessionId, r);
+      kept.push(r);
+      continue;
+    }
+
+    if (tokenCount(r.tokens_in) > tokenCount(prev.tokens_in)) {
+      const idx = kept.indexOf(prev);
+      if (idx !== -1) kept[idx] = r;
+      bySession.set(sessionId, r);
+    }
+  }
+
+  return kept;
 }
 
 // ── 텔레메트리 로그 append (중복 제외) ──────────────────────────────────
@@ -60,7 +102,7 @@ function updateTelemetryLog(rows) {
     `| ${r.ts} | 세션종료 | ${r.tools || "—"} | ${r.tokens_in}/${r.tokens_out} | ${r.duration || "—"} | ${r.task || "—"} | ${r.agent || "—"} | ${r.exact_or_estimate} |`
   ).join("\n");
 
-  fs.writeFileSync(PATHS.telemetryLog, existing.trimEnd() + "\n" + lines + "\n");
+  atomicWriteFile(PATHS.telemetryLog, existing.trimEnd() + "\n" + lines + "\n");
   return newRows.length;
 }
 
@@ -92,8 +134,8 @@ function updateAgentRegistry(rows) {
     const name = r.agent || "unknown";
     if (!agents[name]) agents[name] = { sessions: 0, tokIn: 0, tokOut: 0 };
     agents[name].sessions++;
-    agents[name].tokIn  += parseInt(r.tokens_in  || "0", 10);
-    agents[name].tokOut += parseInt(r.tokens_out || "0", 10);
+    agents[name].tokIn  += tokenCount(r.tokens_in);
+    agents[name].tokOut += tokenCount(r.tokens_out);
   }
 
   // <!-- AGGREGATOR:AGENT-STATS --> 블록 교체 또는 append
@@ -117,7 +159,7 @@ function updateAgentRegistry(rows) {
     ? existing.replace(/<!-- AGGREGATOR:AGENT-STATS -->[\s\S]*?<!-- \/AGGREGATOR:AGENT-STATS -->/m, section)
     : existing.trimEnd() + "\n\n" + section + "\n";
 
-  fs.writeFileSync(PATHS.agentReg, updated);
+  atomicWriteFile(PATHS.agentReg, updated);
 }
 
 // ── 팀원 기여 통계 갱신 ──────────────────────────────────────────────────
@@ -162,7 +204,7 @@ function updateContribStats(rows) {
     ? existing.replace(/<!-- AGGREGATOR:CONTRIB-STATS -->[\s\S]*?<!-- \/AGGREGATOR:CONTRIB-STATS -->/m, section)
     : existing.trimEnd() + "\n\n" + section + "\n";
 
-  fs.writeFileSync(PATHS.contribStats, updated);
+  atomicWriteFile(PATHS.contribStats, updated);
 }
 
 // ── ai-usage-stats.md 전체 재생성 ────────────────────────────────────────
@@ -174,8 +216,8 @@ function rebuildUsageStats(rows) {
   for (const r of rows) {
     const eng = r.engine || "claude";
     const dom = r.domain || "other";
-    const tin  = parseInt(r.tokens_in  || "0", 10);
-    const tout = parseInt(r.tokens_out || "0", 10);
+    const tin  = tokenCount(r.tokens_in);
+    const tout = tokenCount(r.tokens_out);
 
     if (!engines[eng]) engines[eng] = { sessions: 0, tokIn: 0, tokOut: 0 };
     engines[eng].sessions++;
@@ -236,18 +278,30 @@ function rebuildUsageStats(rows) {
   ].join("\n");
 
   fs.mkdirSync(path.dirname(PATHS.usageStats), { recursive: true });
-  fs.writeFileSync(PATHS.usageStats, content + "\n");
+  atomicWriteFile(PATHS.usageStats, content + "\n");
+}
+
+async function updateGitContribStats() {
+  try {
+    const gitContribPath = path.join(BASE, "automation/git-contribution.mjs");
+    const mod = await import("file://" + gitContribPath);
+    const update = mod.default || mod.updateGitContrib;
+    if (typeof update === "function") update();
+  } catch {
+    // Git 기반 기여 집계 실패는 텔레메트리 집계를 막지 않는다.
+  }
 }
 
 // ── 메인 ─────────────────────────────────────────────────────────────────
-function main() {
+async function main() {
   try {
     const csv = fs.readFileSync(PATHS.intake, "utf8");
-    const rows = parseCSV(csv).filter(r => r.ts && !r.ts.startsWith("_CORRECTION"));
+    const rows = dedupeSessionRows(parseCSV(csv).filter(r => r.ts && !r.ts.startsWith("_CORRECTION")));
 
     const added = updateTelemetryLog(rows);
     updateAgentRegistry(rows);
     updateContribStats(rows);
+    await updateGitContribStats();
     rebuildUsageStats(rows);
 
     process.stdout.write(
@@ -258,4 +312,4 @@ function main() {
   }
 }
 
-main();
+await main();

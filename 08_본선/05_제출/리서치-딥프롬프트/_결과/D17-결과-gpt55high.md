@@ -1,3 +1,11 @@
+---
+tags:
+  - area/strategy
+  - type/reference
+  - status/active
+date: 2026-06-30
+up: "[[_00-회수현황]]"
+---
 > 원본 파일: `D17. gpt 5.5 high. 20260630_JB_금융그룹_데이터_경계와_클린룸_운영모델.docx`
 > 회수 2026-06-30 · ⚠️ 대외비 · **사용 모델: gpt 5.5 high (Deep Research)**
 

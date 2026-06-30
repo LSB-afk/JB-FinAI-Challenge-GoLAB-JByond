@@ -1,10 +1,16 @@
 ---
+tags:
+  - area/strategy
+  - type/reference
+  - status/active
 title: "D5a 적대적 검증 종합 — 신용정보법·PIPA 가명처리 법조문"
 role: compliance-risk
 대외비: true
 원본: D5a-결과.md
 검증일: 2026-06-30
 검증자: compliance-risk (GoLAB 본선)
+date: 2026-06-30
+up: "[[_00-회수현황]]"
 ---
 
 # D5a 적대적 검증 종합

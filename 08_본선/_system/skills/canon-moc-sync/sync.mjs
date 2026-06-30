@@ -228,14 +228,14 @@ function main() {
   });
 
   if (contentDuplicates.length) {
-    process.stdout.write(`[1/4] ⚠ 중복 파일명(콘텐츠): ${contentDuplicates.length}건 — 경로지정 위키링크 권장\n`);
+    process.stdout.write(`[1/5] ⚠ 중복 파일명(콘텐츠): ${contentDuplicates.length}건 — 경로지정 위키링크 권장\n`);
     for (const [name, paths] of contentDuplicates) {
       process.stdout.write(`  ⚠ "${name}"\n`);
       for (const p of paths) process.stdout.write(`      ${path.relative(process.cwd(), p)}\n`);
     }
     exitCode = 0; // 에러가 아닌 경고
   } else {
-    process.stdout.write(`[1/4] ✓ 중복 파일명(콘텐츠): 없음\n`);
+    process.stdout.write(`[1/5] ✓ 중복 파일명(콘텐츠): 없음\n`);
   }
   if (systemOnlyDuplicates.length) {
     process.stdout.write(`       (시스템 내부 중복 ${systemOnlyDuplicates.length}건은 정상 — 무시)\n`);
@@ -267,12 +267,12 @@ function main() {
   }
 
   if (fmIssues.length) {
-    process.stdout.write(`[2/4] frontmatter 누락: ${fmIssues.length}건\n`);
+    process.stdout.write(`[2/5] frontmatter 누락: ${fmIssues.length}건\n`);
     for (const { file, missing } of fmIssues) {
       process.stdout.write(`  - ${path.relative(process.cwd(), file)} (누락: ${missing.join(", ")})\n`);
     }
   } else {
-    process.stdout.write(`[2/4] ✓ frontmatter: 전체 정합\n`);
+    process.stdout.write(`[2/5] ✓ frontmatter: 전체 정합\n`);
   }
 
   // ── 3. 섹션 MOC 누락 위키링크 감지 ───────────────────────────────────
@@ -319,7 +319,7 @@ function main() {
 
   const totalGaps = Object.values(mocGaps).reduce((s, arr) => s + arr.length, 0);
   if (totalGaps > 0) {
-    process.stdout.write(`[3/4] MOC 누락 링크: ${totalGaps}건\n`);
+    process.stdout.write(`[3/5] MOC 누락 링크: ${totalGaps}건\n`);
     for (const [mocPath, items] of Object.entries(mocGaps)) {
       const mocName = path.basename(mocPath);
       process.stdout.write(`  ${mocName}:\n`);
@@ -328,7 +328,7 @@ function main() {
       }
     }
   } else {
-    process.stdout.write(`[3/4] ✓ MOC 누락 링크: 없음\n`);
+    process.stdout.write(`[3/5] ✓ MOC 누락 링크: 없음\n`);
   }
 
   // ── 4. 죽은 링크(dead link) 감지 — 삭제·이름변경된 파일을 가리키는 링크 ──
@@ -356,17 +356,65 @@ function main() {
     }
   }
   if (deadLinks.length) {
-    process.stdout.write(`[4/4] ⚠ 죽은 링크(삭제·이름변경 대상): ${deadLinks.length}건\n`);
+    process.stdout.write(`[4/5] ⚠ 죽은 링크(삭제·이름변경 대상): ${deadLinks.length}건\n`);
     for (const { src, target } of deadLinks) {
       process.stdout.write(`  ✗ [[${target}]]  ← ${path.relative(process.cwd(), src)}\n`);
     }
     process.stdout.write(`       (자동 삭제 안 함 — 링크 갱신 또는 수동 정리 필요)\n`);
     exitCode = 0; // 경고만, 블로킹 없음
   } else {
-    process.stdout.write(`[4/4] ✓ 죽은 링크: 없음\n`);
+    process.stdout.write(`[4/5] ✓ 죽은 링크: 없음\n`);
   }
 
-  // ── 5. APPLY 모드 실행 ─────────────────────────────────────────────────
+  // ── 5. 도달성·사이클 검증 — "조상에서 자식으로 타고 들어갈 수 있는가" (네비게이션 정합) ──
+  // 루트(본선 HOME·_MOC_HOME)에서 위키링크 BFS → 도달 불가 .md = 부모-자식 단절(고아·유령부모).
+  // up: 체인 사이클도 검출. NFC·이스케이프파이프(\|)·경로/basename·마크다운링크 모두 처리.
+  {
+    const nfc = s => s.normalize("NFC");
+    const NAV_EXCLUDE = new Set(["SKILL", "README", "_pii-scan-report", "ai-usage-stats"]);
+    // basename → 경로 배열 (중복 basename: README·SKILL 등을 모두 보존해야 링크 누락 없음)
+    const byBase = new Map();
+    for (const f of allFiles) { const b = nfc(path.basename(f, ".md")); if (!byBase.has(b)) byBase.set(b, []); byBase.get(b).push(f); }
+    const normT = t => { t = nfc(t).trim().replace(/\\+$/, "").split("/").pop(); return t.endsWith(".md") ? t.slice(0, -3) : t; };
+    const linksOf = f => {
+      let t; try { t = nfc(fs.readFileSync(f, "utf8")); } catch { return []; }
+      const out = [];
+      for (const m of t.matchAll(/\[\[([^\]|#]+)/g)) out.push(normT(m[1]));
+      for (const m of t.matchAll(/\]\(([^)#]+)\)/g)) if (!m[1].includes("://")) out.push(normT(m[1]));
+      return out;
+    };
+    const upOf = f => {
+      let t; try { t = nfc(fs.readFileSync(f, "utf8")); } catch { return null; }
+      const fm = t.match(/^---\n([\s\S]*?)\n---/);
+      const um = fm && fm[1].match(/^up:\s*"?\[\[([^\]|#]+)/m);
+      return um ? normT(um[1]) : null;
+    };
+    const roots = ["본선 HOME", "_MOC_HOME"].map(nfc).filter(b => byBase.has(b));
+    const reached = new Set(roots);
+    const queue = [...roots];
+    while (queue.length) {
+      const b = queue.shift();
+      for (const f of (byBase.get(b) || []))           // 중복 basename: 모든 동명 파일의 링크를 따라간다
+        for (const tgt of linksOf(f)) if (byBase.has(tgt) && !reached.has(tgt)) { reached.add(tgt); queue.push(tgt); }
+    }
+    const unreachable = [...byBase.keys()].filter(b => !reached.has(b) && !NAV_EXCLUDE.has(b));
+    const cycles = [];
+    for (const b of byBase.keys()) {
+      const seen = new Set(); let cur = b;
+      while (cur && byBase.has(cur)) { if (seen.has(cur)) { cycles.push(b); break; } seen.add(cur); cur = nfc(upOf(byBase.get(cur)[0]) || ""); }
+    }
+    if (unreachable.length || cycles.length) {
+      process.stdout.write(`[5/5] ⚠ 도달성: 루트에서 못 타고 가는 노트 ${unreachable.length}건${cycles.length ? `, up 사이클 ${cycles.length}건` : ""}\n`);
+      for (const b of unreachable.slice(0, 20)) process.stdout.write(`  ✗ ${b} (조상→자식 경로 없음 — 부모 MOC/인덱스에 링크 또는 up 추가)\n`);
+      if (unreachable.length > 20) process.stdout.write(`       … 외 ${unreachable.length - 20}건\n`);
+      for (const b of cycles.slice(0, 10)) process.stdout.write(`  ↻ up 사이클: ${b}\n`);
+      exitCode = 0; // 경고만, 블로킹 없음
+    } else {
+      process.stdout.write(`[5/5] ✓ 도달성: 루트에서 모든 노트 도달 (사이클 0)\n`);
+    }
+  }
+
+  // ── 6. APPLY 모드 실행 ─────────────────────────────────────────────────
   if (!APPLY) {
     process.stdout.write(`\n[canon-moc-sync] dry-run 완료 — 수정 없음. --apply 로 실제 적용.\n`);
     process.exit(exitCode);

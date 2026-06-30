@@ -4,7 +4,7 @@ tags:
   - type/log
   - status/draft
 date: 2026-06-26
-up: "[[08_본선/_MOC/_05_제출_MOC|제출 MOC]]"
+up: "[[_05_제출_MOC|제출 MOC]]"
 ---
 
 # 회고 (Retrospective)

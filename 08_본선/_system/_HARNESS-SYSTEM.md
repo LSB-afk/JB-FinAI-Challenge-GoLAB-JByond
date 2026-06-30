@@ -17,10 +17,10 @@ aliases:
 > 이 시스템 자체가 대회 메타 평가(운영·협업·재현성) 점수 대상이다. 벤치마크: HagentOS(메모리+옵시디언 협업으로 1등).
 
 ## 0. 두 종류의 메모리 (구분)
-| 메모리 | 위치 | 공유 | 용도 |
-|--------|------|------|------|
+| 메모리              | 위치                      | 공유               | 용도                      |
+| ---------------- | ----------------------- | ---------------- | ----------------------- |
 | **인-볼트 메모리(정본)** | `08_본선/_system/memory/` | **GitHub로 팀 공유** | 프로젝트 맥락·결정·사실의 공유 단일 출처 |
-| 전역 에이전트 메모리 | `~/.claude/.../memory/` | 비공유(내 세션 recall) | 세션 간 빠른 회상용 미러 |
+| 전역 에이전트 메모리      | `~/.claude/.../memory/` | 비공유(내 세션 recall) | 세션 간 빠른 회상용 미러          |
 
 → 새 맥락은 **인-볼트 메모리에 먼저** 쌓고, 필요 시 전역으로 미러. 팀원은 볼트만 보면 전체 맥락 파악.
 
@@ -33,7 +33,7 @@ aliases:
 | `team/` | 팀원 4명 — `_team-roster.md` + `member-template.md` + `member-01..04.md`(역할·이력·프로필·한 일·분야별 기여 통계) |
 | `agents/` | 운영·개발 AI 에이전트 레지스트리 — `_agent-registry.md`(에이전트 정의·기여·토큰) |
 | `collaboration-rules.md` | 최소 협업 규칙(브랜치·커밋·옵시디언·로그·핸드오프·비밀유지) |
-| `visualizations/` | Excalidraw 시각화 — 타임라인·기여도·토큰/시간·에이전트 흐름 (스펙 + `.excalidraw`) |
+| `visualizations/` | Excalidraw 시각화 — [[VISUALIZATION-PLAN]] 기획 선행 + `.excalidraw` 자동 생성·검증 |
 | `automation/` | 자동 기록 하네스 — Stop 훅 스크립트 + 와이어링(사용자 무자각 기록의 실체) |
 | `dashboard/project-dashboard.md` | 살아있는 운영 대시보드(현황·오늘 할 일·블로커) |
 
@@ -50,11 +50,15 @@ aliases:
 - **규약 층**(항상): [[AGENTS]] — 모든 에이전트/세션은 종료 전 위 로그에 append(수동이라도 강제).
 - **자동 층**(훅): `automation/`의 **Stop 훅**이 세션 종료 시 트랜스크립트를 파싱해 `telemetry/_telemetry-log.md`에 툴/토큰/시간/타임스탬프를 자동 append → *사용자가 아무것도 안 해도 기록됨*. 활성화는 `update-config`로 settings.json 등록(검증 후).
 - **수동 트리거**: 사용자가 "기록해" 라고 하거나 체크포인트 시점에 동일 항목 갱신.
+- **시각화 자동 층**: [[visualization-cycle]]이 [[VISUALIZATION-PLAN]]을 기준으로 `viz-generator.mjs`를 실행하고 `.excalidraw` JSON·인덱스·간트 갭·5초 가독성 정합성을 검증한다. `harness-sync` 자동 단계에 포함된다.
 
 ## 4. 시각화 (Excalidraw)
-HagentOS처럼 핵심 지표를 엑스칼리드로로 바로 보거나 디자인 참고:
-- 타임라인(마일스톤 × 요소), 기여도(팀원×분야 / 에이전트×토큰), 툴·토큰·시간 추이, 에이전트 협업 흐름.
-→ `visualizations/`에 스펙 + 편집 가능한 `.excalidraw`.
+HagentOS처럼 핵심 지표를 엑스칼리드로로 바로 보거나 디자인 참고한다.
+
+- 기획 SSoT: [[VISUALIZATION-PLAN]] — 새 보드·큰 변경은 여기 먼저 등록.
+- 담당 에이전트: [[visualization]] — 시각화 PM + 데이터 품질 관리자.
+- 자동화 스킬: [[visualization-cycle]] — 계획 확인 → 생성기 실행 → JSON/인덱스·간트 갭·5초 가독성 검증.
+- 핵심 보드: 타임라인, 기여도, 툴·토큰·시간 추이, 에이전트 흐름, AX 운영체계, 팀 역할·기여율, 시연영상 스토리보드.
 
 ## 5. 연결
 - [[AGENTS|협업 계약]] · [[project-dashboard|운영 대시보드]] · [[_MOC_HOME|본선 MOC]] · [[hagent-os-구조-청사진|구조 청사진]]

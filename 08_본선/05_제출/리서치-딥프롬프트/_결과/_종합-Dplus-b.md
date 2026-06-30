@@ -1,9 +1,15 @@
 ---
+tags:
+  - area/strategy
+  - type/reference
+  - status/active
 classification: 대외비
 expires: 2026-06-29
 source: Dplus-b-결과.md (엔진 산출 원문)
 role: research — 표현 정제 + format B 종합
 verified: 2026-06-30
+date: 2026-06-30
+up: "[[_00-회수현황]]"
 ---
 
 # _종합 D+b: 거버넌스 AI 확장 경로 — 표현 정제 보고서

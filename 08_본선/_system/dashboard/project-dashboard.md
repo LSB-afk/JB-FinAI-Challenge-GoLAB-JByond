@@ -4,7 +4,7 @@ tags:
   - type/guide
   - status/active
 date: 2026-06-26
-up: "[[08_본선/_MOC/_system_tools_MOC|시스템 도구 MOC]]"
+up: "[[_system_tools_MOC|시스템 도구 MOC]]"
 ---
 
 # 프로젝트 대시보드

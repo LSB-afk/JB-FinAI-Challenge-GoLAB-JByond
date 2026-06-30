@@ -1,3 +1,11 @@
+---
+tags:
+  - area/strategy
+  - type/reference
+  - status/active
+date: 2026-06-30
+up: "[[_00-회수현황]]"
+---
 > 원본 파일: `D16. gemini flash. 20260630_은행_RM_생산성_원가_분석.docx`
 > 회수 2026-06-30 · ⚠️ 대외비 · **사용 모델: Gemini Flash (Deep Research)**
 > 수식은 원문이 이미지로 제공 → `_media/`에 추출(Obsidian 인라인 렌더).
