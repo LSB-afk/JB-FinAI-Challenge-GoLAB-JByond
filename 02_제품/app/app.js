@@ -1884,12 +1884,52 @@ function commandMarkup() {
   `;
 }
 
+function latestWorkSummaryView() {
+  const roles = [
+    ["기업여신", "3개 Agent · 5개 Skill", "서류·재무분석, 전결 라우팅, 자금용도 사후점검", "#corporate-credit-dashboard"],
+    ["소비자 보호", "4개 Agent · 7개 Skill", "적합성·적정성, 부당권유, 민원, 취약고객 보호", "#consumer-protection-dashboard"],
+    ["FDS/보이스피싱", "3개 Agent · 6개 Skill", "이상징후, 지급정지·해제, 탐지룰 운영", "#fds-dashboard"],
+    ["준법감시", "4개 Agent · 9개 Skill", "책무구조도, 데이터 경계, 감사 무결성, 사고대응", "#compliance-dashboard"],
+  ];
+  return `
+    <div class="latest-work">
+      <div class="latest-work-head">
+        <div>
+          <span class="source-badge">2026-07-01 최신 반영</span>
+          <strong>담당자별 Agent/Skill 제안이 서버 첫 화면에 노출됩니다.</strong>
+          <p>본선 리서치 딥프롬프트에서 정리한 신규 제안 14개 Agent와 27개 Skill을 런타임 계약과 분리된 proposed 상태로 연결했습니다.</p>
+        </div>
+        <div class="latest-work-metrics" aria-label="latest work metrics">
+          <span><strong>14</strong> Agent</span>
+          <span><strong>27</strong> Skill</span>
+          <span><strong>4</strong> 역할 대시보드</span>
+        </div>
+      </div>
+      <div class="latest-role-grid">
+        ${roles
+          .map(
+            ([label, count, description, href]) => `
+              <a class="latest-role-card" href="${escapeHtml(href)}">
+                <span>${escapeHtml(label)}</span>
+                <strong>${escapeHtml(count)}</strong>
+                <p>${escapeHtml(description)}</p>
+              </a>
+            `,
+          )
+          .join("")}
+      </div>
+      <p class="insight-copy">승인 전에는 실제 장착 스킬이 아니라 제안 근거와 검토 범위로만 표시됩니다. 고객 영향 행동은 기존 승인 게이트를 통과해야 합니다.</p>
+    </div>
+  `;
+}
+
 function dashboardPage() {
   return `
     ${pageHeader("대시보드", "대시보드", "오케스트레이터 상태와 최근 흐름을 한 화면에서 확인합니다.")}
     ${commandMarkup()}
     ${dispatchResultMarkup()}
     <section id="metric-grid" class="metric-grid" aria-label="metrics"></section>
+    ${panelMarkup("최신 작업 반영", "서버 첫 화면 업데이트", latestWorkSummaryView(), "latest-work-panel panel-primary")}
     ${panelMarkup("의사결정 요약", "오늘 우선 처리 기준", dashboardDecisionView(), "decision-panel panel-primary")}
     <section class="dashboard-grid">
       <div class="dashboard-column">

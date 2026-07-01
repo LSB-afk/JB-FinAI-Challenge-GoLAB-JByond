@@ -3543,6 +3543,108 @@ body {
   font-size: 20px;
 }
 
+.latest-work {
+  display: grid;
+  gap: 14px;
+}
+
+.latest-work-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: start;
+}
+
+.latest-work-head > div:first-child {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.latest-work-head strong {
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.latest-work-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.latest-work-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(76px, 1fr));
+  gap: 8px;
+  min-width: 280px;
+}
+
+.latest-work-metrics span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.latest-work-metrics strong {
+  color: var(--blue-700);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.latest-role-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.latest-role-card {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: inherit;
+  text-decoration: none;
+}
+
+.latest-role-card:hover {
+  border-color: rgba(37, 99, 235, 0.42);
+  background: var(--surface-blue);
+}
+
+.latest-role-card span {
+  color: var(--blue-700);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.latest-role-card strong {
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.latest-role-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .cost-bars {
   display: grid;
   gap: 8px;
@@ -4333,6 +4435,18 @@ body {
     padding: 16px;
   }
 
+  .latest-work-head {
+    grid-template-columns: 1fr;
+  }
+
+  .latest-work-metrics {
+    min-width: 0;
+  }
+
+  .latest-role-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .view-goals .work-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -4360,6 +4474,11 @@ body {
   }
 
   .view-goals .work-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .latest-work-metrics,
+  .latest-role-grid {
     grid-template-columns: 1fr;
   }
 

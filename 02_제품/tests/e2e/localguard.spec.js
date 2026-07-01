@@ -28,6 +28,9 @@ test("home and dashboard render without console errors", async ({ page }) => {
   await expect(page.getByText("운영 비용 해석")).toBeVisible();
   await expect(page.getByText("지역별 위험도")).toBeVisible();
   await expect(page.getByText("완료된 사용자 가치")).toBeVisible();
+  await expect(page.getByText("서버 첫 화면 업데이트")).toBeVisible();
+  await expect(page.getByText("2026-07-01 최신 반영")).toBeVisible();
+  await expect(page.getByText("신규 제안 14개 Agent와 27개 Skill")).toBeVisible();
   await expect(page.getByText("데이터 출처와 저장 상태")).toBeVisible();
   await expect(page.getByText("샘플·실제·오류 상태")).toBeVisible();
   await expect(page.locator('[data-state="sample"]')).toContainText("Sample");
