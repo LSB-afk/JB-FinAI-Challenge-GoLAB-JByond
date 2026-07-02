@@ -243,6 +243,24 @@ aliases:
 
 <!-- 새 세션은 이 줄 아래에 추가 -->
 
+### 2026-07-02 · 백업 위험·협업 인프라 정비 + 회의4/5 준비 + 데일리 시스템 + AI 프로토콜
+**한 일**
+- 백업 위험 진단·보완: `.stversions/`·`*.sync-conflict-*` gitignore(구 `_canon` 사본 유입 방지).
+- [[다음-작업-분해]] — 회의록3 결정 게이트(G1~G7·A1) + READY/BLOCKED 태스크 보드.
+- 회의 4([[회의록-2026-07-03-제품정의확정]])·5([[회의록-2026-07-04-시연기술범위]]) 준비 문서 + [[_회의록-INDEX]] 등재. 다운로드 zip JB 디자인 토큰 확인(#0A31A8·SUIT·radius 8/16).
+- **협업 진단 + 텔레메트리 근본수정**: `session-telemetry.mjs` `cwd`→`CLAUDE_PROJECT_DIR` 앵커, 중첩 `08_본선/…/08_본선/` 트리 4곳(12파일) 제거(데이터 손실 0, 하위폴더 실행 테스트 통과).
+- **데일리 노트 시스템 신설** + 소급 6일치(Codex 4병렬, 06-26~07-01) → [[_daily-INDEX]].
+- **[[AI-협업-맥락관리-프로토콜]] 신설** — 병렬 세션 공존·경로앵커·SSOT·승인게이트 룰북.
+- 거버넌스·메모리·MOC 정합.
+
+**검증**
+- canon-moc-sync 죽은링크 0·도달성 전부·사이클 0. `node --check session-telemetry.mjs` OK. verify_static 영향 없음.
+- 데일리 6종 형식·`.md`누출 0·팩트 정합(06-30 _canon §10 수치 = decision-log 일치).
+
+**결과물**: 커밋 4개(`8a374ab`·`87687d4`·`bfb95bb`·`3b4c27c`·`bac148c`) fork(River-181) 푸시.
+
+**다음(사람)**: 메인 승격 방식 확인 → 회의4/5 실행(게이트 픽) → 정의 §1 확정.
+
 ## 2026-07-01 야간 · 리서치 점-점 종합 파이프라인 (Codex gpt-5.5 병렬, A→B→C 완료)
 사용자 취침 중 자율 진행. 40개 독립 결과 → 6 연결노트(Phase A) → 교차 인사이트맵·canon 갱신후보(B) → 본선 논증척추(C). 산출 `_결과/_종합/` 9파일. 가드: 푸시 없음·canon 자동수정 없음(제안만 12건, 승인대기)·휴머나이즈·출처보존. 플랜 [[리서치-점연결-야간종합-플랜]], 기록 R39. 메모리·MEMORY·MOC(02_전략)·회수현황 배선 완료. 함정해결: Bash도구 zsh(→bash 스크립트), 한글 글로브 NFD(→`${code}-*.md`), codex stdin(`< /dev/null`). 병렬 paperclip 레인(R38)과 파일 무충돌. 아침 검토: _인사이트맵→_본선-논증척추→_canon-갱신후보(승인)→커밋·푸시 여부.
 
@@ -298,3 +316,30 @@ aliases:
 - `node 08_본선/_system/automation/viz-exporter.mjs` 통과.
 - `npm run test` 통과.
 - `canon-moc-sync` dry-run 통과: frontmatter·MOC·죽은 링크·도달성 정합.
+
+### 2026-07-02 · 팀 역할/발표 PPT 전략 갱신
+**한 일**
+- 재형 역할을 `데이터·시스템 설계·금융 전략`으로 정정: `member-04`, `_team-roster`, `contribution-ledger.csv`, `_contribution-stats` 반영.
+- `workflow-gantt-blueprint`, `team-contribution-role-radar`, `ax-operating-system-map` 재생성: 재형을 DB/API·데이터 모델·시스템 구조 검토 담당으로 표시.
+- `발표-PPT-전략-스토리보드.md` 신설: 본선 확정 전 PPT 전략 SSOT, 12장 슬라이드 스토리보드, 6분 컷, 회의 4·5 확정 게이트 기록.
+- `VISUALIZATION-PLAN`, `_viz-index`, `_05_제출_MOC`에 새 발표 전략 문서와 시각화 입력 관계 연결.
+
+**검증**
+- `node --check 08_본선/_system/automation/viz-generator.mjs` 통과.
+- `node 08_본선/_system/automation/viz-generator.mjs` 통과 — 20개 보드 재생성.
+- `node 08_본선/_system/skills/visualization-cycle/scripts/run.mjs` 통과 — 20개 Excalidraw 검증.
+- `node 08_본선/_system/automation/viz-exporter.mjs` 통과 — 공유 PNG/SVG 재export.
+
+## 2026-07-02 · JB 도입시나리오 설득패키지(PPT 백본) 착수
+- PM 고민(설득 준비 미흡) → 재프레이밍: 리서치 부족 아님, "임원 언어 조립" 부재. 회의록(6/30·회의4·5)+P1·P3·논증척추 확인.
+- 산출: [[JB-도입시나리오-설득패키지]] — 레인+레이어 핵심슬라이드, 외부/공공데이터 3레인 안전반입표, 보안 리스크→통제→증거표, 모델주권(로컬우선), 히어로1풀리얼 빌드청사진, 확장 4단계, 경제성, 시장분석 갭.
+- 잠정 결정: 계열사=전북 히어로 / 구동=하이브리드 실동작 / 히어로 도메인=보이스피싱 / 연동=혼합(히어로 실API). 모두 회의4·5 게이트 확정 대기.
+- 로컬모델 추천(M4 Pro): EXAONE 3.5 7.8B(한국어) / Qwen2.5-14B(툴콜) · Ollama or MLX.
+- ⚠️ 크루프트 재확인: 04_증빙/01_핵심로그/08_본선/ 중첩 디렉토리 여전(상대경로 쓰기 사고) — 커밋 제외 대상.
+
+### 2026-07-02 · paperclip fork 시각검증 실험 (Codex 병렬)
+- **⚠️ 협업 공지**: `~/Downloads/archives/paperclip-jb-fork/`(볼트 밖·비커밋)는 **시각 확인용 레퍼런스 실험**. **최종 제품 아님** — 실제 구현은 다른 팀원 담당. 다른 에이전트는 이 fork를 프로덕션으로 취급 말 것. 근거·재개법: [[레퍼런스]] "paperclip fork 실험" 절.
+- 한 일: (A)paperclip 실제 설치·부팅·**영속 실측** → JB 실토큰 리스킨(#0A31A8·SUIT·8px) → 도메인 개조(Sidebar 한글화·3계열사·[[nemotron-personas-korea]] 합성페르소나 9 Case). Codex 최대 4병렬(하위에이전트 활용)로 앱 자체 테스트·데이터 확장 진행.
+- 결과물: [[paperclip-런타임-데이터흐름]](루프1~3 실측)·[[nemotron-personas-korea]](재사용 데이터셋). 서버 `localhost:3100` 가동.
+- 격리: JBproject 볼트 무영향(verify_static 34 green). 볼트 신규=학습문서 1개(텍스트).
+- 다음: Codex 병렬 결과 회수 → 시각 갤러리 캡처. 제품 채택 여부는 제품정의 확정 후(사람).
