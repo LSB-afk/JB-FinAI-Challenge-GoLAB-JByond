@@ -19,12 +19,27 @@ npm run dev          # http://127.0.0.1:8000/index.html
 | GP-3 전세 보호 (확장 로드맵) | `?demo=jeonse` | 로드맵 미리보기 — Hero 실동작 범위 아님 |
 | JB우리캐피탈 포털 (그룹 확장성 증명) | `#/jb-woori-capital/board` | 동일 운영 패턴을 계열사 전용 독립 하네스로 확장 |
 
+### 실데이터 라이브 데모 (선택, `?live=1`)
+
+기본값은 **OFF**(결정론적 오프라인 데모). 공공 API 1종(국토부 연립다세대 실거래가)으로
+"실데이터 증명"을 켜려면:
+
+```bash
+DATA_GO_KR_KEY=<data.go.kr Decoding 인증키> npm run demo:proxy   # 로컬 프록시 :8020
+# 브라우저에서 ?live=1 붙여 접속 → 전세 사전 점검의 "주변 매매가"에 실거래가 평균 적용
+open "http://127.0.0.1:8000/index.html?live=1#jeonse"
+```
+
+- 프록시/키가 없으면 자동으로 **시뮬레이션 기본값 fallback**으로 완주합니다 (모델·API 없이도 데모 보장).
+- 감사 로그에 시세 출처(`공공데이터` vs `시뮬레이션 입력`)가 기록됩니다.
+- `?model=0`으로 로컬모델 플래그만 끌 수 있습니다 (`window.RUNTIME_CONFIG`).
+
 ## 검증
 
 ```bash
 npm run build      # 정적 계약 검증 (파일·핵심 문자열·금지 패턴·JS 문법)
 npm test           # 동일
-npm run test:e2e   # Playwright 33개 시나리오 (데모 골든패스·승인/감사·계열사 스코핑·반응형)
+npm run test:e2e   # Playwright 35개 시나리오 (데모 골든패스·승인/감사·계열사 스코핑·라이브 fallback·반응형)
 ```
 
 ## 문서

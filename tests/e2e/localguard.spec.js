@@ -439,6 +439,37 @@ test("tablet viewport keeps dashboard interpretation panels readable", async ({ 
   await saveShot(page, "tablet-view.png");
 });
 
+test("live flag toggles RUNTIME_CONFIG and stays off by default", async ({ page }) => {
+  await page.goto("/index.html?demo=jeonse&live=1");
+  const live = await page.evaluate(() => window.RUNTIME_CONFIG && window.RUNTIME_CONFIG.liveApi);
+  expect(live).toBe(true);
+
+  await page.goto("/index.html?demo=jeonse");
+  const off = await page.evaluate(() => window.RUNTIME_CONFIG && window.RUNTIME_CONFIG.liveApi);
+  expect(off).toBe(false);
+  await expect(page.locator(".live-data-note")).toHaveCount(0);
+});
+
+test("live mode without proxy falls back to simulation and still completes diagnosis", async ({ page }) => {
+  await page.goto("/index.html?live=1#jeonse");
+  await expect(page.locator("#jeonse-diagnosis-form")).toBeVisible();
+  await expect(page.locator('[data-live-market="fallback"]')).toContainText("공공 API 미연결", { timeout: 8_000 });
+  await expect(page.locator('input[name="market"]')).toHaveAttribute("data-market-source", "simulation");
+
+  await page.locator('input[name="deposit"]').fill("210000000");
+  await page.locator('input[name="market"]').fill("240000000");
+  await page.locator('input[name="assets"]').fill("260000000");
+  await page.locator('input[name="income"]').fill("3200000");
+  await page.locator('select[name="rights"]').selectOption("근저당 있음");
+  await page.locator("#jeonse-diagnosis-form").getByRole("button", { name: "사전 점검 실행" }).click();
+  await expect(page.getByText(/사전 점검 결과 · 주의 수준/)).toBeVisible();
+  const audit = await page.evaluate(() => {
+    const item = cases.find((entry) => entry.pains.includes("jeonse-fraud"));
+    return item.audit[item.audit.length - 1][1];
+  });
+  expect(audit).toContain("시세 출처: 시뮬레이션 입력");
+});
+
 test("settings can reset local demo state", async ({ page }) => {
   await page.goto("/index.html#settings");
   await expect(page.getByRole("button", { name: "데모 상태 초기화" })).toBeVisible();

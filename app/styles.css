@@ -8646,3 +8646,13 @@ textarea {
     overflow: visible;
   }
 }
+
+/* 라이브 데모(?live=1) 시세 조회 상태 노트 */
+.live-data-note {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--muted, #637797);
+}
+.live-data-note.is-live { color: #0b6b3a; }
+.live-data-note.is-fallback { color: #8a5a00; }

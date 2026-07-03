@@ -678,6 +678,53 @@ const jeonseFeatures = [
 
 const appStorageKey = "jb-finance-support-state-v4";
 const storageSchemaVersion = 4;
+
+// 라이브 데모 opt-in seam. 기본 OFF = 현행 결정론적 동작(오프라인·verify_static 안전).
+// ?live=1 → 전세 실거래가 실 호출 + 로컬모델 판단 텍스트. ?model=0 로 모델만 끔.
+const RUNTIME_CONFIG = (() => {
+  const p = new URLSearchParams(window.location.search);
+  const live = p.get("live") === "1";
+  return {
+    liveApi: live,
+    localModel: live && p.get("model") !== "0",
+    apiProxyBase: "http://127.0.0.1:8020",
+    ollamaBase: "http://127.0.0.1:11434",
+  };
+})();
+window.RUNTIME_CONFIG = RUNTIME_CONFIG;
+function isLive() { return RUNTIME_CONFIG.liveApi === true; }
+
+// 전세 주변 시세 라이브 조회 상태 (?live=1 전용). 실패해도 데모는 시뮬레이션 값으로 완주한다.
+let jeonseLiveMarket = { status: "idle", price: 0, samples: 0, source: "" };
+
+function ensureJeonseLiveMarket() {
+  if (!isLive() || jeonseLiveMarket.status !== "idle") return;
+  jeonseLiveMarket = { ...jeonseLiveMarket, status: "loading" };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 1500);
+  fetch(`${RUNTIME_CONFIG.apiProxyBase}/jeonse?lawd=11500&ym=202605&kind=trade`, { signal: controller.signal })
+    .then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
+    .then((data) => {
+      if (!data || !Number(data.estimatedPrice)) throw new Error("empty");
+      jeonseLiveMarket = { status: "ok", price: Number(data.estimatedPrice), samples: Number(data.samples) || 0, source: String(data.source || "국토부 실거래가") };
+    })
+    .catch(() => { jeonseLiveMarket = { ...jeonseLiveMarket, status: "error" }; })
+    .finally(() => {
+      clearTimeout(timer);
+      if (activeView === "jeonse") render();
+    });
+}
+
+function jeonseLiveNoteMarkup() {
+  if (!isLive()) return "";
+  if (jeonseLiveMarket.status === "loading" || jeonseLiveMarket.status === "idle") {
+    return `<p class="live-data-note" data-live-market="loading">국토부 연립다세대 실거래가 조회 중...</p>`;
+  }
+  if (jeonseLiveMarket.status === "ok") {
+    return `<p class="live-data-note is-live" data-live-market="ok">주변 매매가에 ${escapeHtml(jeonseLiveMarket.source)} 평균을 적용했습니다 (${escapeHtml(String(jeonseLiveMarket.samples))}건 · 출처: 공공데이터).</p>`;
+  }
+  return `<p class="live-data-note is-fallback" data-live-market="fallback">공공 API 미연결 — 시뮬레이션 기본값으로 진행합니다 (프록시: npm run demo:proxy).</p>`;
+}
 const monthlyCostTrend = [
   ["3월", 218000],
   ["4월", 246000],
@@ -1782,6 +1829,7 @@ function bindPageActions() {
   });
   const jeonseForm = document.getElementById("jeonse-diagnosis-form");
   if (jeonseForm) {
+    ensureJeonseLiveMarket();
     jeonseForm.addEventListener("submit", (event) => {
       event.preventDefault();
       runJeonseDiagnosis(jeonseForm);
@@ -3428,6 +3476,8 @@ function jeonseDiagnosisFormMarkup(item) {
     income: 3600000,
     rights: "근저당 있음",
   };
+  const liveMarketApplied = isLive() && jeonseLiveMarket.status === "ok" && !item.jeonseInputs;
+  const marketValue = liveMarketApplied ? jeonseLiveMarket.price : inputs.market;
   return `
     <form id="jeonse-diagnosis-form" class="diagnosis-form">
       <label>
@@ -3436,7 +3486,7 @@ function jeonseDiagnosisFormMarkup(item) {
       </label>
       <label>
         <span>주변 매매가</span>
-        <input name="market" inputmode="numeric" value="${escapeHtml(inputs.market)}" aria-label="주변 매매가" />
+        <input name="market" inputmode="numeric" value="${escapeHtml(marketValue)}" aria-label="주변 매매가" data-market-source="${liveMarketApplied ? "public-api" : "simulation"}" />
       </label>
       <label>
         <span>고객 총자산</span>
@@ -3456,6 +3506,7 @@ function jeonseDiagnosisFormMarkup(item) {
         <span aria-hidden="true">${iconSvg("activity")}</span>
         사전 점검 실행
       </button>
+      ${jeonseLiveNoteMarkup()}
     </form>
   `;
 }
@@ -5004,7 +5055,11 @@ function runJeonseDiagnosis(form) {
     ["특약 문구는 초안으로만 제공", "passed"],
   ];
   item.analysisResult = createAnalysisResult(item, "jeonse-diagnosis");
-  item.audit.push([timestamp(), `전세 사전 점검 실행: 전세가율 ${ratio}%, 자산노출 ${exposureRatio}%, 주거비 부담 ${housingBurden}%.`]);
+  const marketSource = isLive() && jeonseLiveMarket.status === "ok" && market === jeonseLiveMarket.price
+    ? `공공데이터(${jeonseLiveMarket.source})`
+    : "시뮬레이션 입력";
+  item.jeonseInputs.marketSource = marketSource;
+  item.audit.push([timestamp(), `전세 사전 점검 실행: 전세가율 ${ratio}%, 자산노출 ${exposureRatio}%, 주거비 부담 ${housingBurden}% · 시세 출처: ${marketSource}.`]);
   activity.unshift([timestamp(), "Jeonse Shield Lead", "created approval", item.code]);
   selectedCaseId = item.id;
   activeDetailType = "case";

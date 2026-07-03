@@ -39,6 +39,7 @@ required = [
     ROOT / "docs/01-시스템-아키텍처.md",
     ROOT / "docs/02-은행-DB-연동-설계.md",
     ROOT / "docs/03-JB우리캐피탈-하네스.md",
+    ROOT / "scripts/api-proxy.mjs",
     ROOT / "tests/e2e/localguard.spec.js",
     ROOT / "tests/e2e/wooricap.spec.js",
 ] + [ROOT / "app" / name for name in app_js_files]
@@ -97,6 +98,9 @@ js_needles = [
     "전세 안심 점검 · 로드맵",
     "GP-1 소상공인 자금압박",
     "GP-2 보이스피싱 차단",
+    "RUNTIME_CONFIG",
+    "ensureJeonseLiveMarket",
+    "시세 출처",
 ]
 for needle in js_needles:
     if needle not in js:
