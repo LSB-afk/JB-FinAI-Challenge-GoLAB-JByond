@@ -66,3 +66,6 @@ tests/results/
 08_본선/assets/screenshots/*.png
 08_본선/assets/screenshots/*.jpeg
 08_본선/assets/screenshots/paperclip/
+
+# 벤더링된 외부 레포(우리 git에 커밋 안 함)
+_vendor/
