@@ -18,6 +18,7 @@ npm run dev          # http://127.0.0.1:8000/index.html
 | GP-2 보이스피싱 (Hero 실동작) | `?demo=phishing` 또는 첫 화면 CTA | 이상거래 탐지·차단 운영지원 — high/critical 자동 종결 금지, human escalation 유지 |
 | GP-3 전세 보호 (확장 로드맵) | `?demo=jeonse` | 로드맵 미리보기 — Hero 실동작 범위 아님 |
 | JB우리캐피탈 포털 (그룹 확장성 증명) | `#/jb-woori-capital/board` | 동일 운영 패턴을 계열사 전용 독립 하네스로 확장 |
+| 전세사기 보호 담당자 하네스 (역할=독립 하네스) | 역할 레일 → 전세보호 담당자 또는 `#/roles/jeonse-protection/board` | 역할 전용 메뉴 21종·에이전트 10종·승인/감사 흐름을 가진 별도 운영 콘솔 |
 
 ### 실데이터 라이브 데모 (선택, `?live=1`)
 
@@ -39,7 +40,7 @@ open "http://127.0.0.1:8000/index.html?live=1#jeonse"
 ```bash
 npm run build      # 정적 계약 검증 (파일·핵심 문자열·금지 패턴·JS 문법)
 npm test           # 동일
-npm run test:e2e   # Playwright 35개 시나리오 (데모 골든패스·승인/감사·계열사 스코핑·라이브 fallback·반응형)
+npm run test:e2e   # Playwright 45개 시나리오 (골든패스·승인/감사·계열사/역할 스코핑·라이브 fallback·반응형)
 ```
 
 ## 문서
@@ -49,6 +50,7 @@ npm run test:e2e   # Playwright 35개 시나리오 (데모 골든패스·승인/
 | [docs/01-시스템-아키텍처.md](docs/01-시스템-아키텍처.md) | 설계도: 전체 구성도, 운영 계약(Case→…→Audit), 에이전트 하네스, 가드레일 |
 | [docs/02-은행-DB-연동-설계.md](docs/02-은행-DB-연동-설계.md) | 기존 은행 DB(계정계/정보계/FDS/전자결재)와의 연결 방안 명문화 — 단계별 로드맵·데이터 매핑·보안 통제 |
 | [docs/03-JB우리캐피탈-하네스.md](docs/03-JB우리캐피탈-하네스.md) | 계열사 전용 하네스: route·count 매핑·taxonomy·에이전트/핸드오프·seed·전환 주의사항 |
+| [docs/04-전세보호-역할-하네스.md](docs/04-전세보호-역할-하네스.md) | 역할 전용 하네스: 역할=독립 업무 하네스 원칙, 메뉴/count 매핑, 라우팅 규칙, PII 가드레일, 공식 근거 |
 
 ## 보안·컴플라이언스 원칙
 

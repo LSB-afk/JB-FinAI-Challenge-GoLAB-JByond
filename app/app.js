@@ -208,7 +208,7 @@ const agents = [
     spent: 18000,
     heartbeat: "5m",
     queue: 2,
-    currentCase: "광주 송정 도소매",
+    currentCase: "익산 중앙 도소매",
     skills: ["policy-match", "document-checklist"],
     role: "정책금융 후보와 제출 서류 체크리스트 생성",
   },
@@ -478,12 +478,12 @@ const initialCases = [
     ],
   },
   {
-    id: "gwangju-wholesale",
+    id: "iksan-wholesale",
     code: "JBG-118",
-    customerName: "광주 송정 도소매",
+    customerName: "익산 중앙 도소매",
     affiliate: "전북은행",
     segment: "개인사업자",
-    region: "광주 광산구",
+    region: "전북 익산",
     industry: "도소매",
     riskScore: 72,
     status: "New",
@@ -1280,7 +1280,7 @@ function counts() {
     settings: 3,
     "rm-dashboard": 8,
     "corporate-credit-dashboard": 8,
-    "jeonse-protection-dashboard": 8,
+    "jeonse-protection-harness": 8,
     "fds-dashboard": 8,
     "jb-woori-capital-dashboard": 8,
   };
@@ -1560,7 +1560,7 @@ function defaultDetailForView(view) {
     "settings",
     "rm-dashboard",
     "corporate-credit-dashboard",
-    "jeonse-protection-dashboard",
+    "jeonse-protection-harness",
     "fds-dashboard",
     "jb-woori-capital-dashboard",
   ];
@@ -1768,7 +1768,7 @@ function renderWorkbench() {
     plugins: pluginsPage,
     "rm-dashboard": rmDashboardPage,
     "corporate-credit-dashboard": corporateCreditDashboardPage,
-    "jeonse-protection-dashboard": jeonseProtectionDashboardPage,
+    "jeonse-protection-harness": jeonseProtectionHarnessPage,
     "fds-dashboard": fdsDashboardPage,
     "jb-woori-capital-dashboard": jbWooriCapitalDashboardPage,
     "case-detail": () => caseDetailPage(currentCase()),
@@ -2110,7 +2110,7 @@ function rmDashboardPage() {
     {
       title: "여신 서류 체크",
       caseId: "case-118",
-      customer: "광주 송정 도소매",
+      customer: "익산 중앙 도소매",
       detail: "사업자등록, 부가세 자료, 임대차·세금계산서 누락 여부를 대조합니다.",
       status: "보완 요청",
       skills: ["서류 누락", "증빙 대조", "KYC"],
@@ -2288,7 +2288,7 @@ function corporateCreditDashboardPage() {
     {
       title: "보증서·정책금융 구조화",
       caseId: "case-118",
-      customer: "광주 송정 도소매",
+      customer: "익산 중앙 도소매",
       detail: "지역신보·정책자금 후보, 보증 가능 금액, 제출 서류 누락 여부를 담당자 검토용으로 좁힙니다.",
       status: "보완 요청",
       skills: ["보증 매칭", "정책자금", "서류 체크"],
@@ -2579,110 +2579,6 @@ function roleDashboardContextMarkup(config) {
   `;
 }
 
-function jeonseProtectionDashboardConfig() {
-  return {
-    title: "전세보호 담당자 대시보드",
-    description: "전세 계약 전 권리관계, 주변 시세, 보증 가능성, 피해지원 연결까지 확인하는 역할 전용 화면입니다.",
-    heroEyebrow: "전세 보호 업무 사이클",
-    heroTitle: "AI는 위험 신호를 묶고, 대출·계약 진행은 사람이 승인합니다.",
-    heroBody: "국토교통부 전세사기피해자 지원관리시스템, HUG 전세피해지원센터, 전세사기피해자 지원 특별법 흐름을 참고해 등기·신탁·선순위채권·전세가율·보증보험 요건 확인 필요을 한 번에 점검합니다.",
-    badges: [
-      { label: "HUG/HF/SGI 확인", className: "status-new" },
-      { label: "권리관계 검토", className: "status-pending" },
-      { label: "피해지원 연결", className: "status-approved" },
-    ],
-    kpis: [
-      ["고위험 계약", "4건", "전세가율·선순위채권·신탁 신호", "shield"],
-      ["보증 확인", "3건", "보증보험 가입 가능성 재검토", "check-square"],
-      ["권리 하자", "2건", "근저당·압류·신탁등기 확인 필요", "file-text"],
-      ["지원 연결", "5건", "법률·주거·금융지원 안내 후보", "link"],
-    ],
-    workTitle: "전세보호 업무 큐",
-    work: [
-      {
-        title: "전세가율·주변 시세 점검",
-        caseId: "case-201",
-        customer: "서울 신축빌라 전세 예정",
-        detail: "보증금이 주변 실거래·매매가 대비 높은지 확인하고 HUG 담보인정비율 기준을 함께 표시합니다.",
-        status: "검토 대기",
-        skills: ["전세가율", "주변 시세", "보증금 과다"],
-      },
-      {
-        title: "등기·신탁·선순위 권리 확인",
-        caseId: "case-104",
-        customer: "전주 중앙로 임차 상담",
-        detail: "근저당, 압류, 신탁등기, 단기 소유권 이전 여부를 분리해 계약 전 확인 항목으로 정리합니다.",
-        status: "상위 검토",
-        skills: ["등기 권리", "신탁 확인", "선순위채권"],
-      },
-      {
-        title: "보증보험 가입 가능성",
-        caseId: "case-118",
-        customer: "광주 오피스텔 임차인",
-        detail: "임대인, 주택 유형, 보증금, 선순위채권, 보증기관 조건을 비교해 가입 가능성을 제안합니다.",
-        status: "보완 요청",
-        skills: ["HUG 확인", "HF/SGI 후보", "서류 누락"],
-      },
-      {
-        title: "피해지원·법률상담 연결",
-        caseId: "case-133",
-        customer: "익산 전세계약 피해 상담",
-        detail: "결정신청, 이의신청, 법률·심리·주거지원 연결 여부를 사람이 확인할 수 있게 묶습니다.",
-        status: "승인 대기",
-        skills: ["특별법", "지원신청", "상담 연결"],
-      },
-    ],
-    flowTitle: "전세보호 처리 흐름",
-    flow: [
-      ["01", "상담·계약 정보 접수", "주소, 보증금, 계약 예정일, 임대인, 중개사 정보를 가상 데이터로 구조화합니다."],
-      ["02", "시세·전세가율 확인", "주변 시세 대비 보증금 과다, 전세가율, 가격 급변 신호를 먼저 봅니다."],
-      ["03", "등기·권리관계 확인", "근저당, 압류, 신탁등기, 선순위 권리, 단기 소유권 이전을 체크합니다."],
-      ["04", "보증보험 요건 확인 필요 검토", "HUG/HF/SGI 가입 가능성과 보완 서류를 후보로 제시합니다."],
-      ["05", "안전계약 담당자 승인 절차", "특약 문구와 계약 진행 안내는 담당자 승인 뒤에만 고객에게 나갑니다."],
-      ["06", "피해지원·사후기록", "위험 계약은 지원기관 연결, 법률상담, 감사 로그로 남깁니다."],
-    ],
-    roleCaseTitle: "전세 위험 신호 범주",
-    roleCases: [
-      ["전세가율 과다", "보증금이 매매가 또는 주변 시세 대비 높을 때 우선 경고합니다."],
-      ["권리관계 위험", "근저당·압류·가압류·신탁등기·선순위채권을 계약 전 확인합니다."],
-      ["소유권 변동", "단기간 소유권 이전, 법인 임대인, 다주택 임대인 신호를 표시합니다."],
-      ["보증보험 불가", "보증기관별 가입 제한 가능성과 보완 서류를 분리합니다."],
-      ["임차인 자산 위험", "총자산 대비 보증금, 월소득 대비 주거비, 대출 상환 가능성을 봅니다."],
-      ["피해지원 연결", "특별법 결정신청, 이의신청, 주거·금융·법률지원 흐름을 안내합니다."],
-    ],
-    controlTitle: "전세보호 승인 전 고객 안내 금지",
-    controlIcon: "lock",
-    controlLead: "계약 진행, 대출 상담, 보증 가능 안내는 사람이 최종 확인합니다.",
-    controlBody: "AI는 위험 신호, 서류 누락, 특약 후보, 보증기관 후보를 제안합니다. 계약 안전성 최종 확인 표현이나 보증 가능 최종 확인 표현은 담당자 승인 없이는 고객에게 표시하지 않습니다.",
-    controlRows: [
-      ["법령 참고", "전세사기피해자 지원 및 주거안정 특별법"],
-      ["기관 연결", "국토부·HUG·HF·SGI·법률지원"],
-      ["감사 기록", "상담 → 위험점검 → 승인 → 고객안내"],
-    ],
-    context: {
-      roleEyebrow: "전세보호 역할",
-      roleTitle: "계약 전 위험을 먼저 줄이는 담당자",
-      roleRows: [
-        ["핵심 업무", "권리관계·전세가율·보증가능성·피해지원"],
-        ["AI 역할", "등기/시세/보증 조건 후보와 체크리스트 제안"],
-        ["사람 역할", "고객 안내·계약 진행·지원기관 연결 승인"],
-      ],
-      priorityTitle: "전세보호 담당자가 먼저 볼 항목",
-      priorities: [
-        ["고위험 계약", "전세가율 90% 이상 또는 선순위권리 존재", "4건"],
-        ["보증 불확실", "보증기관 가입 조건과 누락 서류 재검토", "3건"],
-        ["피해지원 후보", "결정신청·법률지원 연결 가능 관리 건", "5건"],
-      ],
-      referenceTitle: "외부 참고 기준",
-      references: [
-        ["정부 시스템", "전세사기피해자 지원관리시스템"],
-        ["지원기관", "HUG 전세피해지원센터"],
-        ["법령", "전세사기피해자 지원 및 주거안정 특별법"],
-      ],
-    },
-  };
-}
-
 function fdsDashboardConfig() {
   return {
     title: "보이스피싱/FDS 담당자 대시보드",
@@ -2730,7 +2626,7 @@ function fdsDashboardConfig() {
       {
         title: "오탐 소명·해제 검토",
         caseId: "case-118",
-        customer: "광주 송정 도소매",
+        customer: "익산 중앙 도소매",
         detail: "정상 거래 소명 자료, 통화 기록, 영업점 확인을 묶어 해제 승인 큐로 보냅니다.",
         status: "재심 대기",
         skills: ["오탐 소명", "해제 승인", "고객 안내"],
@@ -2787,16 +2683,8 @@ function fdsDashboardConfig() {
   };
 }
 
-function jeonseProtectionDashboardPage() {
-  return roleDashboardPage(jeonseProtectionDashboardConfig());
-}
-
 function fdsDashboardPage() {
   return roleDashboardPage(fdsDashboardConfig());
-}
-
-function jeonseProtectionDashboardContextMarkup() {
-  return roleDashboardContextMarkup(jeonseProtectionDashboardConfig());
 }
 
 function fdsDashboardContextMarkup() {
@@ -2806,6 +2694,16 @@ function fdsDashboardContextMarkup() {
 function jbWooriCapitalDashboardPage() {
   if (typeof jbwcOpsPage === "function") return jbwcOpsPage();
   return pageHeader("JB우리캐피탈 운영 포털", "JB우리캐피탈", "전용 운영 하네스 파일을 불러오지 못했습니다.");
+}
+
+function jeonseProtectionHarnessPage() {
+  if (typeof jpoOpsPage === "function") return jpoOpsPage();
+  return pageHeader("전세사기 보호 담당자 하네스", "전세사기 보호", "전용 역할 하네스 파일을 불러오지 못했습니다.");
+}
+
+function jeonseProtectionHarnessContextMarkup() {
+  if (typeof jpoContextMarkup === "function") return jpoContextMarkup();
+  return `<div class="empty-state">전세보호 전용 컨텍스트를 불러오지 못했습니다.</div>`;
 }
 
 function jbWooriCapitalDashboardContextMarkup() {
@@ -3851,7 +3749,7 @@ function renderProperties() {
     settings: settingsContextMarkup,
     "rm-dashboard": rmDashboardContextMarkup,
     "corporate-credit-dashboard": corporateCreditDashboardContextMarkup,
-    "jeonse-protection-dashboard": jeonseProtectionDashboardContextMarkup,
+    "jeonse-protection-harness": jeonseProtectionHarnessContextMarkup,
     "fds-dashboard": fdsDashboardContextMarkup,
     "jb-woori-capital-dashboard": jbWooriCapitalDashboardContextMarkup,
   };
@@ -3887,7 +3785,7 @@ function propertyPanelTitle() {
   if (activeDetailType === "feature" && currentFeature()) return currentFeature().title;
   if (activeDetailType === "view" && activeView === "rm-dashboard") return "RM 역할 대시보드";
   if (activeDetailType === "view" && activeView === "corporate-credit-dashboard") return "기업여신 담당자 대시보드";
-  if (activeDetailType === "view" && activeView === "jeonse-protection-dashboard") return "전세보호 담당자 대시보드";
+  if (activeDetailType === "view" && activeView === "jeonse-protection-harness") return "전세사기 보호 담당자 하네스";
   if (activeDetailType === "view" && activeView === "fds-dashboard") return "보이스피싱/FDS 담당자 대시보드";
   if (activeDetailType === "view") return "선택 화면 요약";
   const item = currentCase();
@@ -5661,13 +5559,18 @@ function bindActions() {
         return;
       }
       if (selectedRailRole === "전세보호 담당자") {
-        activeView = "jeonse-protection-dashboard";
+        activeView = "jeonse-protection-harness";
         activeDetailType = defaultDetailForView(activeView);
-        if (window.location.hash !== "#jeonse-protection-dashboard") {
-          window.location.hash = "jeonse-protection-dashboard";
+        if (typeof jpoState !== "undefined") {
+          jpoState.view = "board";
+          jpoState.detail = null;
+        }
+        const jpoHash = typeof jpoHashForView === "function" ? jpoHashForView("board") : "#/roles/jeonse-protection";
+        if (window.location.hash !== jpoHash) {
+          window.location.hash = jpoHash;
         }
         render();
-        notify("전세보호 담당자 대시보드로 이동했습니다.");
+        notify("전세사기 보호 담당자 하네스로 이동했습니다.");
         return;
       }
       if (selectedRailRole === "보이스피싱/FDS 담당자") {
@@ -5811,10 +5714,20 @@ function applyHashRoute() {
     }
     return;
   }
+  const jpoRoute = typeof jpoRouteFromHash === "function" ? jpoRouteFromHash(window.location.hash) : null;
+  if (jpoRoute) {
+    activeView = "jeonse-protection-harness";
+    activeDetailType = defaultDetailForView(activeView);
+    if (typeof jpoState !== "undefined") {
+      jpoState.view = jpoRoute.view || "board";
+      jpoState.detail = jpoRoute.caseId ? { kind: "case", id: jpoRoute.caseId } : null;
+    }
+    return;
+  }
   const view = window.location.hash.replace("#", "");
   const known = navigation
     .flatMap((group) => group.items.map((item) => item.id))
-    .concat(["rm-dashboard", "corporate-credit-dashboard", "jeonse-protection-dashboard", "fds-dashboard", "jb-woori-capital-dashboard"]);
+    .concat(["rm-dashboard", "corporate-credit-dashboard", "fds-dashboard", "jb-woori-capital-dashboard"]);
   if (!known.includes(view)) return;
   activeView = view;
   activeDetailType = defaultDetailForView(view);

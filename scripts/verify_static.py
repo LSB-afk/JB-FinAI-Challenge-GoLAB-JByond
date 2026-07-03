@@ -27,6 +27,17 @@ app_js_files = [
     "wooricap.view.harness.js",
     "wooricap.sidebar.js",
     "wooricap.js",
+    "jeonseProtection.config.js",
+    "jeonseProtectionAgents.registry.js",
+    "jeonseProtection-db.js",
+    "jeonseProtectionServices.js",
+    "jeonseProtection.helpers.js",
+    "jeonseProtection.view.board.js",
+    "jeonseProtection.view.cases.js",
+    "jeonseProtection.view.wizard.js",
+    "jeonseProtection.view.harness.js",
+    "jeonseProtection.sidebar.js",
+    "jeonseFraudProtectionHarness.js",
 ]
 
 required = [
@@ -79,6 +90,17 @@ html_needles = [
     "./wooricap.view.harness.js",
     "./wooricap.sidebar.js",
     "./wooricap.js",
+    "./jeonseProtection.config.js",
+    "./jeonseProtectionAgents.registry.js",
+    "./jeonseProtection-db.js",
+    "./jeonseProtectionServices.js",
+    "./jeonseProtection.helpers.js",
+    "./jeonseProtection.view.board.js",
+    "./jeonseProtection.view.cases.js",
+    "./jeonseProtection.view.wizard.js",
+    "./jeonseProtection.view.harness.js",
+    "./jeonseProtection.sidebar.js",
+    "./jeonseFraudProtectionHarness.js",
     "./app.js",
 ]
 for needle in html_needles:
@@ -101,6 +123,8 @@ js_needles = [
     "RUNTIME_CONFIG",
     "ensureJeonseLiveMarket",
     "시세 출처",
+    "jeonse-protection-harness",
+    "jeonseProtectionHarnessPage",
 ]
 for needle in js_needles:
     if needle not in js:
@@ -139,6 +163,62 @@ for needle in wooricap_needles:
 for forbidden in ["전세 안심 점검", "jbWooriCapitalDashboardConfig", "roleDashboardPage(jbWooriCapital"]:
     if forbidden in joined_wooricap:
         raise SystemExit(f"JB우리캐피탈 dedicated layer should not contain {forbidden!r}")
+
+# 역할 하네스(전세사기 보호 담당자) 계약 — 라벨-only 구현 금지, 계열사/메인 business alias 금지
+jpo_files = [
+    "jeonseProtection.config.js",
+    "jeonseProtectionAgents.registry.js",
+    "jeonseProtection-db.js",
+    "jeonseProtectionServices.js",
+    "jeonseProtection.helpers.js",
+    "jeonseProtection.view.board.js",
+    "jeonseProtection.view.cases.js",
+    "jeonseProtection.view.wizard.js",
+    "jeonseProtection.view.harness.js",
+    "jeonseProtection.sidebar.js",
+    "jeonseFraudProtectionHarness.js",
+]
+joined_jpo = "\n".join((ROOT / "app" / name).read_text(encoding="utf-8") for name in jpo_files)
+jpo_needles = [
+    "JPO_ROLE_KEY",
+    "jeonse-protection-officer",
+    "role scope is required",
+    "getJeonseProtectionSidebarCounts",
+    "searchJeonseProtectionRecordsAsync",
+    "createJeonseProtectionCase",
+    "recordJeonseProtectionAgentRun",
+    "jeonseFraudProtectionHarness",
+    "routeJeonseProtectionCase",
+    "/roles/jeonse-protection",
+    "전세사기 보호 업무지원 하네스",
+    "신규 전세보호 운영 건 접수",
+    "피해자 결정 신청 보조",
+    "내부 운영 참고용",
+    "담당자 검토 필요",
+    "최신 기준 담당자 확인 필요",
+    "JEONSE-CASE-0001",
+    "JEONSE-RUN-0001",
+    "jpoRepository",
+    "JPO_STATUS_LABELS",
+    "TENANT-REF-",
+]
+for needle in jpo_needles:
+    if needle not in joined_jpo:
+        raise SystemExit(f"전세보호 role harness missing {needle!r}")
+
+for forbidden in [
+    "jbwcTable(",
+    "JBWC_DOMAIN_TAXONOMY",
+    "jbWooriCapitalAgents",
+    "jbWooriCapitalOpsHarness",
+    "roleDashboardPage(",
+    "전세 안심 점검",
+]:
+    if forbidden in joined_jpo:
+        raise SystemExit(f"전세보호 role harness should not contain {forbidden!r}")
+
+if "jeonse-protection-dashboard" in js or "jeonseProtectionDashboardConfig" in js:
+    raise SystemExit("label-only jeonse-protection-dashboard resurfaced in app.js")
 
 if "border-radius: 8px" not in css:
     raise SystemExit("CSS should keep cards and controls at 8px radius")

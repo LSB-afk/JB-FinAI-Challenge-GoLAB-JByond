@@ -228,7 +228,7 @@ test("properties detail panel scrolls expanded case sections", async ({ page }) 
 
 test("scenario flow runs a selected case and reaches approval state", async ({ page }) => {
   await page.goto("/index.html#cases");
-  await page.locator('button[data-case-id="gwangju-wholesale"]').first().click();
+  await page.locator('button[data-case-id="iksan-wholesale"]').first().click();
   await saveShot(page, "scenario-flow-1.png");
 
   await page.locator('[data-collapse-key="case-approval"]').click();
