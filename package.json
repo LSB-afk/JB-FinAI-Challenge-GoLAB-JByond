@@ -1,0 +1,15 @@
+{
+  "name": "jb-localguard-os-prototype",
+  "version": "0.2.0",
+  "private": true,
+  "description": "JB LocalGuard OS — 담당자 승인 중심 금융 AI 에이전트 운영 콘솔 프로토타입 (정적 MVP + Playwright 검증)",
+  "scripts": {
+    "dev": "python3 -m http.server 8000 --directory app",
+    "build": "python3 scripts/verify_static.py",
+    "test": "python3 scripts/verify_static.py",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0"
+  }
+}
