@@ -28,6 +28,7 @@ aliases:
 | [[08_본선/_system/memory/context/대외비-규칙\|대외비-규칙]] | 6/29 전 외부유출·공개푸시 금지; .eml·개인정보 git 비추적 |
 | [[08_본선/_system/memory/context/리서치-사이클\|리서치-사이클]] | 딥프롬프트 27종·결과 회수(수식 LaTeX)·모델기록·총정리본; 1차 사이클 6/30 마감 |
 | [[08_본선/_system/memory/context/본선-운영-하네스\|본선-운영-하네스]] | 자체 스킬 9종·AI 자동 시행 규칙·시각화/제출 정합성 검증 맵 |
+| [[08_본선/_system/memory/context/실동작-슬라이스\|실동작-슬라이스]] | JB_project2 파이프라인·가드레일 실재·LLM출력 목업 → ccl-financial/CCL-0001 실 LLM 슬라이스 PR `LSB-afk/JB_project2#1` |
 
 ---
 
