@@ -17,7 +17,10 @@ up: "[[_03_제품_MOC]]"
 
 ### 00 Vision
 - [[08_본선/03_제품/00_vision/core-bet|Core Bet]] — 핵심 베팅
+- [[08_본선/03_제품/00_vision/차별성-경험레이어-서사|차별성 — 경험레이어 서사]] — 발표 척추(SSOT)
 - [[08_본선/03_제품/00_vision/business-model|Business Model (DDBM)]] — 데이터 기반 비즈니스 모델 11블록
+- [[08_본선/03_제품/00_vision/definitions|Definitions]] — 정식 용어(8종)+명명규칙
+- [[08_본선/03_제품/00_vision/principles|Principles]] — 제품 원칙(6)+거부규칙(5)
 
 ### 01 PRD
 - [[08_본선/03_제품/01_prd/prd|PRD]] — 제품 요구사항
