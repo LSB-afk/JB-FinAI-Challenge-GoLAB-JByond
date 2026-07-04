@@ -1,5 +1,6 @@
 node_modules/
 test-results/
 tests/results/
+server/data/
 .DS_Store
 .omc/

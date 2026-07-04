@@ -10,6 +10,7 @@
 ```bash
 npm install          # Playwright (검증용)
 npm run dev          # http://127.0.0.1:8000/index.html
+npm run backend      # http://127.0.0.1:8010/index.html + /api/*
 ```
 
 | 데모 | 진입 | 내용 |
@@ -41,11 +42,26 @@ open "http://127.0.0.1:8000/index.html?live=1#jeonse"
   `MOLIT_DETACHED_HOUSE_TRADE_KEY`·`MOLIT_DETACHED_HOUSE_RENT_KEY`·`MOLIT_OFFICETEL_RENT_KEY`,
   서울 `SEOUL_OPEN_API_KEY`/`SEOUL_API_KEY`/`MOVEVALUE_SEOUL_OPEN_API_KEY`. 키 없으면 스냅샷/샘플 fallback.
 
+### 로컬 백엔드 서버
+
+현재 백엔드는 운영용 은행 서버가 아니라, 심사 데모와 다음 단계 전환을 위한 **로컬 API 서버 기준선**입니다.
+기존 정적 앱을 유지하면서 `/api/*`로 역할, 케이스, 파일 업로드, 에이전트 실행, 산출물, 감사 로그를 제공합니다.
+
+```bash
+npm run backend
+open "http://127.0.0.1:8010/index.html"
+curl "http://127.0.0.1:8010/api/health"
+```
+
+데이터는 `server/data/localguard-db.json`에 저장되며 이 경로는 git에 커밋하지 않습니다.
+자세한 API 계약은 [docs/06-백엔드-서버.md](docs/06-백엔드-서버.md)를 참고하세요.
+
 ## 검증
 
 ```bash
 npm run build      # 정적 계약 검증 (파일·핵심 문자열·금지 패턴·JS 문법)
 npm test           # 동일
+npm run backend:test # 로컬 백엔드 API/DB/fallback 검증
 npm run test:e2e   # Playwright 47개 시나리오 (골든패스·승인/감사·계열사/역할 스코핑·라이브 fallback·반응형)
 npm run test:smoke # 전세보호 역할 하네스 스모크만 (16단계 플로우 + 자체 검증 루프)
 ```
@@ -61,6 +77,8 @@ npm run test:smoke # 전세보호 역할 하네스 스모크만 (16단계 플로
 | [app/HARNESS_GUIDE.md](app/HARNESS_GUIDE.md) | ECC식 하네스 엔지니어링: Agents·Skills·Commands·Hooks·Rules·Verification·Continuous Learning |
 | [app/ROLE_HARNESS_CONTRACT.md](app/ROLE_HARNESS_CONTRACT.md) | 역할 하네스 계약: manifest 검증 기준, 신규 역할 추가 절차, 금지 alias 패턴 |
 | [app/SECURITY_GUARDRAILS.md](app/SECURITY_GUARDRAILS.md) | 보안 가드레일이 어느 계층(훅/검증기/정적 게이트)에서 자동 검증되는지 명문화 |
+| [docs/06-백엔드-서버.md](docs/06-백엔드-서버.md) | 로컬 백엔드 서버: API 계약, 실행 방법, 저장소, 운영 전환 경계 |
+| [docs/07-백엔드-루프-검증.md](docs/07-백엔드-루프-검증.md) | 백엔드 구축 루프: 발견→구현→검증→보완 기록 |
 
 ## 보안·컴플라이언스 원칙
 
@@ -74,7 +92,9 @@ npm run test:smoke # 전세보호 역할 하네스 스모크만 (16단계 플로
 
 ```
 app/          정적 SPA (메인 하네스 app.js + JB우리캐피탈 전용 wooricap.*)
+server/       로컬 백엔드 API 서버 + JSON 파일 저장소 seed/repository
 tests/e2e/    Playwright 시나리오 33개
+tests/backend/ Node test 기반 백엔드 API 검증
 scripts/      verify_static.py (정적 계약 게이트)
 docs/         아키텍처·DB 연동·계열사 하네스 설계
 ```

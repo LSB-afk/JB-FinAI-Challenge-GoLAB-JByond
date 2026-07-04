@@ -95,11 +95,17 @@ required = [
     ROOT / "docs/03-JB우리캐피탈-하네스.md",
     ROOT / "docs/04-전세보호-역할-하네스.md",
     ROOT / "docs/05-RM-하네스.md",
+    ROOT / "docs/06-백엔드-서버.md",
+    ROOT / "docs/07-백엔드-루프-검증.md",
     ROOT / "app/HARNESS_GUIDE.md",
     ROOT / "app/ROLE_HARNESS_CONTRACT.md",
     ROOT / "app/SECURITY_GUARDRAILS.md",
+    ROOT / "server/index.mjs",
+    ROOT / "server/lib/seed.mjs",
+    ROOT / "server/lib/repository.mjs",
     ROOT / "scripts/api-proxy.mjs",
     ROOT / "scripts/ollama-agent-proxy.mjs",
+    ROOT / "tests/backend/server.test.mjs",
     ROOT / "tests/e2e/localguard.spec.js",
     ROOT / "tests/e2e/wooricap.spec.js",
     ROOT / "tests/e2e/corporate-credit-smoke.spec.js",
@@ -115,6 +121,8 @@ package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 required_scripts = {
     "dev": "python3 -m http.server 8000 --directory app",
     "build": "python3 scripts/verify_static.py",
+    "backend": "node server/index.mjs",
+    "backend:test": "node --test tests/backend/*.test.mjs",
     "test": "python3 scripts/verify_static.py",
     "test:e2e": "playwright test",
 }
@@ -694,6 +702,36 @@ proxy_check = subprocess.run(
 )
 if proxy_check.returncode != 0:
     raise SystemExit(proxy_check.stderr or proxy_check.stdout)
+
+for backend_script in [
+    ROOT / "server/index.mjs",
+    ROOT / "server/lib/seed.mjs",
+    ROOT / "server/lib/repository.mjs",
+    ROOT / "tests/backend/server.test.mjs",
+]:
+    backend_check = subprocess.run(
+        ["node", "--check", str(backend_script)],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if backend_check.returncode != 0:
+        raise SystemExit(backend_check.stderr or backend_check.stdout)
+
+backend_src = (ROOT / "server/index.mjs").read_text(encoding="utf-8")
+for needle in [
+    "/api/roles",
+    "/api/cases",
+    "/api/agent-runs",
+    "/api/deliverables",
+    "/api/audit-logs",
+    "/api/public-data/jeonse/market",
+    "/api/model-runtime/run",
+    "FILE_UPLOADED",
+    "AGENT_RUN_COMPLETED",
+]:
+    if needle not in backend_src:
+        raise SystemExit(f"backend server missing {needle!r}")
 
 doc_contracts = {
     "app/HARNESS_GUIDE.md": ["Agents", "Skills", "Commands", "Hooks", "Rules", "Continuous Learning"],

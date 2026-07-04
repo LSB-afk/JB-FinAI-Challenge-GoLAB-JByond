@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "python3 -m http.server 8000 --directory app",
     "build": "python3 scripts/verify_static.py",
+    "backend": "node server/index.mjs",
+    "backend:test": "node --test tests/backend/*.test.mjs",
     "test": "python3 scripts/verify_static.py",
     "test:e2e": "playwright test",
     "demo:proxy": "node scripts/api-proxy.mjs",
