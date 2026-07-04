@@ -102,8 +102,8 @@ registerHarness({
   verification: {
     enforceHooks: true,
     requiredHooks: ["beforeCaseCreate", "beforeAgentRun", "beforeCustomerMessage"],
-    requiredAgents: 10,
-    requiredCommands: 6,
+    requiredAgents: 11,
+    requiredCommands: 7,
     scopeProbe() {
       try { jpoTable("jeonse_cases"); return "scope 미지정 조회가 허용됨"; }
       catch (error) { return String(error.message).includes("role scope is required") ? null : `예외 계약 불일치: ${error.message}`; }
@@ -155,6 +155,118 @@ registerHarness({
     },
     forbiddenResurface() {
       return document.querySelector('[data-affiliate="광주은행"]') ? "광주은행 레일 재유입" : null;
+    },
+  },
+});
+
+registerHarness({
+  id: "corporate-credit",
+  kind: "role",
+  scopeKey: "roleKey",
+  scopeValue: CCL_ROLE_KEY,
+  displayName: CCL_DISPLAY_NAME,
+  routeBase: CCL_ROUTE_BASE,
+  sidebarConfig: cclNavigation,
+  countService: getCorporateCreditSidebarCounts,
+  searchService: searchCorporateCreditRecords,
+  caseCreationFlow: { view: "cases-new", wizardFormId: "ccl-new-case-form", create: createCorporateCreditCase },
+  agents: cclConsoleAgents,
+  skills: cclConsoleSkills,
+  commands: [],
+  hooks: cclConsoleHooks,
+  rules: cclConsoleRules,
+  guardrails: cclConsoleHarness.policy,
+  verification: {
+    enforceHooks: true,
+    requiredHooks: ["beforeCaseCreate", "beforeAgentRun", "beforeCustomerMessage"],
+    requiredAgents: 8,
+    requiredCommands: 0,
+    scopeProbe() {
+      try { cclTable("ccl_cases"); return "scope 미지정 조회가 허용됨"; }
+      catch (error) { return String(error.message).includes("role scope is required") ? null : `예외 계약 불일치: ${error.message}`; }
+    },
+    piiScan() {
+      const raw = window.localStorage.getItem(CCL_DB_KEY) || "";
+      return harnessGuardCheckPII(raw);
+    },
+    forbiddenResurface() {
+      // label-only 대시보드가 라우팅에 다시 연결되면 실패시킨다
+      return window.location.hash === "#corporate-credit-dashboard" ? "label-only corporate-credit-dashboard 재유입" : null;
+    },
+  },
+});
+
+registerHarness({
+  id: "fds-response",
+  kind: "role",
+  scopeKey: "roleKey",
+  scopeValue: FDR_ROLE_KEY,
+  displayName: FDR_DISPLAY_NAME,
+  routeBase: FDR_ROUTE_BASE,
+  sidebarConfig: fdrNavigation,
+  countService: getFdsResponseSidebarCounts,
+  searchService: searchFdsResponseRecords,
+  caseCreationFlow: { view: "cases-new", wizardFormId: "fdr-new-case-form", create: createFdsResponseCase },
+  agents: fdrConsoleAgents,
+  skills: fdrConsoleSkills,
+  commands: [],
+  hooks: fdrConsoleHooks,
+  rules: fdrConsoleRules,
+  guardrails: fdrConsoleHarness.policy,
+  verification: {
+    enforceHooks: true,
+    requiredHooks: ["beforeCaseCreate", "beforeAgentRun", "beforeCustomerMessage"],
+    requiredAgents: 8,
+    requiredCommands: 0,
+    scopeProbe() {
+      try { fdrTable("fdr_cases"); return "scope 미지정 조회가 허용됨"; }
+      catch (error) { return String(error.message).includes("role scope is required") ? null : `예외 계약 불일치: ${error.message}`; }
+    },
+    piiScan() {
+      const raw = window.localStorage.getItem(FDR_DB_KEY) || "";
+      return harnessGuardCheckPII(raw);
+    },
+    forbiddenResurface() {
+      return window.location.hash === "#fds-dashboard" ? "label-only fds-dashboard 재유입" : null;
+    },
+  },
+});
+
+registerHarness({
+  id: "rm-officer",
+  kind: "role",
+  scopeKey: "roleKey",
+  scopeValue: RMO_ROLE_KEY,
+  displayName: RMO_DISPLAY_NAME,
+  routeBase: RMO_ROUTE_BASE,
+  sidebarConfig: rmoNavigation,
+  countService: getRmOfficerSidebarCounts,
+  searchService: searchRmOfficerRecords,
+  caseCreationFlow: { view: "cases-new", wizardFormId: "rmo-new-case-form", create: createRmOfficerCase },
+  agents: rmOfficerAgents,
+  skills: rmOfficerSkills,
+  commands: rmOfficerCommands,
+  hooks: rmOfficerHooks,
+  rules: rmOfficerRules,
+  guardrails: rmOfficerHarness.policy,
+  verification: {
+    enforceHooks: true,
+    requiredHooks: ["beforeCaseCreate", "beforeAgentRun", "beforeCustomerMessage"],
+    requiredAgents: 11,
+    requiredCommands: 3,
+    scopeProbe() {
+      try { rmoTable("rm_officer_cases"); return "scope 미지정 조회가 허용됨"; }
+      catch (error) { return String(error.message).includes("role scope is required") ? null : `예외 계약 불일치: ${error.message}`; }
+    },
+    piiScan() {
+      const raw = window.localStorage.getItem(RMO_DB_KEY) || "";
+      return harnessGuardCheckPII(raw);
+    },
+    forbiddenResurface() {
+      const issues = [];
+      if (typeof rmOfficerDashboardConfig !== "undefined") issues.push("label-only rm-dashboard 재유입");
+      if (document.querySelector('[data-affiliate="광주은행"]')) issues.push("광주은행 레일 재유입");
+      return issues.length ? issues.join(" / ") : null;
     },
   },
 });

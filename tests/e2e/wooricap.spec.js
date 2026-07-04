@@ -22,6 +22,8 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => window.localStorage.removeItem("jbwc-ops-db-v2"));
   await page.addInitScript(() => window.localStorage.removeItem("jbwc-ops-db-v3"));
   await page.addInitScript(() => window.localStorage.removeItem("jpo-ops-db-v2"));
+  await page.addInitScript(() => window.localStorage.removeItem("ccl-ops-db-v1"));
+  await page.addInitScript(() => window.localStorage.removeItem("fdr-ops-db-v1"));
 });
 
 async function createCaseViaWizard(page, { domain, productType, title, riskLevel }) {

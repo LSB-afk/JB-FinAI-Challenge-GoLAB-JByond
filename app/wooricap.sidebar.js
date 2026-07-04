@@ -17,6 +17,8 @@ function jbwcCaptureSidebar() {
 
 function jbwcTakeoverSidebar() {
   if (typeof jpoRestoreSidebar === "function") jpoRestoreSidebar();
+  if (typeof cclRestoreSidebar === "function") cclRestoreSidebar();
+  if (typeof fdrRestoreSidebar === "function") fdrRestoreSidebar();
   jbwcCaptureSidebar();
   const brand = document.querySelector(".sidebar-brand");
   if (brand && !brand.dataset.jbwcMode) {
