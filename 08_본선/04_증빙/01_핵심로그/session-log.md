@@ -295,3 +295,9 @@ aliases:
 - **피그마**: 부록 통합 1장(5042:2, 3단+도메인 링크+검증요약 박스, 구 2장 삭제) · 조직도(4939:2710)에 운영 에이전트 3종 소그룹(5039:2, Cost Sentinel·119·Ledger Curator) 스크린샷 검수 통과.
 - **시연 인프라**: api-proxy.mjs 폴백 사다리에 ollama 삽입(1줄) — engine:codex 실패 시 한 호출 안에서 로컬 폴백(fallbackPath 기록), verify_static 34파일 그린. JB_project2 llm-gateway.mjs 동일 패치는 승보/PR 반영 필요.
 - 협업 슬라이드 자원 인벤토리 전환(사용자 확인값 라벨), 팀-협업 콘텐츠 md(역할=예선 원문). 로그 체제 전환: 프롬프트 로그는 분기점 일괄(V-31부터).
+
+### 2026-07-05 · 총력전 4트랙 — 점수개선·README 본선화·최종 패키징 (Fable + R1~R4·fixer 2기)
+- **점수 사이클 완결(74→82 추정, PR#4 머지 전제)**: fixer(CCL_ROLE_KEY 에러·fds 이중등록·게이트웨이 실배선·NOTICES / 변경이력 단계9·MVP제안서 정합·CMP-23 모순) + R2(준칙 근거 승격·Q9 E4 반박·로드맵 기간) + R3(PII 3패턴 확장 오탐0·model-runtime-smoke E2E 신설).
+- **README 본선화(85f1ada)**: 양식 완전 보존(헤딩 diff 0)·예선 원본 보관·최신 스크린샷 5장(RM 하네스에 메모리 패널+온톨로지 실렌더 포착)·아키텍처 excalidraw+mermaid PNG·2차 개선(계열사 매핑·깨진 링크 교정). CCR 표기 판정: 최신 코드 정합(cclConsole=죽은 코드), 히어로 ID만 CCL-0001 유지.
+- **최종 패키징(be6507a·82693e5)**: md→PDF 파이프라인(한글·표·위키링크 검증) + 기능명세서-최종.pdf(11p)·MVP제안서-최종.pdf(6p) 실생성 + 최종-패키징-가이드(4종 체크·URL 절차·T-30 컷오프).
+- **잔여 사람 게이트**: 승보(PR#4 머지=코드 점수 실체화·JBWC enforceHooks·FDS 미로드 판단·Typekit 회신) / 발표(발표자료 PDF·GitHub URL 확정·프레이밍 4건). 도달권 84~87.
