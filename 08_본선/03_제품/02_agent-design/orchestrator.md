@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [오케스트레이터, Case FSM, AgentRun 파이프라인, 콘솔 라우팅]
+aliases: [오케스트레이터, AgentRun 파이프라인]
 ---
 
 # 오케스트레이터
@@ -82,7 +82,7 @@ sequenceDiagram
 
 | 단계 | 함수/책임(CCL 기준) | 산출물 | 담당 |
 |---|---|---|---|
-| **0. 설정**(신설, [조건부/미구현]) | 담당자가 케이스 유형별 스킬·커넥터를 켬 — 현재는 정적 seed, 런타임 토글 UI 미착수([[08_본선/03_제품/00_결정-준비/설계/paperclip-통합-블루프린트|블루프린트]] §6 Task 1~3) | 근거 소스 구성 | 담당자 |
+| **0. 설정**(신설, [조건부/미구현]) | 담당자가 케이스 유형별 스킬·커넥터를 켬 — 현재는 정적 seed, 런타임 토글 UI 미착수([[08_본선/03_제품/01_결정-준비/설계/paperclip-통합-블루프린트|블루프린트]] §6 Task 1~3) | 근거 소스 구성 | 담당자 |
 | **1. 판단(Judgment)** | `ccl-financial`/`ccl-repayment` — 재무 요약·상환부담 구간 산출 | riskLevel, 확인 필요 표시 | 도메인 에이전트 |
 | **2. 행동초안(Draft)** | `ccl-doc`/`ccl-policy`/`ccl-memo`/`ccl-reply` — 체크리스트·정책후보·품의초안·회신초안 | RecommendationDraft(체크리스트+초안) | 초안 에이전트 |
 | **3. 검증(Verification)** | `beforeCustomerMessage`/`beforeCaseCreate` 훅 + `ccl-supervisor` 검토 등록 | 검증 통과/차단, PII·단정표현 스캔 결과 | 훅 + 감독 |
@@ -136,4 +136,4 @@ sequenceDiagram
 - [[08_본선/03_제품/05_domain-model|도메인 모델]]
 - [[08_본선/03_제품/07_architecture|아키텍처]](Data flow §3, Human approval §10)
 - [[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]]
-- [[08_본선/03_제품/00_결정-준비/설계/paperclip-통합-블루프린트|paperclip-통합-블루프린트]]
+- [[08_본선/03_제품/01_결정-준비/설계/paperclip-통합-블루프린트|paperclip-통합-블루프린트]]

@@ -39,23 +39,23 @@ aliases:
 <!-- PLUGIN-REGISTRY-START -->
 ## 활성 플러그인 (enabledPlugins: true)
 
-| 플러그인 | 마켓플레이스 | 상태 | 용도 | 본선 권장 | 팀 baseline |
-|---------|------------|------|------|----------|------------|
-| `frontend-design` | claude-plugins-official | **활성** | 프론트엔드 컴포넌트 설계·생성 | 필수(MVP 재설계) | ✅ baseline |
-| `ui-ux-pro-max` | ui-ux-pro-max-skill | **활성** | UI/UX 고급 설계 지원 | 필수(MVP 재설계) | ✅ baseline |
-| `figma` | claude-plugins-official | **활성** | Figma 디자인 연동 (MCP 보완) | 필수(MVP 재설계) | ✅ baseline |
-| `obsidian` | obsidian-skills (`github:kepano/obsidian-skills`) | **활성** | 볼트 파일 읽기·쓰기·검색·태그 관리 | 필수 | ✅ baseline |
-| `superpowers` | claude-plugins-official | **활성** | 브레인스토밍·병렬 에이전트·TDD·코드리뷰 슈퍼파워 | 필수 | ✅ baseline |
-| `code-simplifier` | claude-plugins-official | **활성** | 코드 단순화·리팩터링 지원 | 권장 | — |
-| `code-review` | claude-plugins-official | **활성** | 코드 리뷰·개선 지원 | 필수 | ✅ baseline |
-| `context7` | claude-plugins-official | **활성** | 라이브러리·프레임워크 최신 문서 조회 | 필수 | ✅ baseline |
-| `skill-creator` | claude-plugins-official | **활성** | 스킬 정의·배포 자동화 | 필수 | ✅ baseline |
-| `codex` | openai-codex (`github:openai/codex-plugin-cc`) | **활성** | Codex CLI 런타임 연동 | 필수 | ✅ baseline |
-| `example-skills` | anthropic-agent-skills (`https://github.com/anthropics/skills.git`) | **활성** | 스킬 예시 참조 컬렉션 | 선택 | — |
-| `humanize-korean` | im-not-ai (`github:epoko77-ai/im-not-ai`) | **활성** | 한국어 윤문·AI 티 제거 | 권장 | ✅ baseline |
-| `ponytail` | claude-plugins-official | **활성** | 효율적 개발·게으른 엔지니어 패턴 | 개인 선택 | — |
-| `taste-skill` | taste-skill | **활성** | UI/UX 설계 감각·미학 | 개인 선택 | — |
-| `agent-sdk-dev` | claude-code-plugins | **활성** | Anthropic Agent SDK 개발 지원 | 개인 선택 | — |
+| 플러그인              | 마켓플레이스                                                              | 상태     | 용도                           | 본선 권장       | 팀 baseline |
+| ----------------- | ------------------------------------------------------------------- | ------ | ---------------------------- | ----------- | ---------- |
+| `frontend-design` | claude-plugins-official                                             | **활성** | 프론트엔드 컴포넌트 설계·생성             | 필수(MVP 재설계) | ✅ baseline |
+| `ui-ux-pro-max`   | ui-ux-pro-max-skill                                                 | **활성** | UI/UX 고급 설계 지원               | 필수(MVP 재설계) | ✅ baseline |
+| `figma`           | claude-plugins-official                                             | **활성** | Figma 디자인 연동 (MCP 보완)        | 필수(MVP 재설계) | ✅ baseline |
+| `obsidian`        | obsidian-skills (`github:kepano/obsidian-skills`)                   | **활성** | 볼트 파일 읽기·쓰기·검색·태그 관리         | 필수          | ✅ baseline |
+| `superpowers`     | claude-plugins-official                                             | **활성** | 브레인스토밍·병렬 에이전트·TDD·코드리뷰 슈퍼파워 | 필수          | ✅ baseline |
+| `code-simplifier` | claude-plugins-official                                             | **활성** | 코드 단순화·리팩터링 지원               | 권장          | —          |
+| `code-review`     | claude-plugins-official                                             | **활성** | 코드 리뷰·개선 지원                  | 필수          | ✅ baseline |
+| `context7`        | claude-plugins-official                                             | **활성** | 라이브러리·프레임워크 최신 문서 조회         | 필수          | ✅ baseline |
+| `skill-creator`   | claude-plugins-official                                             | **활성** | 스킬 정의·배포 자동화                 | 필수          | ✅ baseline |
+| `codex`           | openai-codex (`github:openai/codex-plugin-cc`)                      | **활성** | Codex CLI 런타임 연동             | 필수          | ✅ baseline |
+| `example-skills`  | anthropic-agent-skills (`https://github.com/anthropics/skills.git`) | **활성** | 스킬 예시 참조 컬렉션                 | 선택          | —          |
+| `humanize-korean` | im-not-ai (`github:epoko77-ai/im-not-ai`)                           | **활성** | 한국어 윤문·AI 티 제거               | 권장          | ✅ baseline |
+| `ponytail`        | claude-plugins-official                                             | **활성** | 효율적 개발·게으른 엔지니어 패턴           | 개인 선택       | —          |
+| `taste-skill`     | taste-skill                                                         | **활성** | UI/UX 설계 감각·미학               | 개인 선택       | —          |
+| `agent-sdk-dev`   | claude-code-plugins                                                 | **활성** | Anthropic Agent SDK 개발 지원    | 개인 선택       | —          |
 
 ---
 
@@ -71,12 +71,12 @@ aliases:
 
 ## 등록된 마켓플레이스 (extraKnownMarketplaces)
 
-| 마켓플레이스 ID | 소스 | 설명 |
-|--------------|------|------|
-| `obsidian-skills` | `github:kepano/obsidian-skills` | Obsidian 볼트 플러그인 |
-| `openai-codex` | `github:openai/codex-plugin-cc` | OpenAI Codex CLI 연동 |
-| `anthropic-agent-skills` | `https://github.com/anthropics/skills.git` | Anthropic 공식 에이전트 스킬 |
-| `omc` | `https://github.com/Yeachan-Heo/oh-my-claudecode.git` | Oh My Claude Code |
+| 마켓플레이스 ID                | 소스                                                    | 설명                   |
+| ------------------------ | ----------------------------------------------------- | -------------------- |
+| `obsidian-skills`        | `github:kepano/obsidian-skills`                       | Obsidian 볼트 플러그인     |
+| `openai-codex`           | `github:openai/codex-plugin-cc`                       | OpenAI Codex CLI 연동  |
+| `anthropic-agent-skills` | `https://github.com/anthropics/skills.git`            | Anthropic 공식 에이전트 스킬 |
+| `omc`                    | `https://github.com/Yeachan-Heo/oh-my-claudecode.git` | Oh My Claude Code    |
 <!-- PLUGIN-REGISTRY-END -->
 
 ---

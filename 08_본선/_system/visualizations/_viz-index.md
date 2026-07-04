@@ -39,11 +39,21 @@ aliases:
 | [[08_본선/_system/visualizations/ax-operating-system-map\|ax-operating-system-map.excalidraw]] | `_agent-registry`, `registry-*`, `tool-usage-ledger.csv` | 사람·AI·툴·산출물·거버넌스 연결 맵 | 심사자·발표 |
 | [[08_본선/_system/visualizations/team-contribution-role-radar\|team-contribution-role-radar.excalidraw]] | `_team-roster`, `_contribution-stats`, `contribution-ledger.csv` | 김주용 PM·김민주 UX/UI 포함 팀원 역할·기여 %·AI Support Layer | PM·발표 |
 | [[08_본선/_system/visualizations/update-control-tower\|update-control-tower.excalidraw]] | `PROGRESS`, `PLAN`, `phase-ledger.csv` | Done/In Progress/Waiting/Risk + 제품결정/API승격 리스크 추적판 | 팀 운영 |
+| [[08_본선/_system/visualizations/meeting-decision-action-board\|meeting-decision-action-board.excalidraw]] | 7/1~7/3 데일리·회의록·decision-log·session-log | 회의 결정 타임라인 + D1~D6 게이트 + 즉시 실행 레인 + 사람/AI 담당 | PM·팀 운영 |
+| [[08_본선/_system/visualizations/morning-decision-brief-board\|morning-decision-brief-board.excalidraw]] | 결정준비 브리핑·Q1~Q12·근거팩·viz 3보드 | 오전 팀 공유용 후보·추천·담당 액션·제품 한눈 보드 | 팀 공유·PM |
 | [[08_본선/_system/visualizations/demo-video-storyboard\|demo-video-storyboard.excalidraw]] | 시연 시나리오, 발표 스크립트 | SME 히어로 중심 시연영상 12컷 스토리보드 | 발표·영상 |
 | [[08_본선/_system/visualizations/evidence-traceability-board\|evidence-traceability-board.excalidraw]] | `_canon`, D결과, 제출문서, 심사기준 | 주장→근거→산출물→심사항목 + 제품결정/API승격 추적판 | 발표 백업 |
 | [[08_본선/_system/visualizations/demo-golden-path-state-machine\|demo-golden-path-state-machine.excalidraw]] | 본선 시연 시나리오, live verification | SME 히어로/피싱 보조/전세 optional 데모 상태기계 | 시연·QA |
 | [[08_본선/_system/visualizations/research-domain-atlas\|research-domain-atlas.excalidraw]] | 리서치 README, 회수현황, 인사이트맵, 논증척추 | 리서치 도메인 6범주 + D/B 코드 + 교차 연결 + 제품/시연/발표 활용처 | 팀 운영·발표 백업 |
 | [[08_본선/_system/visualizations/research-to-product-funnel\|research-to-product-funnel.excalidraw]] | D1~D23, D+a/b, 갭감사, 제품정의 | 리서치→Decision Gate→제품결정→MVP/발표 전환 흐름 | 제품·발표 |
+| [[08_본선/_system/visualizations/48h-스프린트-시간간트\|48h-스프린트-시간간트.excalidraw]] | 본선 일정표, `session-log`, `decision-log` | 7/3 20:00(h0)~7/5 마감까지 트랙×담당×시간 단위 현장 스프린트 시계 | 팀 운영(현장) |
+
+> 다음 2개는 이 카탈로그 대상(JB 대회 상태 시각화)이 아니라 **별도 방법론 도구**(`harness-engineering-skills` 플러그인) 아키텍처 문서다. JSON Canvas 포맷(Excalidraw 아님) — Obsidian Canvas로 열람.
+
+| 파일 | 목적 |
+| --- | --- |
+| [[08_본선/_system/visualizations/20260703_harness_engineering_frontier_skill_roadmap.canvas\|20260703_harness_engineering_frontier_skill_roadmap.canvas]] | `harness-engineering-skills` 리포지토리(레포 지도 참고) 전체 아키텍처·릴리스 로드맵 스케치 |
+| [[08_본선/_system/visualizations/20260703_금융그룹대회_스킬팩.canvas\|20260703_금융그룹대회_스킬팩.canvas]] | 위 스킬팩을 JB Fin:AI 대회 어댑터로 좁힌 요약(route→init-project→아티팩트 라이프사이클→통제 레이어) |
 
 ---
 
@@ -75,7 +85,7 @@ aliases:
 - **목적**: 멀티에이전트 협업 구조 심사 제시
 
 ### jb-group-structure.excalidraw
-- **소스**: [[JB-총정리본-플랜]], [[D3e-결과-gpt55xhigh]], [[D3f-결과-gpt55xhigh]]
+- **소스**: [[JB-총정리본-플랜]], [[D03e-결과-원문-gpt55xhigh]], [[D03f-결과-원문-gpt55xhigh]]
 - **형식**: 지주→국내 계열사→해외 플랫폼 구조도
 - **목적**: JB를 "지역은행"이 아니라 운영 복잡도가 있는 금융그룹으로 제시
 
@@ -137,6 +147,18 @@ aliases:
 - **목적**: 오늘 기준 무엇이 끝났고 무엇이 막혔는지 팀 공유
 - **업데이트 트리거**: `PROGRESS.md` 체크박스 변경
 
+### meeting-decision-action-board.excalidraw
+- **소스**: [[meeting-decision-action-board-plan]], [[2026-07-01]], [[2026-07-02]], [[회의록-2026-07-02-스프린트회의]], [[회의록-2026-07-03-스프린트회의]], [[decision-log]], [[session-log]]
+- **형식**: 7/1~7/3 결정 타임라인 + D1~D6 게이트 상태 + 즉시 실행 레인 + 리스크/다음회의 박스
+- **목적**: 회의록을 다시 읽지 않아도 확정·미확정·오늘 실행할 작업과 담당 사람/AI를 판단하게 함
+- **업데이트 트리거**: 7/4 스코프 확정, D2/D3/D5 변경, 제출물·시연영상·데모 구동 방식 변경
+
+### morning-decision-brief-board.excalidraw
+- **소스**: [[morning-decision-brief-board-plan]], [[아침-카톡-브리핑]], [[결정-현황-종합]], `질문/Q1~Q12`, `근거팩/`, `viz/보드-*`
+- **형식**: 근거 보강 완료 3축 + 오늘 결정 후보/추천 + keystone + 담당자별 액션 + 제품 구조 한눈
+- **목적**: 팀 공유 메시지의 시각자료. 팀원이 보드만 보고 오늘 무엇을 고르고 무엇을 하면 되는지 판단하게 함
+- **업데이트 트리거**: 7/4 오전 도메인 실동작 택1, Q3/Q5/Q11/Q12 확정, 팀 공유 문구 변경
+
 ### demo-video-storyboard.excalidraw
 - **소스**: [[본선-시연-시나리오]], [[03-발표-시연-스크립트]], [[발표-PPT-전략-스토리보드]]
 - **형식**: 12컷 영상 제작판(컷·자막·화면요소·증빙요소)
@@ -156,7 +178,7 @@ aliases:
 - **업데이트 트리거**: 데모 플로우·폴백 시나리오 변경
 
 ### research-domain-atlas.excalidraw
-- **소스**: [[research-domain-atlas-plan]], [[README]], [[_00-도메인-분해-점검]], [[_00-회수현황]], [[_인사이트맵]], [[_본선-논증척추]]
+- **소스**: [[research-domain-atlas-plan]], [[08_본선/04_증빙/02_분석자료/리서치/리서치-인덱스|리서치 인덱스]], [[_운영-도메인-분해-점검]], [[_운영-회수현황]], [[_인사이트맵]], [[_본선-논증척추]]
 - **형식**: 좌측 리서치 입력 레이어 + 중앙 6개 도메인 클러스터 + 우측 제품/시연/발표 활용처 + 연결선
 - **목적**: 다량의 D/B 리서치가 어떤 범주와 근거 네트워크를 이루는지 한눈에 보여주고, 발표 백업 질의 때 어디를 봐야 하는지 안내
 - **업데이트 트리거**: D시리즈 추가·회수, 인사이트맵·논증척추·제품정의·발표 전략 변경
@@ -167,6 +189,12 @@ aliases:
 - **목적**: 리서치가 실제 기능과 발표 문장으로 변환된 과정을 설명
 - **업데이트 트리거**: 리서치 회수·제품 반영 변경
 
+### 48h-스프린트-시간간트.excalidraw
+- **소스**: 본선 일정표, `session-log`, `decision-log`
+- **형식**: 7/3 20:00(h0) 기준 7/4~7/5 시간 단위(1시간 간격) × 트랙/담당 레인
+- **목적**: 완료된 준비 구간(7/1~7/3)과 현장 48시간을 한 시계로 이어, 지금이 전체 스프린트의 어느 시점인지 즉시 판단하게 함
+- **업데이트 트리거**: 현장 일정 변경, 마감 시각 변경
+
 ---
 
 ## 공유용 이미지 Export
@@ -174,19 +202,19 @@ aliases:
 공유용 PNG/SVG는 원본 Excalidraw에서 자동 추출해 아래 폴더에 보관한다. 기본 공유본은 깔끔한 차트 렌더가 아니라 Excalidraw 손그림풍으로 export한다.
 
 - 생성기: `08_본선/_system/automation/viz-exporter.mjs`
-- 최신 export: `08_본선/assets/excalidraw/exported-images/20260702/`
-- 인덱스: [[08_본선/assets/excalidraw/exported-images/20260702/_export-index|Excalidraw Exported Images]]
-- 우선 공유 후보: `workflow-gantt-blueprint`, `project-master-timeline`, `team-contribution-role-radar`, `research-domain-atlas`, `research-to-product-funnel`, `evidence-traceability-board`, `demo-video-storyboard`
+- 최신 export: `08_본선/assets/excalidraw/exported-images/20260703/`
+- 인덱스: [[08_본선/assets/excalidraw/exported-images/20260703/_export-index|Excalidraw Exported Images]]
+- 우선 공유 후보: `morning-decision-brief-board`, `workflow-gantt-blueprint`, `project-master-timeline`, `meeting-decision-action-board`, `team-contribution-role-radar`, `research-domain-atlas`, `research-to-product-funnel`, `evidence-traceability-board`, `demo-video-storyboard`
 - 주의: PNG는 팀 공유·메신저용, SVG는 발표덱 재편집용. 발표 최종본은 Obsidian/Excalidraw 네이티브 export와 비교 QA한다.
 
 ## 자동 생성
 
-생성기: `_system/automation/viz-generator.mjs`, 마지막 생성: 2026-07-02
+생성기: `_system/automation/viz-generator.mjs`, 마지막 생성: 2026-07-03
 재생성: `node 08_본선/_system/automation/viz-generator.mjs` (데이터 변경 시마다)
 이미지 export: `node 08_본선/_system/automation/viz-exporter.mjs`
 
 기획 문서: [[VISUALIZATION-PLAN]]
-보드별 기획: [[research-domain-atlas-plan]]
+보드별 기획: [[research-domain-atlas-plan]] · [[meeting-decision-action-board-plan]] · [[morning-decision-brief-board-plan]]
 담당 역할: [[visualization]]
 
 ## 감사·개선 문서

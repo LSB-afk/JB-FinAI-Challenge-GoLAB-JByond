@@ -15,6 +15,8 @@ const required = [
   'ax-operating-system-map.excalidraw',
   'team-contribution-role-radar.excalidraw',
   'update-control-tower.excalidraw',
+  'meeting-decision-action-board.excalidraw',
+  'morning-decision-brief-board.excalidraw',
   'demo-video-storyboard.excalidraw',
   'evidence-traceability-board.excalidraw',
   'demo-golden-path-state-machine.excalidraw',
@@ -112,6 +114,29 @@ function main() {
   assertIncludes(contributionText, '🧑', 'team-contribution-role-radar people layer')
   assertIncludes(contributionText, '🤖', 'team-contribution-role-radar AI layer')
   assertIncludes(contributionText, '%', 'team-contribution-role-radar contribution layer')
+
+  const meetingDecisionText = textOfBoard(path.join(VIZ, 'meeting-decision-action-board.excalidraw'))
+  assertIncludes(meetingDecisionText, '7/1~7/3', 'meeting-decision-action-board date scope')
+  assertIncludes(meetingDecisionText, 'D2', 'meeting-decision-action-board decision gate')
+  assertIncludes(meetingDecisionText, 'TBD', 'meeting-decision-action-board uncertainty label')
+  assertIncludes(meetingDecisionText, 'Build / Demo', 'meeting-decision-action-board execution lane')
+  assertIncludes(meetingDecisionText, '김민주', 'meeting-decision-action-board team role')
+  assertIncludes(meetingDecisionText, '이승보', 'meeting-decision-action-board team role')
+  assertIncludes(meetingDecisionText, '🤖', 'meeting-decision-action-board AI layer')
+
+  const morningBriefText = textOfBoard(path.join(VIZ, 'morning-decision-brief-board.excalidraw'))
+  assertIncludes(morningBriefText, '7/4 오전 결정 브리핑', 'morning-decision-brief-board title')
+  assertIncludes(morningBriefText, '전세사기 vs 보이스피싱', 'morning-decision-brief-board keystone')
+  assertIncludes(morningBriefText, '연 7.66억원', 'morning-decision-brief-board ROI')
+  assertIncludes(morningBriefText, 'Q1', 'morning-decision-brief-board decision questions')
+  assertIncludes(morningBriefText, 'Q3', 'morning-decision-brief-board decision questions')
+  assertIncludes(morningBriefText, 'Q5', 'morning-decision-brief-board decision questions')
+  assertIncludes(morningBriefText, 'Q11', 'morning-decision-brief-board decision questions')
+  assertIncludes(morningBriefText, '이승보', 'morning-decision-brief-board people')
+  assertIncludes(morningBriefText, '김민주', 'morning-decision-brief-board people')
+  assertIncludes(morningBriefText, '김주용', 'morning-decision-brief-board people')
+  assertIncludes(morningBriefText, '최영욱', 'morning-decision-brief-board people')
+  assertIncludes(morningBriefText, '재형', 'morning-decision-brief-board people')
 
   console.log(`[visualization-cycle] ok: ${files.length} excalidraw files validated`)
 }

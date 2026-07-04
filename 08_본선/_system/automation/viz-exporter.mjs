@@ -4,14 +4,16 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 
 const SRC_DIR = "08_본선/_system/visualizations";
-const OUT_DIR = "08_본선/assets/excalidraw/exported-images/20260702";
+const OUT_DIR = "08_본선/assets/excalidraw/exported-images/20260703";
 const PADDING = 40;
-const GENERATED_AT = "2026-07-02 KST";
+const GENERATED_AT = "2026-07-03 KST";
 const EXPORT_STYLE = "hand-drawn";
 
 const SHARE_PICKS = new Set([
+  "morning-decision-brief-board",
   "workflow-gantt-blueprint",
   "project-master-timeline",
+  "meeting-decision-action-board",
   "team-contribution-role-radar",
   "research-domain-atlas",
   "research-to-product-funnel",
@@ -235,7 +237,6 @@ function writeIndex(rows) {
   for (const row of rows) {
     lines.push(`| [${row.png}](${row.png}) | [${row.svg}](${row.svg}) | \`${row.source}\` |`);
   }
-  lines.push("");
   fs.writeFileSync(path.join(OUT_DIR, "_export-index.md"), `${lines.join("\n")}\n`);
 
   const readme = [
@@ -257,13 +258,15 @@ function writeIndex(rows) {
     "",
     "## Recommended Sharing Order",
     "",
-    "1. `project-master-timeline.png` — 전체 일정",
-    "2. `workflow-gantt-blueprint.png` — 간트·역할·AI 협업",
-    "3. `team-contribution-role-radar.png` — 팀원/AI 기여 구조",
-    "4. `research-domain-atlas.png` — 리서치 범주·연결 지도",
-    "5. `research-to-product-funnel.png` — 리서치→제품결정 흐름",
-    "6. `evidence-traceability-board.png` — 주장→근거→제출물",
-    "7. `demo-video-storyboard.png` — 시연영상 구성",
+    "1. `morning-decision-brief-board.png` — 오전 팀 결정 브리핑",
+    "2. `project-master-timeline.png` — 전체 일정",
+    "3. `workflow-gantt-blueprint.png` — 간트·역할·AI 협업",
+    "4. `meeting-decision-action-board.png` — 회의 결정→실행판",
+    "5. `team-contribution-role-radar.png` — 팀원/AI 기여 구조",
+    "6. `research-domain-atlas.png` — 리서치 범주·연결 지도",
+    "7. `research-to-product-funnel.png` — 리서치→제품결정 흐름",
+    "8. `evidence-traceability-board.png` — 주장→근거→제출물",
+    "9. `demo-video-storyboard.png` — 시연영상 구성",
     "",
     "## Share Picks",
     "",
@@ -277,14 +280,15 @@ function writeIndex(rows) {
   for (const row of rows) {
     readme.push(`| [${row.png}](${row.png}) | [${row.svg}](${row.svg}) |`);
   }
-  readme.push("");
   fs.writeFileSync(path.join(OUT_DIR, "README.md"), `${readme.join("\n")}\n`);
 }
 
 function purpose(name) {
   return {
+    "morning-decision-brief-board": "오전 팀 결정 브리핑",
     "workflow-gantt-blueprint": "팀 운영·간트·역할 보고",
     "project-master-timeline": "프로젝트 전체 일정 공유",
+    "meeting-decision-action-board": "회의 결정→실행판",
     "team-contribution-role-radar": "팀원/AI 기여 설명",
     "research-domain-atlas": "리서치 범주·연결 지도",
     "research-to-product-funnel": "리서치→제품결정 흐름",

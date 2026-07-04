@@ -39,7 +39,7 @@ aliases:
 | [[user-journeys]] | RM 여정과 승인 게이트 씨앗 | draft/stub |
 | [[agent-roster]] | 14종 에이전트, 조직도, 승인 게이트 | draft/stub |
 | [[orchestrator]] | Case→AgentRun→승인→Audit 흐름 | draft/stub |
-| [[submission-checklist]] | 제출 전 체크리스트 | 일부 구버전 |
+| [[08_본선/03_제품/07_발표-제출/submission-checklist\|submission-checklist]] | 제출 전 체크리스트 | 일부 구버전 |
 | [[live-final-verification]] | 최종 검증 항목 | 전세 중심 구버전 |
 | [[본선-시연-시나리오]] | SME 히어로, 피싱 보조, 전세 제외/잔여시간 언급 | 현재 시연 SSOT |
 | [[function-spec]] | 운영 계약, 3개 골든패스, 기능 명세 | 제출 기준 정본 |
@@ -56,8 +56,8 @@ aliases:
 | AI Agent 설계 | [[function-spec]] 운영 계약, [[agent-roster]], [[orchestrator]] | 정합이나 세부는 draft |
 | MVP 구현/고도화 | [[function-spec]], [[기능-변경이력]], [[mvp-scope]] | 정합 |
 | UX/UI·브랜딩·시연 화면 | [[PROGRESS]]의 IA·화면 지도, 디자인 시스템, 조직도 메인 UI, JB 웹 디자인 | 별도 트랙 필요 |
-| 문서/기능명세/변경이력 | [[function-spec]], [[기능-변경이력]], [[submission-checklist]] | 정합 |
-| QA/검증/시연 안정화 | [[submission-checklist]], [[live-final-verification]], [[risk-register]] | 정합이나 체크리스트 갱신 필요 |
+| 문서/기능명세/변경이력 | [[function-spec]], [[기능-변경이력]], [[08_본선/03_제품/07_발표-제출/submission-checklist\|submission-checklist]] | 정합 |
+| QA/검증/시연 안정화 | [[08_본선/03_제품/07_발표-제출/submission-checklist\|submission-checklist]], [[live-final-verification]], [[risk-register]] | 정합이나 체크리스트 갱신 필요 |
 | 운영 하네스/AI 협업 증빙 | [[PLAN]], [[PROGRESS]], [[VISUALIZATION-PLAN]] | 정합 |
 | 발표/시연/리허설 | [[본선-시연-시나리오]], [[bet-memo]] | 정합 |
 
@@ -65,7 +65,7 @@ aliases:
 
 | ID | 갭 | 근거 | 영향 | 권고 |
 |---|---|---|---|---|
-| G1 | `submission-checklist`는 전세사기 E2E를 핵심 시나리오로 둠 | [[submission-checklist]] | 현재 시연 SSOT와 충돌 | SME E2E를 기본, 피싱 보조, 전세 optional로 수정 |
+| G1 | `submission-checklist`는 전세사기 E2E를 핵심 시나리오로 둠 | [[08_본선/03_제품/07_발표-제출/submission-checklist\|submission-checklist]] | 현재 시연 SSOT와 충돌 | SME E2E를 기본, 피싱 보조, 전세 optional로 수정 |
 | G2 | `live-final-verification`은 전세사기 위험 탐지만 검증 | [[live-final-verification]] | 리허설 체크가 히어로 시연을 검증하지 못함 | SME(JBG-104) 검증을 메인으로 재작성 |
 | G3 | PRD/MVP/UX 문서가 `작성 예정` 상태 | [[prd]], [[mvp-scope]], [[design-system]], [[ia-screen-map]], [[user-journeys]] | 간트가 실제보다 확정적으로 보일 수 있음 | 간트의 UX/UI·제품 레인에는 `estimate/planned` 표시 유지 |
 | G4 | 제품 의사결정 레인이 간트에 약함 | [[PROGRESS]]의 은행 선택·배포vs로컬·DB 범위 확정 | 구현/발표 논리의 선행 결정이 묻힘 | `제품 결정/범위 확정` 마커를 간트 또는 update-control-tower에 추가 |
@@ -96,7 +96,7 @@ aliases:
 
 | 우선순위 | 문서 | 수정 내용 |
 |---|---|---|
-| P0 | [[submission-checklist]] | 제품 MVP 검증 항목을 SME 히어로 기준으로 갱신 |
+| P0 | [[08_본선/03_제품/07_발표-제출/submission-checklist\|submission-checklist]] | 제품 MVP 검증 항목을 SME 히어로 기준으로 갱신 |
 | P0 | [[live-final-verification]] | 최종 검증 시나리오를 SME 중심으로 재작성 |
 | P1 | [[mvp-scope]] | P0 기능 상태를 `작성 예정`에서 실제 시연 기준으로 갱신 |
 | P1 | [[design-system]] | 김민주 UX/UI 오너 트랙과 JB 톤앤매너 작업 항목 반영 |
@@ -105,7 +105,7 @@ aliases:
 
 ## 다음 액션
 
-- 이 감사 결과를 기준으로 `submission-checklist`와 `live-final-verification`을 먼저 갱신한다.
+- 이 감사 결과를 기준으로 [[08_본선/03_제품/07_발표-제출/submission-checklist|submission-checklist]]와 `live-final-verification`을 먼저 갱신한다.
 - 그 다음 `workflow-gantt-blueprint`에는 `제품 결정/범위 확정`, `백엔드/API 승격`, `SME E2E 리허설`을 추가한다.
 - 시각화 수정 전에는 [[VISUALIZATION-PLAN]]을 먼저 갱신하고 [[visualization-cycle]]을 실행한다.
 

@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url'
 const __dir = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dir, '..', '..')
 const VIZ = join(__dir, '..', 'visualizations')
-const GENERATED_AT = '2026-07-02 KST'
+const GENERATED_AT = '2026-07-03 KST'
 
 // ── Element builders ──────────────────────────────────────────────────────────
 let _id = 0
@@ -1034,7 +1034,216 @@ const buildUpdateControlTower = () => {
   return elements
 }
 
-// ── 17. DEMO-VIDEO-STORYBOARD ───────────────────────────────────────────────
+// ── 17. MEETING-DECISION-ACTION-BOARD ───────────────────────────────────────
+const buildMeetingDecisionActionBoard = () => {
+  _id = 0
+  const elements = []
+
+  elements.push(text(0, 35, 18, 1220, 34, 'Meeting Decision Action Board — 7/1~7/3 회의 결정 실행판', 22, 'left'))
+  elements.push(text(1, 38, 54, 1250, 22, '회의록을 다시 읽지 않아도 확정·미확정·오늘 할 일·담당 사람/AI를 판단하는 운영 보드', 12, 'left'))
+
+  const days = [
+    {
+      x: 55, date: '07/01 (수)', title: '기반 구축',
+      body: '볼트 정합화\n운영 자동화 스킬\n리서치 종합\n11블록·WBS',
+      color: '#dbeafe', tag: 'foundation',
+    },
+    {
+      x: 405, date: '07/02 (목)', title: '제품·UX 방향',
+      body: '키보드-퍼스트 UX\n역할별 대시보드\nAgent=스킬+MCP+DB+API+LLM\nPII 직접 미취급',
+      color: '#dcfce7', tag: 'product direction',
+    },
+    {
+      x: 755, date: '07/03 (금)', title: '스코프·제출 조건',
+      body: '전북은행+JB우리캐피탈\n하이브리드 구동\n역할 분담\n5분+2분 / 영상 가점',
+      color: '#fef3c7', tag: 'scope lock',
+    },
+  ]
+
+  elements.push(text(10, 55, 92, 270, 20, '1) 결정 흐름', 15, 'left'))
+  days.forEach((d, i) => {
+    elements.push(rect(30 + i, d.x, 120, 280, 126, d.color, '#334155'))
+    elements.push(text(50 + i, d.x + 14, 132, 252, 18, d.date, 12, 'left', '#475569'))
+    elements.push(text(70 + i, d.x + 14, 154, 252, 22, d.title, 15, 'left'))
+    elements.push(text(90 + i, d.x + 16, 184, 248, 48, d.body, 10, 'left'))
+    elements.push(text(110 + i, d.x + 156, 132, 112, 16, d.tag, 9, 'center', '#64748b'))
+    if (i < days.length - 1) elements.push(arrow(130 + i, d.x + 280, 183, 95, 0))
+  })
+
+  elements.push(rect(150, 1105, 120, 250, 126, '#fee2e2', '#dc2626'))
+  elements.push(text(151, 1122, 136, 216, 20, '결론', 15, 'center'))
+  elements.push(text(152, 1120, 166, 220, 50, 'D2·D3·D5 잠금 후\n빌드·브랜딩·제출물로\n즉시 전환', 12, 'center'))
+  elements.push(arrow(153, 1035, 183, 70, 0))
+
+  elements.push(text(180, 55, 282, 320, 20, '2) D1~D6 결정 게이트', 15, 'left'))
+  const gates = [
+    { x: 55, y: 315, key: 'D1', status: '확정', title: '계열사', body: '전북은행 + JB우리캐피탈\n2개 콘솔 중심', color: '#bbf7d0', owner: '사람 김주용·이승보 / AI product 🤖' },
+    { x: 275, y: 315, key: 'D2', status: 'TBD', title: '도메인', body: 'RM(여신) + 전세사기 + 보이스피싱\n실동작 1개: 7/4 오전 확정', color: '#fee2e2', owner: '사람 김주용·이승보 / AI judge-qa 🤖' },
+    { x: 495, y: 315, key: 'D3', status: 'TBD', title: 'Agent roster', body: '실동작 4~5개\n조직도 14개는 AI 설계 위임', color: '#fee2e2', owner: '사람 재형 support / AI architect 🤖' },
+    { x: 715, y: 315, key: 'D4', status: '확정', title: '구동', body: '하이브리드\n로컬모델 실동작\n최종 테스트=이승보 PC', color: '#bbf7d0', owner: '사람 이승보 main / AI Codex·Claude 🤖' },
+    { x: 935, y: 315, key: 'D5', status: 'mixed', title: 'DB/API', body: '공공 API 1개 실연결\n나머지 목업+폴백', color: '#fed7aa', owner: '사람 김주용 API · 재형 data' },
+    { x: 1155, y: 315, key: 'D6', status: '진행', title: '브랜딩', body: '이름·슬로건·UX writing\n발표 톤 고정', color: '#dbeafe', owner: '사람 김민주 main / AI designer 🤖' },
+  ]
+  gates.forEach((g, i) => {
+    elements.push(rect(200 + i, g.x, g.y, 190, 152, g.color, '#334155'))
+    elements.push(text(230 + i, g.x + 12, g.y + 12, 42, 18, g.key, 13, 'left'))
+    elements.push(rect(260 + i, g.x + 112, g.y + 10, 62, 22, '#ffffff', '#94a3b8'))
+    elements.push(text(290 + i, g.x + 116, g.y + 16, 54, 12, g.status, 9, 'center', g.status === 'TBD' ? '#b91c1c' : '#166534'))
+    elements.push(text(320 + i, g.x + 12, g.y + 42, 166, 20, g.title, 13, 'left'))
+    elements.push(text(350 + i, g.x + 12, g.y + 70, 166, 42, g.body, 9, 'left'))
+    elements.push(text(380 + i, g.x + 12, g.y + 122, 166, 18, g.owner, 8, 'left', '#475569'))
+  })
+
+  elements.push(text(430, 55, 505, 320, 20, '3) 오늘 실행 레인', 15, 'left'))
+  const lanes = [
+    {
+      x: 55, title: 'Build / Demo', color: '#e0f2fe',
+      items: ['전북+캐피탈 콘솔 정리', 'D2 실동작 도메인 택1', '로컬모델·공공API 폴백 테스트', '감사체인·승인 플로우 노출'],
+      owner: '사람 이승보 main · 재형 data/system / AI Codex 🤖',
+    },
+    {
+      x: 385, title: 'UX / Brand / Pitch', color: '#fce7f3',
+      items: ['키보드-퍼스트 화면 문구 고정', '이름·슬로건·브랜딩', '김민주 발표/시연 동선', '5분 예선 컷과 15분 결선 컷 분리'],
+      owner: '사람 김민주 main · 김주용 story / AI designer 🤖',
+    },
+    {
+      x: 715, title: 'Docs / Submission', color: '#fef3c7',
+      items: ['발표자료 PDF 필수항목', '기능명세서 3p + 변경이력', 'GitHub README/데모 URL', '시연영상 5분·100MB 가점'],
+      owner: '사람 김주용 PM/docs / AI submission-check 🤖',
+    },
+    {
+      x: 1045, title: 'Governance / AI Ops', color: '#dcfce7',
+      items: ['텔레메트리 정본 1곳 유지', 'PII·API 키 미기록', '회의/프롬프트 캡처', 'visualization-cycle 동기화'],
+      owner: '사람 김주용 ops / AI Codex GPT-5 · Claude 🤖',
+    },
+  ]
+  lanes.forEach((lane, i) => {
+    elements.push(rect(450 + i, lane.x, 540, 285, 260, lane.color, '#334155'))
+    elements.push(text(480 + i, lane.x + 15, 558, 255, 20, lane.title, 14, 'center'))
+    lane.items.forEach((item, j) => {
+      const y = 598 + j * 42
+      elements.push(rect(510 + i * 20 + j, lane.x + 20, y, 245, 30, '#ffffff', '#94a3b8'))
+      elements.push(text(550 + i * 20 + j, lane.x + 30, y + 8, 225, 14, item, 9, 'left'))
+    })
+    elements.push(text(650 + i, lane.x + 22, 768, 240, 14, lane.owner, 8, 'left', '#475569'))
+  })
+
+  const risks = [
+    ['TBD', 'D2: 전세사기 vs 보이스피싱'],
+    ['risk', '자격·PII·API키·STT 재확인'],
+    ['mixed', '실API 1개 + 목업 + 폴백'],
+    ['next', '7/4 후 관련 보드 동기화'],
+  ]
+  elements.push(rect(720, 55, 840, 950, 92, '#fff7ed', '#ea580c'))
+  elements.push(text(721, 75, 856, 170, 18, 'Risks / Next Locks', 13, 'left'))
+  risks.forEach((r, i) => {
+    elements.push(rect(740 + i, 230 + i * 190, 856, 170, 42, i === 0 ? '#fee2e2' : '#ffffff', '#fed7aa'))
+    elements.push(text(760 + i, 238 + i * 190, 869, 34, 14, r[0], 9, 'center', '#9a3412'))
+    elements.push(text(780 + i, 278 + i * 190, 866, 116, 20, r[1], 8, 'left', '#7c2d12'))
+  })
+
+  elements.push(rect(820, 1045, 835, 310, 104, '#f8fafc', '#94a3b8'))
+  elements.push(text(821, 1062, 852, 280, 18, 'Decision Rule', 13, 'center'))
+  elements.push(text(822, 1060, 880, 282, 34, '확정된 것은 빌드로 보내고,\nTBD는 7/4 회의 안건으로 잠근다.', 11, 'center'))
+  metaBox(elements, 860, 1015, 965, 340, 'plan + 7/1~7/3 daily/meeting + logs', '7/4 스코프 확정·D2/D3/D5 변경', 'PM + visualization', 'mixed')
+
+  return elements
+}
+
+// ── 18. MORNING-DECISION-BRIEF-BOARD ────────────────────────────────────────
+const buildMorningDecisionBriefBoard = () => {
+  _id = 0
+  const elements = []
+
+  elements.push(text(0, 35, 18, 1180, 34, '7/4 오전 결정 브리핑 — 후보·추천·담당 액션 한 장 공유', 22, 'left'))
+  elements.push(text(1, 38, 54, 1260, 22, '원문: 08_본선/03_제품/00_결정-준비/ · 이 보드 목적: 팀이 오늘 실제로 고를 것만 빠르게 잠그기', 12, 'left'))
+
+  elements.push(rect(10, 55, 92, 1280, 78, '#fee2e2', '#dc2626'))
+  elements.push(text(11, 80, 108, 220, 22, 'Keystone', 17, 'left', '#991b1b'))
+  elements.push(text(12, 305, 104, 700, 28, '전세사기 vs 보이스피싱 중 무엇을 실제로 돌릴지 택1', 18, 'center', '#7f1d1d'))
+  elements.push(text(13, 1010, 111, 290, 18, 'Q1·Q6·Q7·Q8·Q9 연쇄 해소', 12, 'center', '#991b1b'))
+
+  elements.push(text(20, 55, 205, 280, 20, '1) 밤새 보강 완료 — 검토만', 15, 'left'))
+  const evidence = [
+    { x: 55, title: 'ROI', metric: '연 7.66억원', body: 'RM 116석 기준\n보수 0.83억 ~ 공격 31.42억\n실현율은 발표서 가정 명시', color: '#dcfce7', note: 'D16 baseline 재검증' },
+    { x: 340, title: '적법성', metric: 'PII는 로컬', body: '신용정보법 §40조의2\n전자금융감독규정 망분리\n금융위 MLS 로드맵', color: '#dbeafe', note: '§36조의2는 설명요구권' },
+    { x: 625, title: '실동작', metric: '도달성 확인', body: 'llama-server\n실거래가·법령·한국은행 API\n무료키+가중치 남음', color: '#fef3c7', note: '라이브 성공 전 단계' },
+  ]
+  evidence.forEach((e, i) => {
+    elements.push(rect(30 + i, e.x, 235, 245, 150, e.color, '#334155'))
+    elements.push(text(50 + i, e.x + 14, 250, 96, 18, e.title, 13, 'left'))
+    elements.push(text(70 + i, e.x + 112, 250, 112, 20, e.metric, 14, 'right', '#0f172a'))
+    elements.push(text(90 + i, e.x + 16, 288, 210, 50, e.body, 10, 'center'))
+    elements.push(text(110 + i, e.x + 16, 355, 210, 14, e.note, 8, 'center', '#475569'))
+  })
+
+  elements.push(text(140, 925, 205, 320, 20, '2) 오늘 골라야 할 후보', 15, 'left'))
+  const decisions = [
+    ['Q1', '도메인', '3개 동급', '1핵심+2확장', '추천: 여신 핵심 + 전세/피싱 확장'],
+    ['Q3', 'Agent 수', '14개 전면', '5코어+9스킬', '팀 방침 충돌: 명시 결정'],
+    ['Q5', 'DB', '정적', '하이브리드', '추천: 4함수계약 유지 후 read-only API 승격'],
+    ['Q7', '모델', '외부 중심', '로컬+외부', '추천: 원본 PII=로컬, 외부=비식별 문안'],
+    ['Q11', '이름', 'LocalGuard', 'JB LocalGuard AX', '추천: 상표검색 전 잠정'],
+    ['Q12', '승인 UX', '일반 승인', 'Evidence-First Gate', '추천: 위험별 마찰 + L4 차단'],
+  ]
+  decisions.forEach((d, i) => {
+    const y = 235 + i * 55
+    elements.push(rect(170 + i, 925, y, 405, 42, i % 2 === 0 ? '#f8fafc' : '#f1f5f9', '#94a3b8'))
+    elements.push(text(200 + i, 938, y + 12, 32, 14, d[0], 10, 'center', '#334155'))
+    elements.push(text(230 + i, 978, y + 12, 64, 14, d[1], 10, 'left'))
+    elements.push(text(260 + i, 1048, y + 7, 92, 22, `${d[2]}\nvs ${d[3]}`, 8, 'center', '#475569'))
+    elements.push(text(290 + i, 1150, y + 12, 160, 14, d[4], 8, 'left', '#0f172a'))
+  })
+
+  elements.push(text(330, 55, 650, 310, 20, '3) 너는 이거 — 담당자별 실행', 15, 'left'))
+  const people = [
+    { x: 55, name: '이승보', role: '개발·시스템', body: 'Q3 Agent 수\nQ5 DB연동\nQ7 Gemma/가중치 실구동', color: '#e0f2fe' },
+    { x: 320, name: '김민주', role: 'UX/UI·브랜딩', body: 'Q11 이름·슬로건\nQ9 스토리 대본\nQ12 승인 UX 시안', color: '#fce7f3' },
+    { x: 585, name: '김주용', role: 'PM·문서·API', body: 'Q1 도메인 최종\nQ6 보안 아키텍처\nQ8 배포 URL', color: '#ede9fe' },
+    { x: 850, name: '최영욱', role: '검토·외부확인', body: '무료키 발급\nKIPRIS 상표검색\n리더보드 조항 재확인', color: '#fef3c7' },
+    { x: 1115, name: '재형', role: '데이터·시스템 설계', body: 'DB/API 구조 검토\n데이터 모델 지원\n실동작 도메인 근거 보강', color: '#dcfce7' },
+  ]
+  people.forEach((p, i) => {
+    elements.push(rect(360 + i, p.x, 682, 220, 150, p.color, '#334155'))
+    elements.push(text(390 + i, p.x + 14, 700, 192, 20, p.name, 15, 'center'))
+    elements.push(text(420 + i, p.x + 16, 730, 188, 16, p.role, 9, 'center', '#475569'))
+    elements.push(text(450 + i, p.x + 18, 760, 184, 44, p.body, 10, 'center'))
+  })
+
+  elements.push(text(500, 55, 875, 320, 20, '4) 제품 한눈 — 확정/가안/TBD', 15, 'left'))
+  const flow = [
+    { x: 55, title: 'Domain', body: '여신 핵심\n전세·피싱 확장\n실동작 1개 TBD', color: '#fee2e2' },
+    { x: 265, title: 'RM Console', body: '역할코드 대시보드\n키보드 중심 UX\nJB 디자인 시스템', color: '#dcfce7' },
+    { x: 475, title: 'Agents', body: '14 vs 5+9\n수·구성 팀결정\n신뢰도 평가 필요', color: '#fee2e2' },
+    { x: 685, title: 'Data/Security', body: 'PII 4중방어\n로컬+외부 비식별\n공공API 1개 실연결', color: '#fef3c7' },
+    { x: 895, title: 'Approval', body: '사람 최종 승인\nEvidence-First Gate\nL4 차단', color: '#dbeafe' },
+    { x: 1105, title: 'Audit/Pitch', body: '감사체인\n연 수억 절감\n5분 발표+영상', color: '#dcfce7' },
+  ]
+  flow.forEach((f, i) => {
+    elements.push(rect(530 + i, f.x, 910, 165, 108, f.color, '#334155'))
+    elements.push(text(560 + i, f.x + 12, 927, 140, 18, f.title, 13, 'center'))
+    elements.push(text(590 + i, f.x + 14, 962, 136, 38, f.body, 9, 'center'))
+    if (i < flow.length - 1) elements.push(arrow(630 + i, f.x + 165, 962, 45, 0))
+  })
+
+  const reminders = [
+    ['팀결정', 'Q1: 여신 1핵심+전세·피싱 2확장 vs 3개 동급'],
+    ['팀결정', 'Q3: 14개 전면 노출 vs 5코어+9스킬 재분류'],
+    ['확인', '공공데이터 키·KIPRIS·도메인·리더보드 조항'],
+  ]
+  elements.push(rect(680, 55, 1055, 850, 88, '#fff7ed', '#ea580c'))
+  elements.push(text(681, 75, 1072, 132, 18, 'Decision Locks', 13, 'left', '#9a3412'))
+  reminders.forEach((r, i) => {
+    elements.push(rect(700 + i, 225 + i * 220, 1072, 205, 40, i < 2 ? '#fee2e2' : '#ffffff', '#fed7aa'))
+    elements.push(text(720 + i, 235 + i * 220, 1085, 48, 13, r[0], 9, 'center', '#9a3412'))
+    elements.push(text(740 + i, 290 + i * 220, 1083, 128, 17, r[1], 8, 'left', '#7c2d12'))
+  })
+
+  metaBox(elements, 780, 930, 1055, 400, '아침-카톡-브리핑, 결정-현황-종합, Q1~Q12, 근거팩, viz 3보드', '7/4 오전 결정·팀 공유 문구 변경', 'PM + visualization', 'mixed')
+  return elements
+}
+
+// ── 19. DEMO-VIDEO-STORYBOARD ───────────────────────────────────────────────
 const buildDemoVideoStoryboard = () => {
   _id = 0
   const elements = []
@@ -1304,6 +1513,8 @@ save('finals-demo-readiness-map.excalidraw', buildFinalsDemoReadinessMap())
 save('ax-operating-system-map.excalidraw', buildAxOperatingSystemMap())
 save('team-contribution-role-radar.excalidraw', buildTeamContributionRoleRadar())
 save('update-control-tower.excalidraw', buildUpdateControlTower())
+save('meeting-decision-action-board.excalidraw', buildMeetingDecisionActionBoard())
+save('morning-decision-brief-board.excalidraw', buildMorningDecisionBriefBoard())
 save('demo-video-storyboard.excalidraw', buildDemoVideoStoryboard())
 save('evidence-traceability-board.excalidraw', buildEvidenceTraceabilityBoard())
 save('demo-golden-path-state-machine.excalidraw', buildDemoGoldenPathStateMachine())

@@ -5,13 +5,13 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [MVP제안서, MVP 제안서, MVP Proposal]
+aliases: [MVP제안서, MVP Proposal]
 ---
 
 # MVP 제안서 — JB LocalGuard OS
 
 > **제출용 정본(Submission SSOT)**. 대회 제출 필수 형태(제안서) 문서로, 분산된 제품 문서를 **취합**한 것이며 창작·신규 사실을 더하지 않는다. 사실·수치·이름이 어긋나면 취합 원천 문서와 `_canon.md`가 이긴다.
-> **취합 원천**: [[08_본선/03_제품/00_vision/core-bet|Core Bet]] · [[08_본선/03_제품/00_vision/business-model|Business Model(DDBM)]] · [[08_본선/03_제품/00_vision/data-strategy|Data Strategy]] · [[08_본선/03_제품/01_prd/prd|PRD]] · [[08_본선/03_제품/09_flow|09 Flow]] · [[08_본선/03_제품/00_vision/business-metrics|Business Metrics]] · [[08_본선/03_제품/00_결정-준비/근거팩/ROI-근거팩|ROI 근거팩]].
+> **취합 원천**: [[08_본선/03_제품/00_vision/core-bet|Core Bet]] · [[08_본선/03_제품/00_vision/business-model|Business Model(DDBM)]] · [[08_본선/03_제품/00_vision/data-strategy|Data Strategy]] · [[08_본선/03_제품/01_prd/prd|PRD]] · [[08_본선/03_제품/09_flow|09 Flow]] · [[08_본선/03_제품/00_vision/business-metrics|Business Metrics]] · [[08_본선/03_제품/01_결정-준비/근거팩/ROI-근거팩|ROI 근거팩]].
 > **근거등급(E0~E5)**: E5 법령·감독규정 원문 · E4 데모/코드 실동작 · E3 다수 외부출처·벤더 실증 · E2 단일 외부출처·산식+앵커 · E1 내부 판단·설계원칙 · E0 가정/추정. 목표선: 핵심 주장 E2+, 데모 주장 E4.
 > **미확정 표기**: 7/4 팀 결정 대기 항목은 `[미결/7-4]`, 미검증·가정은 `[미검증]`/`[가정]`, 개발 목표(미완)는 `[목표/조건부]`로 명시한다.
 
@@ -192,7 +192,5 @@ flowchart LR
 ## 연결
 
 - [[08_본선/03_제품/07_발표-제출/기능명세서|기능명세서(제출용 정본)]]
-- [[08_본선/03_제품/00_vision/core-bet|Core Bet]] · [[08_본선/03_제품/00_vision/business-model|Business Model(DDBM)]] · [[08_본선/03_제품/00_vision/data-strategy|Data Strategy]]
-- [[08_본선/03_제품/01_prd/prd|PRD]] · [[08_본선/03_제품/09_flow|09 Flow]] · [[08_본선/03_제품/00_vision/business-metrics|Business Metrics]]
-- [[08_본선/03_제품/00_결정-준비/근거팩/ROI-근거팩|ROI 근거팩]] · [[08_본선/03_제품/00_vision/차별성-경험레이어-서사|차별성-경험레이어-서사]]
+- [[08_본선/03_제품/00_vision/business-model|Business Model(DDBM)]] · [[08_본선/03_제품/09_flow|09 Flow]]
 - [[08_본선/03_제품/07_발표-제출/pitch-outline|Pitch Outline]] · [[08_본선/03_제품/07_발표-제출/demo-script|Demo Script]]

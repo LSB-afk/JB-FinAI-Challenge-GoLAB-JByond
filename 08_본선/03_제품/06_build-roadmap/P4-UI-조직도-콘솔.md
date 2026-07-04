@@ -54,5 +54,5 @@ aliases:
 
 ## ⑦ 근거
 
-- [[D18-결과-gpt55high]]
+- [[D18-결과-원문-gpt55high]]
 

@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [data-strategy, 데이터전략, 18_data-strategy]
+aliases: [data-strategy, 데이터전략]
 ---
 
 # Data Strategy — JB LocalGuard OS

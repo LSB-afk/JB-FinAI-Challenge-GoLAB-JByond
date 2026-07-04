@@ -24,17 +24,17 @@ aliases:
 
 ## 빠른 진입
 
-| 목적 | 링크 |
-|------|------|
-| 🆕 **새 세션 부팅(핸드오프)** | [[HANDOFF\|HANDOFF — 현재 상태·다음 할 일·가드레일]] |
-| 🗺️ **저장소 구분(레포 지도)** | [[레포-지도\|어느 repo가 무엇인지 — 다른 AI 혼동 방지]] |
-| 🏃 **48h 스프린트 실행 체크리스트** | [[PROGRESS\|PROGRESS §48h]] · [[48h-스프린트-마스터\|오케스트레이션]] |
-| 공유 패키지 (외부 독자용) | [[08_본선/SHARE-PACKAGE\|공유 패키지]] |
-| AI 리포트 최종본 | [[08_본선/05_제출/ai-report-final\|AI 리포트 최종]] |
-| 종합 아키텍처 다이어그램 | [[08_본선/03_제품/05_diagrams/99_comprehensive-architecture\|종합 아키텍처]] |
-| 프로젝트 대시보드 | [[08_본선/_system/dashboard/project-dashboard\|대시보드]] |
-| 시각화 기획·청사진 | [[08_본선/_system/visualizations/VISUALIZATION-PLAN\|시각화 기획안]] |
-| 도구·스킬 목록 | [[registry-skills]] · [[registry-plugins]] · [[_tools-index]] |
+| 목적                       | 링크                                                                 |
+| ------------------------ | ------------------------------------------------------------------ |
+| 🆕 **새 세션 부팅(핸드오프)**     | [[HANDOFF\|HANDOFF — 현재 상태·다음 할 일·가드레일]]                           |
+| 🗺️ **저장소 구분(레포 지도)**    | [[레포-지도\|어느 repo가 무엇인지 — 다른 AI 혼동 방지]]                             |
+| 🏃 **48h 스프린트 실행 체크리스트** | [[PROGRESS\|PROGRESS §48h]] · [[48h-스프린트-마스터\|오케스트레이션]]            |
+| 공유 패키지 (외부 독자용)          | [[08_본선/SHARE-PACKAGE\|공유 패키지]]                                    |
+| AI 리포트 최종본               | [[08_본선/05_제출/ai-report-final\|AI 리포트 최종]]                         |
+| 종합 아키텍처 다이어그램            | [[08_본선/03_제품/05_diagrams/99_comprehensive-architecture\|종합 아키텍처]] |
+| 프로젝트 대시보드                | [[08_본선/_system/dashboard/project-dashboard\|대시보드]]                |
+| 시각화 기획·청사진               | [[08_본선/_system/visualizations/VISUALIZATION-PLAN\|시각화 기획안]]       |
+| 도구·스킬 목록                 | [[registry-skills]] · [[registry-plugins]] · [[_tools-index]]      |
 
 ---
 

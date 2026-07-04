@@ -69,7 +69,7 @@ aliases:
 | 시연영상 스토리보드 시각화 | [[08_본선/_system/visualizations/demo-video-storyboard]] |
 | 전체 워크플로 간트 | [[08_본선/_system/visualizations/workflow-gantt-blueprint]] |
 | 팀·AI 기여 보드 | [[08_본선/_system/visualizations/team-contribution-role-radar]] |
-| 발표용 이미지 export | [[08_본선/assets/excalidraw/exported-images/20260702/README]] |
+| 발표용 이미지 export | [[08_본선/04_증빙/02_분석자료/리서치/리서치-인덱스|리서치 인덱스]] |
 | 제품 전략 근거 | [[본선-마스터-플레이북]] · [[회의록-2026-06-30-아이디어회의]] |
 
 ## 확정 게이트

@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [risk-impact-register, 리스크-임팩트-레지스터, Negative-Impacts]
+aliases: [risk-impact-register, 리스크-임팩트-레지스터]
 ---
 
 # Risk & Impact Register — JB LocalGuard OS

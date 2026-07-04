@@ -1,12 +1,15 @@
 ---
 tags:
-  - area/general
-  - status/draft
+  - area/product
+  - type/design
+  - status/active
 date: 2026-07-04
 up: "[[_결정준비-MOC]]"
 ---
 
 # JB금융그룹 웹사이트 디자인 시스템 가이드
+
+> 이 문서의 목적 = JB 웹사이트 실제 렌더링·CSS를 분석해 우리 콘솔이 차용할 디자인 토큰·컴포넌트 패턴을 확정한다.
 
 분석 기준일: 2026-07-01  
 대상: https://www.jbfg.com/ko/main.do  

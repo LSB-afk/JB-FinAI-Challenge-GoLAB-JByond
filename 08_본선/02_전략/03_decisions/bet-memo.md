@@ -2,12 +2,16 @@
 tags:
   - area/strategy
   - type/log
-  - status/draft
+  - status/active
 date: 2026-06-26
 up: "[[_02_전략_MOC|전략 MOC]]"
+aliases:
+  - 베팅-메모
+  - bet-memo
 ---
+> 목적: 본선에서 내린 핵심 전략적 베팅과 철회·변경 이력을 추적한다.
 
-# Bet Memo
+# 베팅-메모
 
 > 본선에서 우리가 내린 핵심 전략적 베팅. 철회·변경 시 날짜와 이유를 기록.
 

@@ -87,4 +87,4 @@ aliases: [UI 규칙, ui-rules]
 ---
 
 ## 연결
-[[08_본선/03_제품/00_vision/principles|Principles]] · [[08_본선/03_제품/00_vision/definitions|Definitions]] · [[08_본선/03_제품/04_tech/data-model|데이터 모델]] · [[08_본선/03_제품/rules/agent-rules|Agent Rules]] · [[08_본선/03_제품/rules/data-rules|Data Rules]] · [[08_본선/03_제품/00_결정-준비/설계/승보-프로토타입-반영|승보 프로토타입 반영]]
+[[08_본선/03_제품/00_vision/principles|Principles]] · [[08_본선/03_제품/00_vision/definitions|Definitions]] · [[08_본선/03_제품/04_tech/data-model|데이터 모델]] · [[08_본선/03_제품/rules/agent-rules|Agent Rules]] · [[08_본선/03_제품/rules/data-rules|Data Rules]] · [[08_본선/03_제품/01_결정-준비/설계/승보-프로토타입-반영|승보 프로토타입 반영]]

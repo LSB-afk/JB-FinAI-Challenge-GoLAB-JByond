@@ -9,7 +9,7 @@ aliases: [JB_project2 구현현황, implementation-inventory]
 
 > 대상: `_vendor/JB_project2/app/` (읽기 전용 벤더 클론, 이승보 프로토타입 = 제출 코드정본). 모든 수치는 `grep`/파일 직독으로 확인한 실측치이며, 확인 안 된 항목은 `[미확인]`으로 표시했다.
 >
-> **⚠ 델타 (2026-07-04 야간 pull, upstream 0226bd6)**: 아래 §0~§8 실측치는 `e57b826` 기준이다. 이후 **RM 역할 하네스 신설 3커밋(+3,650줄)** 이 들어왔다 — `rmOfficer.*` 18개 신규 파일(에이전트 레지스트리 319줄·db·서비스·보드/케이스/위저드 뷰), `AGENTS.md`(Codex 오케스트레이션 계약 333줄), e2e 2종(`rm-officer*.spec.js`), 자체 `scripts/verify_static.py`. **5번째 콘솔 = RM 역할 하네스** — 콘솔 수·파일 수·에이전트 로스터 집계는 재실측 필요 [미갱신].
+> **⚠ 델타 (2026-07-04 야간 pull, upstream 0226bd6)**: 아래 §0~§8 실측치는 `e57b826` 기준이다. 이후 **RM 역할 하네스 신설 3커밋(+3,650줄)** 이 들어왔다 — `rmOfficer.*` 18개 신규 파일(에이전트 레지스트리 319줄·db·서비스·보드/케이스/위저드 뷰), `AGENTS.md`(Codex 오케스트레이션 계약 333줄), e2e 2종(`rm-officer*.spec.js`), 자체 `scripts/verify_static.py`. **RM 역할 하네스 신설** — 단, E 실사(implementation-index) 결과 RM은 CCL/FDR/JPO/JBWC 같은 완전 콘솔이 아니라 **단일 페이지 대시보드**(`rmDashboardPage`, 하위 라우트 없음)다. "역할 콘솔 4종 + RM 대시보드"로 표기할 것. 파일 수·에이전트 로스터 집계는 재실측 필요 [미갱신].
 
 ## 0. 파일 구성 (실측)
 

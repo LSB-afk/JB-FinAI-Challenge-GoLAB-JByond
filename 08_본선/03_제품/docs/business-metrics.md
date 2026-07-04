@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [business-metrics, 비즈니스지표, DDBM-metrics]
+aliases: [business-metrics, 비즈니스지표]
 ---
 
 # Business Metrics — JB LocalGuard OS

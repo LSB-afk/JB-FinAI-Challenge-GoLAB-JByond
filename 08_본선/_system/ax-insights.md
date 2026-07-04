@@ -11,6 +11,8 @@ aliases:
 ---
 # AX 인사이트 (Agent Experience Insights)
 
+> 목적: `telemetry-aggregator`가 자동 집계하는 AI 협업 성과 인사이트(헤드라인 수치·모델 믹스·팀원×분야 기여·에이전트 ROI·거버넌스 게이트) 보드 — 외부 자랑·인수인계·메타평가용. 수동 작성 대상 아님, 집계 결과만 반영.
+
 > <!-- aggregator 자동생성 --> `telemetry-aggregator`가 `ai-usage-stats.md`와 `_telemetry-log.md`를 기반으로 이 섹션을 갱신한다.
 > **헤드라인 수치·모델 믹스·팀원×분야·에이전트 ROI·거버넌스 게이트** 5개 관점을 합성한 운영 인사이트.
 

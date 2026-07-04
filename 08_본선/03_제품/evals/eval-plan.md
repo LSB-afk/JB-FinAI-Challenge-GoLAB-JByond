@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [Eval Plan, 평가계획, 검증계획]
+aliases: [Eval Plan, 평가계획]
 ---
 
 # Eval Plan — 평가·검증 계획

@@ -14,7 +14,7 @@ aliases:
 
 # Paperclip 소스기반 Phase 2 티어다운 — JB LocalGuard OS 리프트 플랜
 
-> 스크린샷 IA 분석 [[paperclip-레퍼런스-분석]]을 **실제 MIT 소스 근거**로 승격(file:line). 캡처 갤러리 [[_캡처-맵]] · 벤치마크 맥락 [[B1-결과-gpt]].
+> 스크린샷 IA 분석 [[paperclip-레퍼런스-분석]]을 **실제 MIT 소스 근거**로 승격(file:line). 캡처 갤러리 [[_캡처-맵]] · 벤치마크 맥락 [[B01-결과-원문-gpt]].
 > 소스(비커밋 레퍼런스): `~/Downloads/archives/paperclip-master/` · **라이선스 = MIT**(Copyright 2025 Paperclip AI) → 합법 전면 차용.
 > 분업: **소스 추출·근거 = Codex(gpt-5.5 high)** / **토큰 매핑·판정 = Opus**. 하단 [부록]에 Codex 전문(file:line) 첨부.
 

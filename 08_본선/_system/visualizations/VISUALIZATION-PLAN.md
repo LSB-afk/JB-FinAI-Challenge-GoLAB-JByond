@@ -44,6 +44,8 @@ aliases:
 | 제품 결정/범위 확정(G4) | `update-control-tower`, `evidence-traceability-board`, `research-to-product-funnel`, `judge-criteria-coverage-map` | 은행·로컬·DB 범위, SME 히어로, 조직도 UX가 같은 문구로 보임 |
 | 정적 MVP→백엔드/API 승격(G5) | `finals-demo-readiness-map`, `demo-golden-path-state-machine`, `demo-video-storyboard`, `evidence-traceability-board` | 현 MVP 상태와 API 승격 계획을 섞지 않고 분리 표시 |
 | 리서치 흡수→제품 결정(G6) | `research-domain-atlas`, `research-to-product-funnel`, `project-master-timeline`, `urgent-action-map` | D시리즈 리서치의 전체 지형과 제품 결정·발표 문장·시연 근거로 내려온 흐름이 보임 |
+| 회의 결정→실행 전환(G7) | `meeting-decision-action-board`, `workflow-gantt-blueprint`, `update-control-tower`, `demo-video-storyboard` | 7/1~7/3 회의 결정, 미확정 게이트, 담당 사람/AI, 즉시 실행 레인이 같은 상태로 보임 |
+| 오전 팀 공유/결정 브리핑(G8) | `morning-decision-brief-board`, `meeting-decision-action-board`, `team-contribution-role-radar`, `demo-video-storyboard` | 오버나이트 결정준비 결과, 오늘 선택 후보, 추천안, 담당자별 액션, 제품 한눈 보드가 같은 상태로 보임 |
 | 담당자/AI/기여율 변경 | `team-contribution-role-radar`, `ax-operating-system-map` | 사람(🧑), AI(🤖), main/support, contribution %가 간트와 충돌하지 않음 |
 
 ## 보드 기획 목록
@@ -55,10 +57,12 @@ aliases:
 | `ax-operating-system-map.excalidraw` | 사람·AI·툴·산출물·거버넌스가 연결된 AX 운영체계를 증명 | 심사자·팀 | `_tools-index`, `registry-*`, `_agent-registry`, `ai-session-intake.csv` | 도구·AI·에이전트 추가 | 전체 사용 툴 계층과 게이트가 한 장에 보임 |
 | `team-contribution-role-radar.excalidraw` | 팀원 역할, 작업, 서포트, 프로젝트 기여 %를 표시. 김주용 PM·문서·툴관리, 김민주 UX/UI·발표 비주얼, 재형 데이터·시스템 설계를 명시 | PM·발표 | `_team-roster`, `_contribution-stats`, `contribution-ledger.csv` | 팀원 역할·작업 원장 변경 | 사람별 기여율과 AI 지원층이 분리 표시됨 |
 | `update-control-tower.excalidraw` | 지금 어디까지 왔고 무엇이 막혔는지 추적. 간트 G4/G5/G6 리스크를 함께 표시 | 팀 운영 | [[PROGRESS]], [[PLAN]], `phase-ledger.csv` | PROGRESS 변경·간트 변경 | Done/In Progress/Waiting/Risk와 제품결정·API승격 리스크가 보임 |
+| `meeting-decision-action-board.excalidraw` | 7/1~7/3 회의록을 결정 게이트와 즉시 실행 레인으로 바꿔 오늘 무엇을 결정·진행할지 보여줌 | PM·팀 운영·AI 세션 | [[meeting-decision-action-board-plan]], [[2026-07-01]], [[2026-07-02]], [[회의록-2026-07-02-스프린트회의]], [[회의록-2026-07-03-스프린트회의]], [[decision-log]], [[session-log]] | 회의록·결정로그·역할·제출조건 변경 | 7/1~7/3 타임라인, D1~D6 게이트, 확정/TBD/mixed/risk, 사람/AI 담당, 다음 실행이 보임 |
+| `morning-decision-brief-board.excalidraw` | 오버나이트 결정준비 결과를 팀 공유용 한 장으로 압축. 후보·추천·팀결정·담당자 액션·제품한눈을 보여줌 | 오전 팀 공유·PM·후속 AI 세션 | [[morning-decision-brief-board-plan]], [[아침-카톡-브리핑]], [[결정-현황-종합]], `viz/보드-결정현황.md`, `viz/보드-인물별할일.md`, `viz/보드-제품한눈.md`, `근거팩/` | 7/4 오전 결정, Q1/Q3/Q5/Q11/Q12 변경, 팀 공유 문구 변경 | 7.66억 ROI·적법성·실동작 근거, Q별 후보/추천, 전세 vs 보이스피싱 keystone, 사람별 액션, 제품 구조가 보임 |
 | `demo-video-storyboard.excalidraw` | 시연영상 제작용 12컷 스토리보드. 발표 PPT 전략 문서와 데모 구간이 충돌하지 않게 관리 | 발표·영상 제작 | [[본선-시연-시나리오]], [[03-발표-시연-스크립트]], [[발표-PPT-전략-스토리보드]] | 시연 흐름·영상 규칙·PPT 전략 변경 | 컷·자막·화면요소·증빙요소가 있고 발표 데모 구간과 충돌하지 않음 |
 | `evidence-traceability-board.excalidraw` | 핵심 주장→근거→산출물→심사항목 연결. 제품 결정·API 승격 근거도 포함 | 발표 백업 | `_canon`, D결과, 제출 문서, 심사기준 | 리서치·제출 문서 변경·간트 변경 | 주장마다 출처와 심사항목이 연결되고 G4/G5 근거가 보임 |
 | `demo-golden-path-state-machine.excalidraw` | SME/전세/피싱 데모를 상태기계로 표현 | 시연·QA | 앱 데모 시나리오, live verification | 데모 플로우 변경 | 입력→판단→승인→감사→폴백 흐름이 보임 |
-| `research-domain-atlas.excalidraw` | 31+개 리서치의 큰 범주·각 D/B 요소·교차 연결·제품/시연/발표 활용처를 한 장의 지도처럼 표시 | 팀 운영·발표 백업 | [[research-domain-atlas-plan]], [[README]], [[_00-도메인-분해-점검]], [[_00-회수현황]], [[_인사이트맵]], [[_본선-논증척추]] | D시리즈 추가·회수, 인사이트맵·논증척추·제품정의 변경 | 6개 큰 범주, D/B 코드, 연결선, 활용처, TBD 갭이 보임 |
+| `research-domain-atlas.excalidraw` | 31+개 리서치의 큰 범주·각 D/B 요소·교차 연결·제품/시연/발표 활용처를 한 장의 지도처럼 표시 | 팀 운영·발표 백업 | [[research-domain-atlas-plan]], [[08_본선/04_증빙/02_분석자료/리서치/리서치-인덱스|리서치 인덱스]], [[_운영-도메인-분해-점검]], [[_운영-회수현황]], [[_인사이트맵]], [[_본선-논증척추]] | D시리즈 추가·회수, 인사이트맵·논증척추·제품정의 변경 | 6개 큰 범주, D/B 코드, 연결선, 활용처, TBD 갭이 보임 |
 | `research-to-product-funnel.excalidraw` | 딥리서치가 제품 결정으로 내려온 흐름 제시. Decision Gate를 간트와 맞춤 | 제품·발표 | D1~D23, D+a/b, 갭감사, 제품정의 | 리서치 회수·제품 반영 변경·간트 변경 | 리서치 묶음→Decision Gate→제품결정→MVP/발표가 이어짐 |
 
 ## 공통 메타 박스
@@ -81,7 +85,7 @@ Owner:
 | 저장 위치 | `08_본선/assets/excalidraw/exported-images/YYYYMMDD/` |
 | 출력 형식 | Excalidraw 손그림풍 PNG(팀 공유·메신저용), SVG(덱·문서 재편집용) |
 | 인덱스 | `_export-index.md`에 공유 우선 후보와 전체 파일 목록 기록 |
-| 우선 공유 후보 | `workflow-gantt-blueprint`, `project-master-timeline`, `team-contribution-role-radar`, `research-domain-atlas`, `research-to-product-funnel`, `evidence-traceability-board`, `demo-video-storyboard` |
+| 우선 공유 후보 | `morning-decision-brief-board`, `workflow-gantt-blueprint`, `project-master-timeline`, `meeting-decision-action-board`, `team-contribution-role-radar`, `research-domain-atlas`, `research-to-product-funnel`, `evidence-traceability-board`, `demo-video-storyboard` |
 | 주의 | 기본 export는 손그림풍. 발표 최종본은 Obsidian/Excalidraw 네이티브 export와 비교 QA |
 
 ## 데이터 품질 표기
@@ -103,6 +107,7 @@ Owner:
 - 시연 스크립트 또는 발표덱 구조 변경
 - [[workflow-gantt-flow-gap-audit]]의 P0/P1 권고 반영
 - "있어빌리티", 발표용 가독성, 담당자·AI·기여율 표시 개선 피드백
+- 7/1~7/3 회의 결정 실행판이 7/4 스코프 확정과 충돌하는 경우
 
 ## 연결
 
@@ -110,6 +115,8 @@ Owner:
 - [[visualization]]
 - [[visualization-cycle]]
 - [[research-domain-atlas-plan]]
+- [[meeting-decision-action-board-plan]]
+- [[morning-decision-brief-board-plan]]
 - [[_agent-registry]]
 - [[_contribution-stats]]
 - [[workflow-gantt-flow-gap-audit]]

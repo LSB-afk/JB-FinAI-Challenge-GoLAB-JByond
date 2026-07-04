@@ -7,7 +7,7 @@ aliases: [에이전트 규칙, agent-rules]
 
 # Agent Rules — 에이전트 행동 규칙
 
-> 신뢰마커: **E4(작동검증)** = `_vendor/JB_project2/app/`의 실제 하네스 코드(`harnessCore.js`/`harnessRegistry.js`/`harnessVerification.js`/`jeonseProtectionRules.js`)에서 직접 확인된 가드레일. **[미구현/설계]** = 이 문서에서 규칙으로 신규 확정하지만 `02_제품/app/`(우리 MVP)에는 아직 코드 대응이 없음. 승보 프로토타입은 **참조 구현**이지 우리 앱 코드가 아니다 — 편입 전 [[08_본선/03_제품/00_결정-준비/설계/승보-프로토타입-반영|승보-프로토타입-반영]] 재매핑을 거친다.
+> 신뢰마커: **E4(작동검증)** = `_vendor/JB_project2/app/`의 실제 하네스 코드(`harnessCore.js`/`harnessRegistry.js`/`harnessVerification.js`/`jeonseProtectionRules.js`)에서 직접 확인된 가드레일. **[미구현/설계]** = 이 문서에서 규칙으로 신규 확정하지만 `02_제품/app/`(우리 MVP)에는 아직 코드 대응이 없음. 승보 프로토타입은 **참조 구현**이지 우리 앱 코드가 아니다 — 편입 전 [[08_본선/03_제품/01_결정-준비/설계/승보-프로토타입-반영|승보-프로토타입-반영]] 재매핑을 거친다.
 > 범위: `Case → AgentRun → Agent → Skill → Evidence → Approval → Audit` 운영 계약에서 Agent/Skill이 지켜야 할 행동 경계. 에이전트별 개별 역할·경계는 [[08_본선/03_제품/02_agent-design/agent-roster|에이전트 로스터]] 참조 — 이 문서는 **전 에이전트 공통 규칙**만 다룬다.
 
 ---
@@ -101,4 +101,4 @@ Reject-If 요약(승인 화면 노출 전 자동 차단 대상):
 ---
 
 ## 연결
-[[08_본선/03_제품/00_vision/definitions|Definitions]] · [[08_본선/03_제품/00_vision/principles|Principles]] · [[08_본선/03_제품/00_vision/core-bet|Core Bet]] · [[08_본선/03_제품/00_결정-준비/설계/승보-프로토타입-반영|승보 프로토타입 반영]] · [[08_본선/03_제품/02_agent-design/agent-roster|에이전트 로스터]] · [[08_본선/03_제품/rules/compliance-rules|Compliance Rules]] · [[08_본선/03_제품/rules/data-rules|Data Rules]]
+[[08_본선/03_제품/00_vision/definitions|Definitions]] · [[08_본선/03_제품/00_vision/principles|Principles]] · [[08_본선/03_제품/00_vision/core-bet|Core Bet]] · [[08_본선/03_제품/01_결정-준비/설계/승보-프로토타입-반영|승보 프로토타입 반영]] · [[08_본선/03_제품/02_agent-design/agent-roster|에이전트 로스터]] · [[08_본선/03_제품/rules/compliance-rules|Compliance Rules]] · [[08_본선/03_제품/rules/data-rules|Data Rules]]

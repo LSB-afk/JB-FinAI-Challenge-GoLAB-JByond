@@ -14,6 +14,7 @@ const PATHS = {
   agentReg:     path.join(BASE, "agents/_agent-registry.md"),
   contribStats: path.join(BASE, "team/_contribution-stats.md"),
   usageStats:   path.join(BASE, "telemetry/ai-usage-stats.md"),
+  codexBackfill: path.join(BASE, "telemetry/codex-cli-backfill.csv"),
 };
 
 function atomicWriteFile(filePath, content) {
@@ -212,6 +213,7 @@ function rebuildUsageStats(rows) {
   const engines = {};
   const byDomain = {};
   let totalIn = 0, totalOut = 0;
+  const codexCli = readCodexCliBackfill();
 
   for (const r of rows) {
     const eng = r.engine || "claude";
@@ -273,12 +275,35 @@ function rebuildUsageStats(rows) {
     "|------|--------|---------|---------|",
     domainRows || "| (데이터 없음) | — | — | — |",
     "",
+    "## Codex CLI 별도 총량",
+    "",
+    codexCli
+      ? [
+          `- Codex CLI thread: **${codexCli.threads.toLocaleString()}**`,
+          `- Codex CLI tokens_used: **${codexCli.tokens.toLocaleString()}**`,
+          "- 주의: `tokens_used`는 Codex thread 총량이며 입력/출력 분리값이 아니므로 위 표의 입력/출력 토큰과 합산하지 않음.",
+          "- 원천: [[codex-cli-backfill]] · [[codex-cli-usage-stats]]",
+        ].join("\n")
+      : "- 백필 없음. `node 08_본선/_system/automation/codex-cli-telemetry.mjs --write` 실행 시 생성.",
+    "",
     "---",
-    "[[ai-session-intake.README]] · [[_telemetry-log]] · [[ax-insights]]",
+    "[[ai-session-intake.README]] · [[_telemetry-log]] · [[codex-cli-usage-stats]] · [[ax-insights]]",
   ].join("\n");
 
   fs.mkdirSync(path.dirname(PATHS.usageStats), { recursive: true });
   atomicWriteFile(PATHS.usageStats, content + "\n");
+}
+
+function readCodexCliBackfill() {
+  try {
+    if (!fs.existsSync(PATHS.codexBackfill)) return null;
+    const rows = parseCSV(fs.readFileSync(PATHS.codexBackfill, "utf8"));
+    let tokens = 0;
+    for (const row of rows) tokens += tokenCount(row.tokens_used);
+    return { threads: rows.length, tokens };
+  } catch {
+    return null;
+  }
 }
 
 async function updateGitContribStats() {

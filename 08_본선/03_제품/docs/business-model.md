@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [DDBM, business-model, 비즈니스모델]
+aliases: [DDBM, business-model]
 ---
 
 # Business Model (DDBM) — JB LocalGuard OS

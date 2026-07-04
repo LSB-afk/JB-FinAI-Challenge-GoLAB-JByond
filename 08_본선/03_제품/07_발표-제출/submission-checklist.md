@@ -2,7 +2,7 @@
 tags: [area/product, type/checklist, status/active]
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [제출-체크리스트, submission-checklist, 20_submission-checklist]
+aliases: [제출-체크리스트, submission-checklist]
 ---
 # 제출 체크리스트 — JB LocalGuard OS (본선)
 
@@ -59,7 +59,7 @@ aliases: [제출-체크리스트, submission-checklist, 20_submission-checklist]
 | 확인 항목 | 상태 |
 |---|---|
 | 변경이력 문서 존재(일자·대상·내용·사유·전후차이 5필드 충족) | ☐ [TBD] |
-| 예선 대비 **추가** 항목 기재(예: 역할축 콘솔·사이드바 직군 전환·JB우리캐피탈 2계열사·로컬모델 시연) | ☐ |
+| 예선 대비 **추가** 항목 기재(예: 역할축 콘솔·사이드바 직군 전환·JB우리캐피탈 2계열사·로컬모델 시연·운영 관측 기능군[LLM 게이트웨이·토큰 패널·감사 용도 태그], [[08_본선/03_제품/07_발표-제출/기능명세서|기능명세서]] Appendix A F-11) | ☐ |
 | 예선 대비 **수정** 항목 기재(예: 단일 대시보드 → 역할별 대시보드) | ☐ |
 | 예선 대비 **삭제** 항목 기재 | ☐ |
 | 기능명세서/발표자료와 변경이력 내용 **불일치 없음** | ☐ |
@@ -154,6 +154,4 @@ aliases: [제출-체크리스트, submission-checklist, 20_submission-checklist]
 ---
 
 ## 연결
-- [[본선_안내문]] · [[본선-현황]] · [[키스톤-확정]] · [[회의록-2026-07-04-스코프확정]]
-- [[business-model]] · [[pitch-outline]] · [[demo-script]] · [[judge-qna]] · [[handoff]]
-- [[레포-지도]]
+- [[본선_안내문]] · [[08_본선/03_제품/07_발표-제출/pitch-outline|pitch-outline]] · [[08_본선/03_제품/07_발표-제출/demo-script|demo-script]] · [[08_본선/03_제품/07_발표-제출/judge-qna|judge-qna]]

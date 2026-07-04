@@ -5,14 +5,14 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [스킬 명세, skillRack 명세, 내부 스킬 카탈로그, per-console 스킬 카탈로그]
+aliases: [스킬 명세, per-console 스킬 카탈로그]
 ---
 
 # 스킬 명세
 
 > **갱신 노트(2026-07-04)**: 이전 버전(07-03)은 예선 `app.js`의 단일 `skillRack`(25종)을 정본으로 삼았다. 본선 실 프로토타입(JB_project2)은 **콘솔별 정적 스킬 배열**(`cclConsoleSkills`·`fdrConsoleSkills`·`jeonseProtectionSkills`·`jbWooriCapitalSkills`)로 완전히 분리돼 있고, 아직 paperclip식 **런타임 registry(`registerPlugin`/`requirePlugin`)로 승격되지 않았다** — 지금은 코드에 박힌 정적 배열이다. **데모의 내부 스킬 = 우리 차별점**(범용 RAG/챗봇이 아니라 금융 도메인 판단 단위로 스킬을 쪼갠 것)이라는 원칙은 유지된다.
 >
-> 근거: `_vendor/JB_project2/app/cclConsole.core.js`·`fdrConsole.core.js`·`jeonseProtectionAgents.registry.js`·`jbWooriCapitalAgents.registry.js`, [[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]](스킬 설정 메커니즘의 목표 상태), [[08_본선/03_제품/00_결정-준비/설계/paperclip-통합-블루프린트|paperclip-통합-블루프린트]] §2 #3·#11(스킬 카탈로그·플러그인 registry 이식 설계).
+> 근거: `_vendor/JB_project2/app/cclConsole.core.js`·`fdrConsole.core.js`·`jeonseProtectionAgents.registry.js`·`jbWooriCapitalAgents.registry.js`, [[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]](스킬 설정 메커니즘의 목표 상태), [[08_본선/03_제품/01_결정-준비/설계/paperclip-통합-블루프린트|paperclip-통합-블루프린트]] §2 #3·#11(스킬 카탈로그·플러그인 registry 이식 설계).
 
 ---
 
@@ -20,7 +20,7 @@ aliases: [스킬 명세, skillRack 명세, 내부 스킬 카탈로그, per-conso
 
 - 각 에이전트는 스킬(재사용 업무 단위)을 장착해 특정 기능을 수행한다. 스킬은 콘솔(하네스) 단위로 정의되며, 콘솔 경계를 넘어 공유되지 않는다(`jeonseProtectionAgents.registry.js` 주석: "메인/계열사 registry를 alias하지 않는다").
 - 스킬 실행은 AgentRun의 판단/행동초안/검증 단계 중 하나에 속하며([[08_본선/03_제품/02_agent-design/orchestrator|오케스트레이터]] §3), 모든 실행은 콘솔별 audit 테이블에 기록된다.
-- **목표 상태(아직 미구현)**: 담당자가 케이스 유형별로 스킬·외부 API/MCP·내부 DB 접근을 **설정(on/off)**하면 그 설정이 근거 수집 범위를 넓힌다는 것이 실차별성이다([[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]] §3). 현재 코드는 이 설정 레이어가 없고, 콘솔별 스킬 배열이 정적으로 고정돼 있다 — settings 계층·plugin registry 승격은 [[08_본선/03_제품/00_결정-준비/설계/paperclip-통합-블루프린트|블루프린트]] §6 Task 1~2(미착수)에 명시.
+- **목표 상태(아직 미구현)**: 담당자가 케이스 유형별로 스킬·외부 API/MCP·내부 DB 접근을 **설정(on/off)**하면 그 설정이 근거 수집 범위를 넓힌다는 것이 실차별성이다([[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]] §3). 현재 코드는 이 설정 레이어가 없고, 콘솔별 스킬 배열이 정적으로 고정돼 있다 — settings 계층·plugin registry 승격은 [[08_본선/03_제품/01_결정-준비/설계/paperclip-통합-블루프린트|블루프린트]] §6 Task 1~2(미착수)에 명시.
 - `agent-loop` SKILL.md의 품질 게이트를 그대로 채택: **검증 없는 생성은 미완성**, **사람 승인 없는 고위험 행동은 차단**.
 
 ---
@@ -95,7 +95,7 @@ aliases: [스킬 명세, skillRack 명세, 내부 스킬 카탈로그, per-conso
 |---|---|
 | 콘솔별 스킬 배열에 PII 등급 필드 부재(§3) | [미결/7-4] |
 | JBWC 13 에이전트 대비 스킬 6종 — 나머지 7개 에이전트 전용 스킬 미정의(§2.4) | [미결/7-4] 담당자 확인 필요 |
-| 담당자 설정(config) 레이어 전체 미구현 — 정적 배열을 런타임 registry로 승격 필요 | [[08_본선/03_제품/00_결정-준비/설계/paperclip-통합-블루프린트|블루프린트]] §6 Task 1~2, 미착수 |
+| 담당자 설정(config) 레이어 전체 미구현 — 정적 배열을 런타임 registry로 승격 필요 | [[08_본선/03_제품/01_결정-준비/설계/paperclip-통합-블루프린트|블루프린트]] §6 Task 1~2, 미착수 |
 | 콘솔 간 공용 스킬 없음(4개 레지스트리가 이름·형식이 겹쳐도 완전 독립) — 통합/재사용 여부 | [미결/7-4] |
 | 예선 `skillRack`(25종, canon 인용)과 4콘솔 스킬 합(6+6+10+6=28종) 간 이름 매핑 없음 | [Open Question] — 제출 문서에서 canon 25 인용 시 "발표 요약", 코드 근거는 콘솔별 표 인용으로 구분 |
 
@@ -121,5 +121,5 @@ aliases: [스킬 명세, skillRack 명세, 내부 스킬 카탈로그, per-conso
 - [[08_본선/03_제품/02_agent-design/agent-roster|에이전트 로스터]]
 - [[08_본선/03_제품/02_agent-design/orchestrator|오케스트레이터]]
 - [[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]]
-- [[08_본선/03_제품/00_결정-준비/설계/paperclip-통합-블루프린트|paperclip-통합-블루프린트]]
+- [[08_본선/03_제품/01_결정-준비/설계/paperclip-통합-블루프린트|paperclip-통합-블루프린트]]
 - [[08_본선/03_제품/05_domain-model|도메인 모델]]

@@ -8,25 +8,32 @@ up: "[[_HARNESS-SYSTEM]]"
 ---
 # AI 사용 통계 (SSoT)
 
-> <!-- aggregator 자동생성 --> 마지막 집계: 2026-07-02 13:02 UTC
+> <!-- aggregator 자동생성 --> 마지막 집계: 2026-07-04 17:04 UTC
 
 ## 전체 누적
-- 총 세션: **15**
-- 총 입력 토큰: **44,066,059**
-- 총 출력 토큰: **12,102,959**
+- 총 세션: **32**
+- 총 입력 토큰: **93,799,963**
+- 총 출력 토큰: **24,808,272**
 
 ## 엔진별
 | 엔진 | 세션 수 | 입력 토큰 | 출력 토큰 |
 |------|--------|---------|---------|
-| claude | 10 | 44,066,059 | 12,102,959 |
-| codex | 4 | 0 | 0 |
+| claude | 18 | 93,799,963 | 24,808,272 |
+| codex | 13 | 0 | 0 |
 | chatgpt | 1 | 0 | 0 |
 
 ## 분야별
 | 분야 | 세션 수 | 입력 토큰 | 출력 토큰 |
 |------|--------|---------|---------|
-| ops | 12 | 44,036,059 | 11,562,959 |
+| ops | 29 | 93,769,963 | 24,268,272 |
 | research | 3 | 30,000 | 540,000 |
 
+## Codex CLI 별도 총량
+
+- Codex CLI thread: **144**
+- Codex CLI tokens_used: **121,993,380**
+- 주의: `tokens_used`는 Codex thread 총량이며 입력/출력 분리값이 아니므로 위 표의 입력/출력 토큰과 합산하지 않음.
+- 원천: [[codex-cli-backfill]] · [[codex-cli-usage-stats]]
+
 ---
-[[ai-session-intake.README]] · [[_telemetry-log]] · [[ax-insights]]
+[[ai-session-intake.README]] · [[_telemetry-log]] · [[codex-cli-usage-stats]] · [[ax-insights]]

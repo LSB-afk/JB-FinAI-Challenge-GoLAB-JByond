@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [Feature Spec, 기능 명세, feature-spec]
+aliases: [Feature Spec, 기능 명세]
 ---
 
 # Feature Spec — 기능 명세

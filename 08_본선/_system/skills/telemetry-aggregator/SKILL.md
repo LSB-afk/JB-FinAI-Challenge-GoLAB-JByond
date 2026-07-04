@@ -41,7 +41,7 @@ node 08_본선/_system/skills/telemetry-aggregator/aggregate.mjs
 
 ## 연결
 
-- [[ai-session-intake.README]] — 컬럼 가이드
+- [[08_본선/04_증빙/02_분석자료/리서치/리서치-인덱스|리서치 인덱스]] — 컬럼 가이드
 - [[ai-usage-stats]] — 집계 결과 SSoT
 - [[_telemetry-log]] — Append-only 원본 로그
 - [[_agent-registry]] — 에이전트 레지스트리

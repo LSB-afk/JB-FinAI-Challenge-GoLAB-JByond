@@ -9,7 +9,7 @@ aliases:
   - JB-콘솔-개발도구-SDK-플랜
   - jb-console-devtools-sdk
 ---
-> **[대외비]** 팀 내부 레퍼런스. fork(`~/project/active/paperclip-jb-fork`, `jb-console`)를 케이스 운영 콘솔로 재구현하는 데 쓰는 **개발 도구·SDK·플러그인/스킬 사용 플랜**. 사용자 요청(P20) 정본. 플랜 원본 `~/.claude/plans/paperclip-eager-scone.md`, 제품 스펙 [[JB-콘솔-프로토타입-스펙]].
+> **[대외비]** 팀 내부 레퍼런스. fork(`~/project/active/paperclip-jb-fork`, `jb-console`)를 케이스 운영 콘솔로 재구현하는 데 쓰는 **개발 도구·SDK·플러그인/스킬 사용 플랜**. 사용자 요청(P20) 정본. 플랜 원본 `~/.claude/plans/paperclip-eager-scone.md`, 제품 스펙 [[JB-콘솔-프로토타입-스펙-가안]].
 
 # JB 콘솔 — 개발 도구 · SDK · 플러그인/스킬 사용 플랜
 
@@ -47,4 +47,4 @@ aliases:
 - **데모 범위**: 모의/캐시 응답. 실 라이브 MCP 호출·실 Agent SDK 런은 범위 밖(팀원 별도 구현·BYO LLM 키).
 
 ## 3. 현재 구현 상태 (P0~P4)
-[[JB-콘솔-프로토타입-스펙]] 참조. jb-console 커밋: P0~P2 `2324d28` · P3 `427f6bd` · P4 `282de15`. 전 페이즈 tsc 0·라이브 렌더 pageerror 0.
+[[JB-콘솔-프로토타입-스펙-가안]] 참조. jb-console 커밋: P0~P2 `2324d28` · P3 `427f6bd` · P4 `282de15`. 전 페이즈 tsc 0·라이브 렌더 pageerror 0.

@@ -75,6 +75,12 @@ graph LR
 
 > **왜 LLM을 판단 엔진으로 안 쓰나** [E2, D20]: 금융 AX의 주 모델은 LLM이 아니라 특화모델·규칙엔진·레거시 어댑터를 묶는 하네스다. LLM은 **의도 분류 → 근거 범주 결정 → 도구 호출 → 결과 요약**만 맡고, 신용평가·여신심사 점수는 XGBoost/LightGBM류, FDS는 규칙엔진+GNN에 라우팅한다. 같은 모델도 scaffolding에 따라 성능이 크게 갈리므로 **하네스(컨텍스트 배치·승인 게이트·툴 계약·재시도·로깅)가 차별점** [E2, D20]. → JB_project2의 규칙 게이트(`CCL_FORBIDDEN_ASSERTIONS`·`harnessGuardCheckAutoClose`)가 이 원칙의 코드 구현 [E4].
 
+**Policy Engine**: 위 규칙 게이트들을 하나로 묶는 이름 — "LLM은 판단을 돕고, Policy Engine은 금지선·승인선을 강제한다." **가드레일 5종은 `harnessCore.js`에 실동작(E4)**, 5영역·12규칙 통합 결정표(allow/block/require_approval/escalate)는 **[설계]** 통합안 — [[08_본선/03_제품/01_결정-준비/casesops-분기/07-policy-engine|07-Policy-Engine 설계도]] 참조.
+
+**메모리(Memory)**: 에이전트 판단·승인 이력을 세션 로그 전량이 아니라 Customer/Agent/Staff 3계층 카드로 증류해 축적하는 설계는 [[08_본선/03_제품/01_결정-준비/casesops-분기/11-메모리-3계층-자동진화-설계도|11-메모리-3계층 설계도]] 참조([분기/미확정] — PR `LSB-afk/JB_project2#2`의 `memoryCards.js`가 CCL 콘솔 한정 첫 구현으로 제출·수용기준 4/4 검증 완료, **머지 대기(OPEN)**).
+
+**온톨로지 그래프**: 케이스·에이전트·근거·승인의 실데이터 관계를 그래프로 렌더하는 운영계약 시각화(17노드/16엣지 실측, cytoscape 로컬 벤더링) — `modules.js initCaseOntology()` [E4, feature-spec 기능군7 F-7.1.5].
+
 **오픈소스 롤모델(참고, 런타임 미차용)** [E2, B1]:
 
 | 계약 | 롤모델 | 차용 범위 |
@@ -290,6 +296,7 @@ graph LR
 ```
 
 - 로컬모델 머신이 원본 PII 유일 처리점, 콘솔 서버와 같은 사설망(localhost) — **최종 검증은 이승보 PC 기준** [E3, 04_tech §4].
+- **배포 토폴로지(3존 구조) [E4, 2026-07-04 구현]**: 위 그림은 개념도이고, 실제 Docker 물리분리 구성은 존1(edge, 정적 UI+API 프록시)·존2(console, 프런티어 LLM 접근)·존3(pii-zone, `internal:true` 네트워크·Ollama만) 3존으로 실장됐다 — `02_제품/deploy/docker-compose.yml` + [[08_본선/03_제품/01_결정-준비/배포-토폴로지-운영-기획서|배포-토폴로지-운영-기획서]] §2. 시연은 `02_제품/deploy/시연-런북-백엔드분리.md`(pii-zone 외부 curl 타임아웃 킬러컷).
 - 계열사 확장 = 새 레이어 아님: ①7단 엔티티에 `company_id` 부착(멀티테넌시 스키마) ②org-rail 노드 1개 추가 ③필요 시 계열사 전용 서브에이전트 추가, **오케스트레이터·승인 게이트 구조 불변** [E3, 04_tech §6].
 - **확장 서사(키스톤 정합)** [E3, 키스톤-확정]: "동일 운영계약·PII 4중방어 위에 계열사별로 직군·도메인이 다르게 구성 = 모듈식 확장." 전북은행(여신·전세·피싱·사후관리) + JB우리캐피탈(오토/개인/기업 여신·EWS, **전세 없음**) — "3도메인 그대로 복제"보다 강한 확장 논거.
 
@@ -313,10 +320,6 @@ graph LR
 ## 연결
 
 - [[08_본선/03_제품/04_tech/architecture|04_tech/architecture — 레이어·스택 원안(정합 대상)]]
-- [[08_본선/03_제품/04_tech/api-spec|04_tech/api-spec — API 명세]]
-- [[08_본선/03_제품/04_tech/rag-rule-engine|04_tech/rag-rule-engine — RAG·규칙엔진]]
-- [[08_본선/03_제품/04_tech/data-model|04_tech/data-model — 엔티티 필드 SSOT]]
 - [[08_본선/03_제품/05_domain-model|05_domain-model — 도메인 모델(정합)]]
 - [[08_본선/03_제품/01_결정-준비/키스톤-확정|키스톤 — 콘솔 조직 축]]
-- [[08_본선/03_제품/00_vision/business-model|비즈니스 모델]]
-- [[08_본선/03_제품/00_vision/차별성-경험레이어-서사|차별성 경험레이어 서사]]
+- [[08_본선/03_제품/reports/구현현황-JB_project2|구현현황-JB_project2]] (코드 SSOT §9)

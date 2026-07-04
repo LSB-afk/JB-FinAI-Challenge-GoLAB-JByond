@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [Flow, 흐름 명세, 시퀀스 다이어그램, CCL-0001 골든패스]
+aliases: [Flow, CCL-0001 골든패스]
 ---
 
 # 09 Flow — 흐름·시퀀스 명세 (CCL-0001 골든패스)

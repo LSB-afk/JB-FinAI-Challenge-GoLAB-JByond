@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [Golden Cases, 골든케이스, 데모케이스]
+aliases: [Golden Cases, 골든케이스]
 ---
 
 # Golden Cases — 반드시 성공해야 하는 대표 케이스(= 데모 케이스)
@@ -143,4 +143,4 @@ aliases: [Golden Cases, 골든케이스, 데모케이스]
 - [[08_본선/03_제품/evals/rubric|Rubric]] · [[08_본선/03_제품/evals/failure-modes|Failure Modes]]
 - [[키스톤-확정]] · [[키스톤-역할축-검증]] (역할축·데모 3케이스 근거)
 - `_vendor/JB_project2/app/cclConsole.data.js` · `jeonseProtection-db.js` · `fdrConsole.data.js` (케이스 SSOT)
-- 리서치 요약: [[_요약-D1a]] · [[_요약-D1b]] · [[_요약-D13]]
+- 리서치 요약: [[D01a-요약]] · [[D01b-요약]] · [[D13-요약]]

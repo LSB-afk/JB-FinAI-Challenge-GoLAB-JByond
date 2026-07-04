@@ -77,13 +77,28 @@ aliases:
 | M2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | M3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | M4 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| AI | 0 | 0 | 0 | 3 | 0 | 12 | 0 | 15 |
+| AI | 0 | 0 | 0 | 3 | 0 | 29 | 0 | 32 |
 <!-- /AGGREGATOR:CONTRIB-STATS -->
 
 <!-- GIT-CONTRIB -->
 | Author | dev | doc | research | design | ops | other | commits | +lines | -lines |
 |--------|-----|-----|----------|--------|-----|-------|---------|--------|--------|
-| River-181 | 66 | 810 | 0 | 57 | 52 | 331 | 80 | 91734 | 3985 |
-| Lee seung bo | 88 | 30 | 0 | 0 | 0 | 239 | 29 | 16728 | 2127 |
+| River-181 | 75 | 1502 | 0 | 63 | 67 | 357 | 158 | 147382 | 24772 |
+| Lee seung bo | 100 | 59 | 0 | 0 | 0 | 279 | 37 | 19928 | 2458 |
 | LSB-afk | 0 | 0 | 0 | 0 | 0 | 2 | 2 | 1 | 3 |
+| Minju Kim | 5 | 0 | 0 | 0 | 0 | 0 | 1 | 3209 | 624 |
 <!-- /GIT-CONTRIB -->
+
+<!-- EVIDENCE:UNPUSHED-STATS -->
+## 미푸시/워크트리 현황 (자동 점검)
+
+> 기준 시각: 2026-07-03 18:20 UTC. `git log`/`git diff --shortstat` 기준, fetch 없이 로컬 remote ref와 비교.
+
+| 기준 원격 | 비교 범위 | 미푸시 커밋 | 작성자 | 파일 변화 | 라인 변화 | 비고 |
+|-----------|-----------|------------|--------|-----------|-----------|------|
+| origin | `origin/ui-density-improvements..HEAD` | 12 | River-181 | 50 files | +9,599 / -114 | HEAD `dd841c2`, origin remote가 12커밋 뒤처짐 |
+| fork | `fork/ui-density-improvements..HEAD` | 17 | River-181 | 69 files | +11,956 / -188 | fork remote가 17커밋 뒤처짐 |
+
+- 현재 worktree: `git status --short` 기준 변경 225건(modified 112, added 66, deleted 5, renamed 2, untracked 46, conflicted 0). 병렬 세션 변경 존중을 위해 rename/delete/staging/push 미수행.
+- `_원문` 보호: `.gitignore`에 `08_본선/04_증빙/04_회의록/_원문/` 유지, `git ls-files` 추적 유입 0건.
+<!-- /EVIDENCE:UNPUSHED-STATS -->

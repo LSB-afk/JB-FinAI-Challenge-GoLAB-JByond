@@ -13,9 +13,52 @@ up: "[[_03_제품_MOC]]"
 
 ---
 
+## 계약 이행 현황 (2026-07-05)
+
+> [[08_본선/03_제품/_문서생성-스킬-DDBM-Harness-SDD|DDBM-Harness-SDD 스킬]] Output Contract 대비 실존 파일 대조. 상태: ✅ 계약 경로와 파일명 정확히 일치 · 🟡 부분(내용은 존재하나 파일명/위치가 계약과 다름, 위키링크는 파일명 기준이라 정상 작동) · ⛔ 누락(전용 산출물 없음).
+
+**Core 14** (docs/00~12, 계약상 `01_`이 business-model·meeting-log 둘로 갈라져 14개)
+
+| 계약 경로 | 상태 | 실제 |
+|---|---|---|
+| `docs/00_source-log.md` | ✅ | 그대로 |
+| `docs/01_business-model.md` | 🟡 | `docs/business-model.md`(번호 프리픽스 없음) |
+| `docs/01_meeting-log.md` | ⛔ | 회의록은 `01_결정-준비/회의록-정리본/`에 산재 — docs/ 전용 통합본 없음 |
+| `docs/02_cps.md` | 🟡 | `docs/core-bet.md`(Core Bet = CPS 프레임) |
+| `docs/03_principles.md` | 🟡 | `docs/principles.md` |
+| `docs/04_definitions.md` | 🟡 | `docs/definitions.md` |
+| `docs/05_domain-model.md` | ✅ | 그대로 |
+| `docs/06_prd.md` | 🟡 | `docs/prd.md` |
+| `docs/07_architecture.md` | ✅ | 그대로 |
+| `docs/08_feature-spec.md` | ✅ | 그대로 |
+| `docs/09_flow.md` | ✅ | 그대로 |
+| `docs/10_eval-plan.md` | 🟡 | `evals/eval-plan.md`(docs/가 아니라 evals/) |
+| `docs/11_change-log.md` | ✅ | 그대로 |
+| `docs/12_handoff.md` | ⛔ | 전용 파일 없음, INDEX에 "12_handoff = [[본선 HOME]] 매핑"으로만 대체 |
+
+**확장 8** (docs/13~20)
+
+| 계약 경로 | 상태 | 실제 |
+|---|---|---|
+| `docs/13_ssd-implementation.md` | 🟡 | `06_build-roadmap/ssd-implementation.md` |
+| `docs/14_demo-script.md` | ✅ | `07_발표-제출/demo-script.md`(alias로 번호 보존) |
+| `docs/15_pitch-outline.md` | ✅ | `07_발표-제출/pitch-outline.md` |
+| `docs/16_judge-qna.md` | ✅ | `07_발표-제출/judge-qna.md` |
+| `docs/17_business-metrics.md` | 🟡 | `docs/business-metrics.md` |
+| `docs/18_data-strategy.md` | 🟡 | `docs/data-strategy.md` |
+| `docs/19_risk-impact-register.md` | 🟡 | `docs/risk-impact-register.md` |
+| `docs/20_competition-submission-checklist.md` | ✅ | `07_발표-제출/submission-checklist.md` |
+
+**Rules 6 / Evals 4 / Project-level**: 전부 ✅ 일치 — `rules/{agent,compliance,data,import-export,naming,ui}-rules.md`(6/6), `evals/{eval-plan,rubric,golden-cases,failure-modes}.md`(4/4), `harness.yaml`·`validation-report.md`(루트, 2/2).
+
+**요약**: 계약 28항목 중 완전 누락은 **2건**(`01_meeting-log`·`12_handoff` — 둘 다 대체 경로는 있으나 전용 산출물 없음), **10건**은 내용은 있으나 파일명/위치가 계약과 다른 부분 일치(번호 프리픽스 생략이 대부분, 위키링크는 파일명 유일성 덕에 깨지지 않음), **16건**은 완전 일치.
+
+---
+
 ## 전체 문서 목록
 
 > 🔀 **2026-07-05 재구조화**: 하네스 정규문서(harness normal-form) 15종을 `docs/`로 통합했다(전에는 `00_vision/`·`01_prd/`·03_제품 루트에 흩어져 있었음). `구현현황-JB_project2`·`jb-finai-scorecard`는 `reports/`로, `07_계열사-하네스`·`07_역할-하네스`는 번호 없이 `계열사-하네스`·`역할-하네스`로 개명(`07_발표-제출`은 실제 제출자료라 유지). 파일명은 안 바꿔서 위키링크는 그대로 유효.
+- [[08_본선/03_제품/reports/implementation-index|implementation-index — 구현 vs 설계 색인(✅E4/🔶부분/📐설계)]]
 
 ### docs/ — 하네스 정규문서(harness normal-form, 2026-07-05 통합)
 - [[08_본선/03_제품/docs/00_source-log|Source Log]] · [[08_본선/03_제품/docs/business-model|Business Model (DDBM)]] — 데이터 기반 비즈니스 모델 11블록
@@ -49,6 +92,12 @@ up: "[[_03_제품_MOC]]"
 - [[08_본선/03_제품/05_diagrams/02_case-lifecycle|케이스 생명주기]]
 - [[08_본선/03_제품/05_diagrams/03_approval-gate|승인 게이트]]
 - [[08_본선/03_제품/05_diagrams/04_erd|ERD]]
+- [[08_본선/03_제품/05_diagrams/05_deployment-topology|배포 토폴로지(3존·Docker 분리)]]
+- [[08_본선/03_제품/05_diagrams/06_llm-routing-fallback|LLM 라우팅·폴백 사다리]]
+- [[08_본선/03_제품/05_diagrams/07_memory-three-layers|메모리 3계층·증류]]
+- [[08_본선/03_제품/05_diagrams/08_ontology-entity-graph|온톨로지 엔티티 그래프]]
+- [[08_본선/03_제품/05_diagrams/09_policy-engine-gates|Policy Engine 게이트]]
+- [[08_본선/03_제품/05_diagrams/10_observability-dataflow|관측 데이터플로우]]
 - [[08_본선/03_제품/05_diagrams/99_comprehensive-architecture|종합 아키텍처]]
 - [[_빌드-로드맵-MOC|빌드 로드맵]]
 

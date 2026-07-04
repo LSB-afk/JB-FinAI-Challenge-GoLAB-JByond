@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [Demo Script, 데모 대본, CCL-0001 시연 대본, 14_demo-script]
+aliases: [Demo Script, 데모 대본]
 ---
 
 # 14 Demo Script — CCL-0001 골든패스 시연 대본
@@ -44,7 +44,7 @@ aliases: [Demo Script, 데모 대본, CCL-0001 시연 대본, 14_demo-script]
 | 익명 참조 | `BIZ-REF-0001` (원본 PII 없음, 구간지표만) | E4 |
 | 에이전트 | 8종 CCL(intake·financial·repayment·doc·memo·policy·supervisor + reply) | E4, domain-model §1 |
 | DB | `ccl-ops-db-v1` (localStorage 영속, append-only 감사) | E4 |
-| 라이브 LLM | `?live=1` 시 히어로 재무요약을 로컬 에이전트로 생성(**익명 구간지표만 프롬프트, PII 원문 미전송** — `cclConsole.app.js:336`) | E4[목표/조건부] |
+| 라이브 LLM | `?live=1` 시 히어로 재무요약을 로컬 에이전트로 생성(**익명 구간지표만 프롬프트, PII 원문 미전송** — `cclConsole.app.js:336`). 게이트웨이 1차 실측(2026-07-04): claude 2.9초·$0.115/케이스, codex 6.6초(`api-proxy.mjs`). ollama는 폴백 사다리까지 실검증, 실구동은 팀 머신 확인(2차 출처) | E4[목표/조건부] |
 | 보조 노출용 | 차단 케이스(미승인 발송 시도) 1건 + 보류 케이스(고위험 자동종결 시도) 1건 | E4 |
 
 > **정직한 전제** [E3, 키스톤-확정]: 로컬모델(Ollama/EXAONE)·Claude API 실연동은 7/3 기준 **미연결, 밤샘 목표**. **최소 히어로 CCL-0001 1개는 실 LLM 동작 지향**, 나머지 단계·시나리오는 결정형 골든패스로 실동작. 발표 문안에서 "3케이스 라이브"를 완성처럼 단정하지 않는다 [목표/조건부].
@@ -142,6 +142,21 @@ aliases: [Demo Script, 데모 대본, CCL-0001 시연 대본, 14_demo-script]
 
 ---
 
+## 8-A. 보너스 컷 — 물리분리·운영관측 (6분 예산 밖, Q&A·시간 여유 대응용)
+
+> 심사위원이 비용·오류·감사(§16-A judge-qna) 공격질문을 던지면, 말이 아니라 화면으로 받아친다. 6분 골든패스에는 넣지 않고 **여유 시간 또는 Q&A 중 즉석 전환용**으로 준비한다 [E4, feature-spec 기능군7].
+
+| 컷 | 무엇을 보여주나 | 근거 |
+|---|---|---|
+| 토큰 실측 패널 | 케이스 단가·RM 1인 월 환산이 추정이 아니라 실측 숫자로 뜬다 | `modules.js liveLlmBlock()`, [[08_본선/03_제품/_archive/Q13-토큰비용-유닛이코노믹스\|Q13]] |
+| 엔진룸 타임라인 | 최근 LLM 호출이 5초 폴링으로 흐르고, 강제로 타임아웃을 내면 폴백 사다리(claude↔codex→사람 큐)가 실제로 도는 걸 본다 | `modules.js engineRoomRows()`, [[08_본선/03_제품/_archive/Q14-오류로깅-폴백사다리\|Q14]] |
+| 감사 용도 태그 | 감사 로그 화면에서 레코드별 "용도 ○○"(당국 증적/분쟁 재생/운영 점검/원가 정산) 표시 | `app.js auditPurpose()`, [[08_본선/03_제품/_archive/Q15-감사로그-실효성\|Q15]] |
+| **Docker 물리분리 킬러컷** | `pii-zone` 컨테이너에서 `curl https://example.com` 시도 → 타임아웃 실패. "PII 존은 외부 인터넷에 물리적으로 나갈 수 없다"를 30초 안에 증명 | `02_제품/deploy/시연-런북-백엔드분리.md` |
+
+**Docker 킬러컷 복붙 시퀀스**(런북 원문): `docker compose up -d` → `docker network inspect deploy_pii-net --format '{{.Internal}}'`(→ `true`) → `docker compose exec pii-zone curl -m 3 https://example.com`(→ 타임아웃 실패, 이 장면이 증거) → `docker compose exec console curl http://pii-zone:11434/api/tags`(→ 200 OK, 같은 pii-net 안에서만 통신 가능함을 대비 증명). Docker 모드에서는 `engine:"ollama"`만 작동(claude/codex CLI는 컨테이너 밖 host에서만) — 이 제약이 서사가 된다: "PII 존 작업은 로컬모델로만, 외부 프런티어는 컨테이너 밖에서만."
+
+---
+
 ## 9. TBD / Open Question
 
 - 초 단위 타이밍은 **리허설 실측 전 잠정치** — 2회 리허설 후 보정 [Open Question].
@@ -155,8 +170,6 @@ aliases: [Demo Script, 데모 대본, CCL-0001 시연 대본, 14_demo-script]
 ## 연결
 
 - [[08_본선/03_제품/09_flow|09_flow — 골든패스 9스텝·시퀀스]]
-- [[08_본선/03_제품/07_발표-제출/pitch-outline|15_pitch-outline — 발표 구조]]
-- [[08_본선/03_제품/07_발표-제출/judge-qna|16_judge-qna — 예상 질의]]
-- [[08_본선/03_제품/evals/golden-cases|evals/golden-cases — 히어로 케이스·?live=1]]
+- [[08_본선/03_제품/07_발표-제출/judge-qna|judge-qna — 예상 질의 §16]]
 - [[08_본선/03_제품/evals/failure-modes|evals/failure-modes — FM-DEMO1 폴백]]
-- [[08_본선/03_제품/00_vision/차별성-경험레이어-서사|차별성 경험레이어 서사]]
+- [[08_본선/03_제품/reports/구현현황-JB_project2|구현현황-JB_project2]] §9 (운영관측 코드 SSOT)

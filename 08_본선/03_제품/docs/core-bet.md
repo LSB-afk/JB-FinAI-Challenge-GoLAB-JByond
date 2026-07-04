@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [Core Bet, 핵심 베팅, CPS]
+aliases: [Core Bet, CPS]
 ---
 
 # Core Bet — 핵심 베팅 (CPS 노멀폼)

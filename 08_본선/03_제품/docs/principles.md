@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [Product Principles, 제품 원칙, principles]
+aliases: [Product Principles, 제품 원칙]
 ---
 
 # 03 Principles — 제품 원칙

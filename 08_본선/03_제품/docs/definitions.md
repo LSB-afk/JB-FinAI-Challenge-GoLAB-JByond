@@ -5,7 +5,7 @@ tags:
   - status/active
 date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [정의서, Definitions, 용어집, Naming Rules]
+aliases: [정의서, Definitions]
 ---
 
 # Definitions — 정의서 (Canonical Terms & Naming Rules)
