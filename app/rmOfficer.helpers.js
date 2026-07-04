@@ -226,6 +226,35 @@ function rmoRenderMarkdown(md) {
   return metaHtml + html;
 }
 
+function rmoRenderMarkdownSections(md) {
+  const raw = String(md || "");
+  let content = raw;
+  let metaHtml = "";
+  const fm = raw.match(/^---\n([\s\S]*?)\n---\n?/);
+  if (fm) {
+    metaHtml = rmoRenderMarkdown(fm[0]);
+    content = raw.slice(fm[0].length);
+  }
+  const firstSectionIdx = content.search(/^##\s+/m);
+  if (firstSectionIdx < 0) return metaHtml + rmoRenderMarkdown(content);
+  const intro = content.slice(0, firstSectionIdx).trim();
+  const sectionText = content.slice(firstSectionIdx).trim();
+  const sections = sectionText.split(/\n(?=##\s+)/g).filter((part) => part.trim());
+  const introHtml = intro ? `<section class="rmo-md-section-card rmo-md-section-intro">
+    <span class="rmo-md-section-kicker">문서 개요</span>
+    ${rmoRenderMarkdown(intro)}
+  </section>` : "";
+  const sectionHtml = sections.map((part, index) => {
+    const title = (part.match(/^##\s+(.+)$/m) || [null, `본문 ${index + 1}`])[1];
+    return `<section class="rmo-md-section-card">
+      <span class="rmo-md-section-kicker">${escapeHtml(index === 0 ? "Summary" : "본문 섹션")}</span>
+      <div class="rmo-md-section-title">${escapeHtml(title)}</div>
+      <div class="rmo-md-section-content">${rmoRenderMarkdown(part)}</div>
+    </section>`;
+  }).join("");
+  return metaHtml + `<div class="rmo-md-section-stack">${introHtml}${sectionHtml}</div>`;
+}
+
 function rmoInvalidateCounts() {
   rmoState.counts = null;
   rmoState.countsAt = null;

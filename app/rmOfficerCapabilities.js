@@ -87,10 +87,10 @@ function rmoCapabilityCard(cap) {
       ${rmoCapToneChip(cap.category, "domain")}
       ${rmoCapToneChip(risk.review, "review")}
     </div>
-    <div class="rmo-cap-field"><span>연결 에이전트</span><p>${escapeHtml(agentsText)}</p></div>
-    <div class="rmo-cap-field"><span>사용하는 데이터</span><div class="rmo-data-chips">${cap.data.map((d) => `<span class="rmo-data-chip">${escapeHtml(d)}</span>`).join("")}</div></div>
-    <div class="rmo-cap-field"><span>생성 산출물</span><p>${escapeHtml(cap.output)}</p></div>
-    <div class="rmo-cap-field rmo-cap-risk"><span>담당자 확인</span><p>${escapeHtml(risk.review)}</p></div>
+    <div class="rmo-cap-field rmo-cap-field-agents"><span>연결 에이전트</span><p>${escapeHtml(agentsText)}</p></div>
+    <div class="rmo-cap-field rmo-cap-field-data"><span>사용하는 데이터</span><div class="rmo-data-chips">${cap.data.map((d) => `<span class="rmo-data-chip">${escapeHtml(d)}</span>`).join("")}</div></div>
+    <div class="rmo-cap-field rmo-cap-field-output"><span>생성 산출물</span><p>${escapeHtml(cap.output)}</p></div>
+    <div class="rmo-cap-field rmo-cap-risk rmo-cap-field-risk"><span>담당자 확인</span><p>${escapeHtml(risk.review)}</p></div>
   </article>`;
 }
 

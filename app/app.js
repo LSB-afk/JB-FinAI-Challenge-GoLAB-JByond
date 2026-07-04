@@ -794,6 +794,7 @@ let lastDispatchResult = null;
 let draggedCaseId = null;
 let railFilter = "all";
 let selectedRailRole = "";
+let roleActivationState = { status: "idle", roleKey: "", phaseIndex: 0, timers: [] };
 let caseSequence = 201;
 let runSequence = 1;
 let propertiesOpen = true;
@@ -837,6 +838,172 @@ function clampPropertiesPanelWidth(value) {
 function applyPropertiesPanelWidth() {
   propertiesPanelWidth = clampPropertiesPanelWidth(propertiesPanelWidth);
   document.documentElement.style.setProperty("--properties-width", `${propertiesPanelWidth}px`);
+}
+
+const ROLE_ACTIVATION_PHASES = [
+  { key: "auth", label: "권한 확인", detail: "GM/Admin 세션에서 역할 권한과 데이터 범위를 확인합니다." },
+  { key: "data", label: "업무 데이터 연결", detail: "역할 전용 케이스, 산출물, 감사 기록을 연결합니다." },
+  { key: "board", label: "케이스 보드 생성", detail: "우선순위 업무보드와 오늘 처리할 항목을 채웁니다." },
+  { key: "context", label: "상세 패널 활성화", detail: "오른쪽 컨텍스트 패널을 선택 역할 요약으로 전환합니다." },
+  { key: "queue", label: "에이전트 실행 큐 표시", detail: "SUB 실행 큐와 사람 승인 흐름을 준비합니다." },
+];
+
+const ROLE_ACTIVATION_CONFIGS = {
+  RM: {
+    roleKey: "RM",
+    label: "RM 업무지원 포털",
+    shortLabel: "RM",
+    eyebrow: "GM/Admin Console · 역할 활성화",
+    routeLabel: "여신 상담 · 고객관리",
+    hash: () => (typeof rmoHashForView === "function" ? rmoHashForView("board") : "#/roles/rm-officer/board"),
+    targetView: "rm-officer-harness",
+    notifyText: "RM 담당자 하네스로 이동했습니다.",
+    setup() {
+      if (typeof rmoState !== "undefined") {
+        rmoState.view = "board";
+        rmoState.detail = null;
+      }
+    },
+    metrics: [["우선 상담", "7건"], ["승인 대기", "2건"], ["서류 보완", "6건"]],
+    board: [
+      ["양식장 재해위험 대응", "고위험 · 긴급", "매출·담보·보험자료 검토"],
+      ["정책금융 후보 상담", "RM 검토", "자금용도와 신청 조건 확인"],
+      ["만기연장 사전점검", "진행 중", "DSR·상환여력 재평가"],
+    ],
+    queue: ["상담 브리핑", "정책금융 체크", "고객 안내 초안"],
+    contextRows: [["데이터 범위", "고객·여신·상담 이력"], ["핵심 액션", "RM 승인 후 고객 안내"], ["사람 검토", "필수"]],
+  },
+  "기업여신 담당자": {
+    roleKey: "기업여신 담당자",
+    label: "기업여신 업무지원 포털",
+    shortLabel: "기업여신",
+    eyebrow: "GM/Admin Console · 역할 활성화",
+    routeLabel: "기업 심사 · 전결 라우팅",
+    hash: () => (typeof ccrHashForView === "function" ? ccrHashForView("board") : "#/roles/corporate-credit/board"),
+    targetView: "corporate-credit-harness",
+    notifyText: "기업여신 담당자 하네스로 이동했습니다.",
+    setup() {
+      if (typeof ccrState !== "undefined") {
+        ccrState.view = "board";
+        ccrState.detail = null;
+      }
+    },
+    metrics: [["심사 대기", "20건"], ["전결 후보", "6건"], ["자료 보완", "4건"]],
+    board: [
+      ["익명 제조업 운전자금", "중간 · 심사", "재무제표·매출추이 연결"],
+      ["설비투자 여신 검토", "높음 · 승인", "담보·자금용도 확인"],
+      ["사후점검 알림", "RM 검토", "계좌흐름·사용처 점검"],
+    ],
+    queue: ["재무 분석", "담보 검토", "전결 라우팅"],
+    contextRows: [["데이터 범위", "재무·담보·거래 이력"], ["핵심 액션", "전결 경로와 보완서류 제안"], ["사람 검토", "고위험 필수"]],
+  },
+  "전세보호 담당자": {
+    roleKey: "전세보호 담당자",
+    label: "전세사기 보호 업무지원 포털",
+    shortLabel: "전세보호",
+    eyebrow: "GM/Admin Console · 역할 활성화",
+    routeLabel: "시세·권리·보증·피해지원",
+    hash: () => (typeof jpoHashForView === "function" ? jpoHashForView("board") : "#/roles/jeonse-protection/board"),
+    targetView: "jeonse-protection-harness",
+    notifyText: "전세사기 보호 담당자 하네스로 이동했습니다.",
+    setup() {
+      if (typeof jpoState !== "undefined") {
+        jpoState.view = "board";
+        jpoState.detail = null;
+      }
+    },
+    metrics: [["긴급 경매", "3건"], ["권리 확인", "8건"], ["안내 초안", "5건"]],
+    board: [
+      ["다가구 권리관계 확인", "높음 · 긴급", "근저당·압류·신탁등기 후보"],
+      ["보증금 시세 괴리 점검", "중간 · 확인", "전세가율·실거래 비교"],
+      ["피해지원 안내 초안", "검토 필요", "신청요건·서류 안내 후보"],
+    ],
+    queue: ["시세 위험 신호", "권리관계 확인", "담당자 승인"],
+    contextRows: [["데이터 범위", "시세·등기·보증·상담 메모"], ["핵심 액션", "위험 신호와 체크리스트 제안"], ["사람 검토", "필수"]],
+  },
+  "보이스피싱/FDS 담당자": {
+    roleKey: "보이스피싱/FDS 담당자",
+    label: "보이스피싱/FDS 담당자 대시보드",
+    shortLabel: "FDS",
+    eyebrow: "GM/Admin Console · 역할 활성화",
+    routeLabel: "이상거래 · 고객 영향 보류",
+    hash: () => "#fds-dashboard",
+    targetView: "fds-dashboard",
+    notifyText: "보이스피싱/FDS 담당자 대시보드로 이동했습니다.",
+    setup() {},
+    metrics: [["탐지 알림", "12건"], ["고객 영향 보류", "4건"], ["룰 검토", "6건"]],
+    board: [
+      ["비정상 콜백 탐지", "높음 · 보류", "고객 영향 조치 전 내부 검토"],
+      ["오탐 후보 재분류", "중간 · 검토", "거래패턴과 상담 메모 비교"],
+      ["탐지룰 운영 점검", "활성", "룰 변경 감사 기록 연결"],
+    ],
+    queue: ["위험 신호 분류", "오탐 검토", "내부 승인"],
+    contextRows: [["데이터 범위", "거래·상담·탐지룰"], ["핵심 액션", "고객 영향 조치 전 보류"], ["사람 검토", "필수"]],
+  },
+};
+
+function roleActivationConfig(roleKey) {
+  return ROLE_ACTIVATION_CONFIGS[roleKey] || null;
+}
+
+function roleActivationReducedMotion() {
+  return Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+}
+
+function clearRoleActivationTimers() {
+  (roleActivationState.timers || []).forEach((timer) => window.clearTimeout(timer));
+  roleActivationState.timers = [];
+}
+
+function roleActivationPhaseClass(index) {
+  if (roleActivationState.phaseIndex > index) return "is-done";
+  if (roleActivationState.phaseIndex === index) return "is-current";
+  return "is-pending";
+}
+
+function roleActivationCanReveal(phaseKey) {
+  const index = ROLE_ACTIVATION_PHASES.findIndex((phase) => phase.key === phaseKey);
+  return index >= 0 && roleActivationState.phaseIndex >= index;
+}
+
+function activateRoleTarget(config) {
+  if (!config) return;
+  clearRoleActivationTimers();
+  roleActivationState = { status: "ready", roleKey: config.roleKey, phaseIndex: ROLE_ACTIVATION_PHASES.length - 1, timers: [] };
+  activeView = config.targetView;
+  activeDetailType = defaultDetailForView(activeView);
+  if (typeof config.setup === "function") config.setup();
+  const targetHash = config.hash();
+  if (window.location.hash !== targetHash) {
+    window.location.hash = targetHash;
+  } else {
+    render();
+  }
+  notify(config.notifyText);
+}
+
+function startRoleActivation(roleKey) {
+  const config = roleActivationConfig(roleKey);
+  if (!config) return false;
+  clearRoleActivationTimers();
+  selectedRailRole = roleKey;
+  propertiesOpen = true;
+  activeDetailType = "view";
+  document.querySelectorAll("[data-role-filter]").forEach((entry) => {
+    entry.classList.toggle("is-active", entry.dataset.roleFilter === selectedRailRole);
+  });
+  roleActivationState = { status: "activating", roleKey, phaseIndex: 0, timers: [] };
+  render();
+
+  const reduced = roleActivationReducedMotion();
+  const phaseDelay = reduced ? 80 : 230;
+  const timers = ROLE_ACTIVATION_PHASES.slice(1).map((_, offset) => window.setTimeout(() => {
+    roleActivationState.phaseIndex = offset + 1;
+    render();
+  }, phaseDelay * (offset + 1)));
+  timers.push(window.setTimeout(() => activateRoleTarget(config), reduced ? 520 : 1320));
+  roleActivationState.timers = timers;
+  return true;
 }
 let activity = [
   ["14:08", "Jeonse Shield Lead", "created approval", "JBG-201"],
@@ -1765,6 +1932,13 @@ function renderWorkbench() {
   const pageContent = document.getElementById("page-content");
   if (!pageContent) return;
 
+  if (roleActivationState.status === "activating") {
+    pageContent.className = "page-content view-role-activation";
+    pageContent.innerHTML = roleActivationPage();
+    bindPageActions();
+    return;
+  }
+
   const pages = {
     dashboard: dashboardPage,
     inbox: inboxPage,
@@ -1797,6 +1971,12 @@ function renderWorkbench() {
 }
 
 function bindPageActions() {
+  document.querySelectorAll("[data-role-launch]").forEach((button) => {
+    button.addEventListener("click", () => {
+      startRoleActivation(button.dataset.roleLaunch || "");
+    });
+  });
+
   const dispatchButton = document.getElementById("dispatch-command");
   if (dispatchButton) dispatchButton.addEventListener("click", dispatchCommand);
   document.querySelectorAll("[data-board-mode]").forEach((button) => {
@@ -1955,8 +2135,10 @@ function commandMarkup() {
 
 function latestWorkSummaryView() {
   const roles = [
-    ["기업여신", "AI 3개 · 업무 기능 5개", "서류·재무분석, 전결 라우팅, 자금용도 사후점검", "#corporate-credit-dashboard"],
-    ["FDS/보이스피싱", "AI 3개 · 업무 기능 6개", "이상징후, 지급정지·해제, 탐지룰 운영", "#fds-dashboard"],
+    ["RM", "AI 6개 · 실행 큐", "상담 브리핑, 정책금융 후보, 고객 안내 승인", "RM"],
+    ["전세보호", "AI 7개 · 업무 기능 16개", "시세·권리·보증·피해지원 위험 신호 검토", "전세보호 담당자"],
+    ["기업여신", "AI 3개 · 업무 기능 5개", "서류·재무분석, 전결 라우팅, 자금용도 사후점검", "기업여신 담당자"],
+    ["FDS/보이스피싱", "AI 3개 · 업무 기능 6개", "이상징후, 지급정지·해제, 탐지룰 운영", "보이스피싱/FDS 담당자"],
   ];
   return `
     <div class="latest-work">
@@ -1975,18 +2157,155 @@ function latestWorkSummaryView() {
       <div class="latest-role-grid">
         ${roles
           .map(
-            ([label, count, description, href]) => `
-              <a class="latest-role-card" href="${escapeHtml(href)}">
+            ([label, count, description, roleKey]) => `
+              <button class="latest-role-card" type="button" data-role-launch="${escapeHtml(roleKey)}">
                 <span>${escapeHtml(label)}</span>
                 <strong>${escapeHtml(count)}</strong>
                 <p>${escapeHtml(description)}</p>
-              </a>
+              </button>
             `,
           )
           .join("")}
       </div>
       <p class="insight-copy">승인 전에는 실제 연결된 업무 기능이 아니라 제안 근거와 검토 범위로만 표시됩니다. 고객 영향 조치는 담당자 승인 절차를 거쳐야 합니다.</p>
     </div>
+  `;
+}
+
+function roleActivationLockedWorkspaceView() {
+  const roles = Object.values(ROLE_ACTIVATION_CONFIGS);
+  return `
+    <section class="workspace-panel role-lock-console" aria-label="GM 역할 콘솔 활성화 대기">
+      <div class="role-lock-copy">
+        <p class="eyebrow">GM/Admin Console · 역할 선택 대기</p>
+        <h3>역할을 선택하면 업무 화면이 활성화됩니다.</h3>
+        <p>비어 있는 화면 대신, 권한 확인 전 콘솔 뼈대와 연결 예정 데이터가 먼저 보입니다. 역할을 누르면 권한 확인 → 업무 데이터 연결 → 업무보드 생성 → 상세 패널 활성화 → 에이전트 실행 큐 표시 순서로 열립니다.</p>
+      </div>
+      <div class="role-lock-layout">
+        <div class="role-lock-role-list" aria-label="활성화 가능한 역할">
+          ${roles.map((role) => `
+            <button class="role-lock-role ${selectedRailRole === role.roleKey ? "is-selected" : ""}" type="button" data-role-launch="${escapeHtml(role.roleKey)}">
+              <span>${escapeHtml(role.shortLabel)}</span>
+              <strong>${escapeHtml(role.label)}</strong>
+              <small>${escapeHtml(role.routeLabel)}</small>
+            </button>
+          `).join("")}
+        </div>
+        <div class="role-lock-preview" aria-label="잠금 상태 업무보드 미리보기">
+          <div class="role-lock-preview-head">
+            <span class="role-lock-icon" aria-hidden="true">${iconSvg("lock")}</span>
+            <div>
+              <strong>업무 콘솔 잠금 해제 대기</strong>
+              <p>GM 권한으로 역할을 선택하면 이 skeleton이 실제 업무 데이터로 교체됩니다.</p>
+            </div>
+          </div>
+          <div class="role-skeleton-grid" aria-hidden="true">
+            ${[0, 1, 2].map((index) => `
+              <article class="role-skeleton-card" style="--delay:${index * 80}ms">
+                <span></span>
+                <strong></strong>
+                <p></p>
+                <p class="short"></p>
+              </article>
+            `).join("")}
+          </div>
+        </div>
+        <div class="role-lock-context" aria-label="잠금 상태 상세 패널 미리보기">
+          <p class="eyebrow">오른쪽 context panel</p>
+          <div class="role-context-skeleton" aria-hidden="true">
+            <span></span><span></span><span></span><span class="short"></span>
+          </div>
+          <p>선택된 역할, 케이스, 에이전트 요약이 이 영역으로 전환됩니다.</p>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function roleActivationMetricsMarkup(config) {
+  return config.metrics.map(([label, value], index) => `
+    <article class="role-activation-metric ${roleActivationCanReveal("data") ? "is-revealed" : "is-locked"}" style="--delay:${index * 70}ms">
+      <span>${roleActivationCanReveal("data") ? escapeHtml(label) : "----"}</span>
+      <strong>${roleActivationCanReveal("data") ? escapeHtml(value) : "—"}</strong>
+    </article>
+  `).join("");
+}
+
+function roleActivationBoardMarkup(config) {
+  return config.board.map(([title, status, detail], index) => {
+    const revealed = roleActivationCanReveal("board");
+    return `
+      <article class="role-activation-card ${revealed ? "is-revealed" : "is-locked"}" style="--delay:${index * 80}ms">
+        <div class="role-activation-card-head">
+          <strong>${revealed ? escapeHtml(title) : ""}</strong>
+          <span>${revealed ? escapeHtml(status) : ""}</span>
+        </div>
+        <p>${revealed ? escapeHtml(detail) : ""}</p>
+        <div class="role-card-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+      </article>
+    `;
+  }).join("");
+}
+
+function roleActivationContextPreview(config) {
+  const ready = roleActivationCanReveal("context");
+  return `
+    <aside class="role-activation-side ${ready ? "is-revealed" : "is-locked"}" aria-label="상세 패널 활성화 미리보기">
+      <p class="eyebrow">상세 패널</p>
+      <h3>${ready ? escapeHtml(config.shortLabel) : "Context Panel"}</h3>
+      ${ready
+        ? `<div class="role-activation-context-rows">${config.contextRows.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}</div>`
+        : `<div class="role-context-skeleton" aria-hidden="true"><span></span><span></span><span></span><span class="short"></span></div>`
+      }
+    </aside>
+  `;
+}
+
+function roleActivationQueueMarkup(config) {
+  const ready = roleActivationCanReveal("queue");
+  return `
+    <section class="role-activation-queue ${ready ? "is-revealed" : "is-locked"}" aria-label="에이전트 실행 큐 표시">
+      <div>
+        <p class="eyebrow">SUB 실행 큐</p>
+        <h3>${ready ? "에이전트 실행 큐 준비 완료" : "실행 큐 연결 대기"}</h3>
+      </div>
+      <div class="role-activation-queue-list">
+        ${config.queue.map((item, index) => `<span style="--delay:${index * 70}ms">${ready ? escapeHtml(item) : "----"}</span>`).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function roleActivationPage() {
+  const config = roleActivationConfig(roleActivationState.roleKey) || roleActivationConfig("RM");
+  return `
+    <section class="role-activation-page" aria-live="polite" aria-label="역할 업무 콘솔 활성화">
+      <div class="role-activation-hero">
+        <div>
+          <p class="eyebrow">${escapeHtml(config.eyebrow)}</p>
+          <h2>${escapeHtml(config.label)} 활성화 중</h2>
+          <p>${escapeHtml(config.shortLabel)} 권한으로 업무 데이터와 실행 콘솔을 연결하고 있습니다.</p>
+        </div>
+        <span class="role-activation-badge">${escapeHtml(config.routeLabel)}</span>
+      </div>
+      <div class="role-activation-steps" role="list" aria-label="활성화 단계">
+        ${ROLE_ACTIVATION_PHASES.map((phase, index) => `
+          <div class="role-activation-step ${roleActivationPhaseClass(index)}" role="listitem">
+            <span>${index + 1}</span>
+            <strong>${escapeHtml(phase.label)}</strong>
+            <p>${escapeHtml(phase.detail)}</p>
+          </div>
+        `).join("")}
+      </div>
+      <div class="role-activation-layout">
+        <main class="role-activation-main">
+          <div class="role-activation-metrics">${roleActivationMetricsMarkup(config)}</div>
+          <div class="role-activation-board">${roleActivationBoardMarkup(config)}</div>
+        </main>
+        ${roleActivationContextPreview(config)}
+      </div>
+      ${roleActivationQueueMarkup(config)}
+    </section>
   `;
 }
 
@@ -2080,6 +2399,7 @@ function groupExpansionView() {
 function dashboardPage() {
   return `
     ${pageHeader("JB금융그룹 업무포털 · 손은 놓고, 눈만", "JB 금융안전 업무지원 포털", "에이전트가 일하고, 담당자는 승인만. AI는 제안하고, 사람은 결정한다 — Eyes-only banking. 지역 고객의 위험 신호를 관리 건으로 모아 분석하고, 담당자 승인 후에만 고객 안내로 이어지도록 관리합니다.")}
+    ${roleActivationLockedWorkspaceView()}
     ${heroDemoLaunchView()}
     <section id="metric-grid" class="metric-grid" aria-label="metrics"></section>
     ${panelMarkup("업무 보드", "접수됨 → 검토 준비 중 → 담당자 승인 대기 → 검토 완료 / 보류", dashboardCaseBoardView(), "board-panel dashboard-board-panel")}
@@ -3752,6 +4072,28 @@ function workItem(title, description, meta) {
   `;
 }
 
+function roleActivationContextMarkup() {
+  const config = roleActivationConfig(roleActivationState.roleKey) || roleActivationConfig("RM");
+  return `
+    <section class="activation-context-panel" aria-live="polite">
+      <p class="eyebrow">GM/Admin 권한 전환</p>
+      <h3>${escapeHtml(config.label)}</h3>
+      <p>${escapeHtml(config.shortLabel)} 역할의 업무보드, 상세 패널, 에이전트 실행 큐를 순서대로 활성화하고 있습니다.</p>
+      <div class="activation-context-steps">
+        ${ROLE_ACTIVATION_PHASES.map((phase, index) => `
+          <div class="${roleActivationPhaseClass(index)}">
+            <span>${index + 1}</span>
+            <strong>${escapeHtml(phase.label)}</strong>
+          </div>
+        `).join("")}
+      </div>
+      <div class="activation-context-rows">
+        ${config.contextRows.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}
+      </div>
+    </section>
+  `;
+}
+
 function renderProperties() {
   const contextPanel = document.getElementById("context-panel");
   if (!contextPanel) return;
@@ -3775,7 +4117,9 @@ function renderProperties() {
   };
 
   let markup;
-  if (activeDetailType === "agent" && currentAgent()) {
+  if (roleActivationState.status === "activating") {
+    markup = roleActivationContextMarkup();
+  } else if (activeDetailType === "agent" && currentAgent()) {
     markup = agentDetailMarkup();
   } else if (activeDetailType === "skill" && currentSkill()) {
     markup = skillDetailMarkup();
@@ -3800,6 +4144,7 @@ function renderProperties() {
 }
 
 function propertyPanelTitle() {
+  if (roleActivationState.status === "activating") return "역할 콘솔 활성화";
   if (activeDetailType === "agent" && currentAgent()) return agentLabel(currentAgent());
   if (activeDetailType === "skill" && currentSkill()) return skillLabel(currentSkill().slug);
   if (activeDetailType === "feature" && currentFeature()) return currentFeature().title;
@@ -5587,61 +5932,7 @@ function bindActions() {
         entry.classList.toggle("is-active", entry.dataset.roleFilter === selectedRailRole);
       });
       closeRailGroups();
-      if (selectedRailRole === "RM") {
-        const rmoHash = typeof rmoHashForView === "function" ? rmoHashForView("board") : "#/roles/rm-officer/board";
-        activeView = "rm-officer-harness";
-        activeDetailType = defaultDetailForView(activeView);
-        if (typeof rmoState !== "undefined") {
-          rmoState.view = "board";
-          rmoState.detail = null;
-        }
-        if (window.location.hash !== rmoHash) {
-          window.location.hash = rmoHash;
-        }
-        render();
-        notify("RM 담당자 하네스로 이동했습니다.");
-        return;
-      }
-      if (selectedRailRole === "기업여신 담당자") {
-        const ccrHash = typeof ccrHashForView === "function" ? ccrHashForView("board") : "#/roles/corporate-credit/board";
-        activeView = "corporate-credit-harness";
-        activeDetailType = defaultDetailForView(activeView);
-        if (typeof ccrState !== "undefined") {
-          ccrState.view = "board";
-          ccrState.detail = null;
-        }
-        if (window.location.hash !== ccrHash) {
-          window.location.hash = ccrHash;
-        }
-        render();
-        notify("기업여신 담당자 하네스로 이동했습니다.");
-        return;
-      }
-      if (selectedRailRole === "전세보호 담당자") {
-        activeView = "jeonse-protection-harness";
-        activeDetailType = defaultDetailForView(activeView);
-        if (typeof jpoState !== "undefined") {
-          jpoState.view = "board";
-          jpoState.detail = null;
-        }
-        const jpoHash = typeof jpoHashForView === "function" ? jpoHashForView("board") : "#/roles/jeonse-protection";
-        if (window.location.hash !== jpoHash) {
-          window.location.hash = jpoHash;
-        }
-        render();
-        notify("전세사기 보호 담당자 하네스로 이동했습니다.");
-        return;
-      }
-      if (selectedRailRole === "보이스피싱/FDS 담당자") {
-        activeView = "fds-dashboard";
-        activeDetailType = defaultDetailForView(activeView);
-        if (window.location.hash !== "#fds-dashboard") {
-          window.location.hash = "fds-dashboard";
-        }
-        render();
-        notify("보이스피싱/FDS 담당자 대시보드로 이동했습니다.");
-        return;
-      }
+      if (startRoleActivation(selectedRailRole)) return;
       notify(`${selectedRailRole} 유형을 선택했습니다.`);
     });
   });

@@ -128,36 +128,55 @@ function rmoFirstCaseFor(typeKey) {
 function rmoViewContextModel() {
   const caseRows = rmoTable("rm_officer_cases", RMO_ROLE_KEY);
   const findCase = (id) => caseRows.find((c) => c.id === id);
+  const selectedContext = rmoState.contextItem || {};
+  const pickContextRow = (kind, rows, fallback) => {
+    if (selectedContext.kind === kind) {
+      const row = rows.find((item) => item.id === selectedContext.id);
+      if (row) return row;
+    }
+    return fallback || rows[0] || null;
+  };
   const currentCase = rmoState.infoCaseId || (rmoState.detail && rmoState.detail.kind === "case" ? rmoState.detail.id : null);
   if (currentCase) return { kind: "case", row: findCase(currentCase) };
+  if (rmoState.view === "cases") {
+    const c = pickContextRow("case", rmoSortByUrgency(caseRows), rmoSortByUrgency(caseRows)[0]);
+    if (c) return { kind: "case", row: c };
+  }
 
   if (rmoState.view === "consult-queue") {
-    const row = rmoTable("rm_officer_consult_queue", RMO_ROLE_KEY).find((x) => ["pending", "inProgress"].includes(x.status)) || rmoTable("rm_officer_consult_queue", RMO_ROLE_KEY)[0];
+    const consultRows = rmoTable("rm_officer_consult_queue", RMO_ROLE_KEY);
+    const row = pickContextRow("consult", consultRows, consultRows.find((x) => ["pending", "inProgress"].includes(x.status)));
+    const c = row ? findCase(row.caseId) : null;
     return { kind: "generic", title: "여신 상담 큐 요약", rows: [
-      ["상담 ID", row && row.id], ["채널", row && row.channel], ["관련 케이스", row && row.caseId],
-      ["고객 요약", row && findCase(row.caseId) ? `${findCase(row.caseId).customerAlias} · ${findCase(row.caseId).region}` : "-"],
+      ["상담 ID", row && row.id], ["채널", row && row.channel], ["관련 케이스", c ? `${c.caseNo} · ${c.theme}` : row && row.caseId],
+      ["고객 요약", c ? `${c.customerAlias} · ${c.region} · ${c.bank}` : "-"],
       ["상담 목적", row && row.topic], ["현재 상태", row && (RMO_STATUS_LABELS[row.status] || row.status)],
-      ["다음 액션", row ? "상담 메모를 확인하고 관련 케이스 에이전트 큐로 이동" : "-"],
-    ], chips: row ? [row.channel, row.topic, row.status] : [], sections: row && findCase(row.caseId) ? [rmoContextList("연결 케이스", [[findCase(row.caseId).theme, findCase(row.caseId).situation]])] : [] };
+      ["다음 액션", c ? rmoNextActionText(c) : "상담 메모를 확인하고 관련 케이스 에이전트 큐로 이동"],
+    ], chips: row ? [row.channel, row.topic, row.status] : [], sections: c ? [rmoContextList("연결 케이스", [[c.theme, c.situation]]), rmoContextList("생성 산출물", rmoDeliverablesForCase(c.id).slice(0, 3).map((d) => [d.fileName, d.summary]))] : [] };
   }
   if (rmoState.view === "approvals") {
-    const row = rmoTable("rm_officer_approvals", RMO_ROLE_KEY).find((x) => x.status === "pending") || rmoTable("rm_officer_approvals", RMO_ROLE_KEY)[0];
+    const approvalRows = rmoTable("rm_officer_approvals", RMO_ROLE_KEY);
+    const row = pickContextRow("approval", approvalRows, approvalRows.find((x) => x.status === "pending"));
     const c = row ? findCase(row.caseId) : null;
     return { kind: "generic", title: "승인 라우팅 요약", rows: [
       ["승인 항목", row && row.id], ["유형", row && row.approvalType], ["관련 케이스", c ? `${c.caseNo} · ${c.theme}` : row && row.caseId],
       ["요청자/승인권자", row ? `${rmoUserName(row.requestedById)} → ${rmoUserName(row.approverId)}` : "-"],
+      ["승인 필요 사유", c ? c.priorityReason : "사람 승인 필요"],
       ["현재 상태", row && (RMO_STATUS_LABELS[row.status] || row.status)], ["다음 액션", "담당자 검토 후 승인 또는 반려"],
-    ], chips: row ? [row.status, "사람 승인 필요"] : [] };
+    ], chips: row ? [row.status, "사람 승인 필요"] : [], sections: c ? [rmoContextList("관련 감사 로그", rmoAuditsForCase(c.id).map((a) => [a.action, a.createdAt]))] : [] };
   }
   if (rmoState.view === "policy-checklists") {
-    const row = rmoTable("rm_officer_policy_checklists", RMO_ROLE_KEY).find((x) => x.status === "open") || rmoTable("rm_officer_policy_checklists", RMO_ROLE_KEY)[0];
+    const policyRows = rmoTable("rm_officer_policy_checklists", RMO_ROLE_KEY);
+    const row = pickContextRow("policy", policyRows, policyRows.find((x) => x.status === "open"));
     return { kind: "generic", title: "정책금융 체크리스트 요약", rows: [
       ["항목", row && row.item], ["프로그램", row && row.program], ["관련 케이스", row && row.caseId],
-      ["검토 필요", row && row.reviewRequired ? "필요" : "일반 확인"], ["다음 액션", "서류 후보와 공개 요건을 비교해 담당자 확인 질문 생성"],
+      ["검토 필요", row && row.reviewRequired ? "필요" : "일반 확인"], ["확인 근거", row && (row.reason || "공개 요건 비교")],
+      ["다음 액션", row && (row.nextAction || "서류 후보와 공개 요건을 비교해 담당자 확인 질문 생성")],
     ], chips: row ? [row.program, row.reviewRequired ? "확인 필요" : "일반"] : [] };
   }
   if (rmoState.view === "deliverables") {
-    const row = rmoTable("rm_officer_deliverables", RMO_ROLE_KEY)[0];
+    const deliverableRows = rmoTable("rm_officer_deliverables", RMO_ROLE_KEY);
+    const row = pickContextRow("deliverable", deliverableRows);
     return { kind: "generic", title: "산출물 요약", rows: [
       ["파일명", row && row.fileName], ["산출물 유형", row && rmoDeliverableDocType(row)], ["관련 케이스", row && row.caseId],
       ["생성 에이전트", row && rmoAgentDisplayName(row.agentId)], ["핵심 요약", row && row.summary],
@@ -195,21 +214,29 @@ function rmoViewContextModel() {
     ], chips: cap ? [cap.category, RMO_CAPABILITY_STATUS_LABELS[cap.status] || cap.status, rmoCapabilityRisk(cap).label] : [] };
   }
   if (rmoState.view === "data-connectors") {
-    const row = rmoTable("rm_officer_external_connectors", RMO_ROLE_KEY).find((x) => x.health !== "healthy") || rmoTable("rm_officer_external_connectors", RMO_ROLE_KEY)[0];
+    const connectorRows = rmoTable("rm_officer_external_connectors", RMO_ROLE_KEY);
+    const row = pickContextRow("connector", connectorRows, connectorRows.find((x) => x.health !== "healthy"));
     return { kind: "generic", title: "데이터 연결 요약", rows: [
       ["커넥터", row && row.name], ["분류", row && row.category], ["상태", row && `${RMO_STATUS_LABELS[row.health] || row.health} · ${RMO_STATUS_LABELS[row.dataMode] || row.dataMode}`],
-      ["최근 동기화", row && (row.lastSyncAt || "담당자 확인 필요")], ["다음 액션", row && row.health === "healthy" ? "정상 연결 상태 유지" : "수동 확인 후 샘플 데이터 갱신"],
-    ], chips: row ? [row.category, row.health, row.dataMode] : [] };
+      ["최근 동기화", row && (row.lastSyncAt || "담당자 확인 필요")], ["실패 이유", row && (row.failureReason || "없음")],
+      ["다음 액션", row && (row.nextAction || (row.health === "healthy" ? "정상 연결 상태 유지" : "수동 확인 후 샘플 데이터 갱신"))],
+    ], chips: row ? [row.category, row.health, row.dataMode] : [], sections: row ? [rmoContextList("연결 에이전트", (row.agentIds || []).map((id) => [rmoAgentDisplayName(id), "이 커넥터를 입력 데이터로 사용"]))] : [] };
   }
   if (rmoState.view === "roles") {
-    const user = rmoTable("rm_officer_users", RMO_ROLE_KEY)[0];
+    const userRows = rmoTable("rm_officer_users", RMO_ROLE_KEY);
+    const user = pickContextRow("user", userRows);
+    const roles = rmoTable("rm_officer_role_assignments", RMO_ROLE_KEY);
+    const role = user ? roles.find((r) => r.userId === user.id) : null;
+    const assignedCases = user ? caseRows.filter((c) => c.assignedRmId === user.id).slice(0, 4) : [];
     return { kind: "generic", title: "담당자/권한 요약", rows: [
       ["담당자", user && user.name], ["팀", user && user.team], ["역할", user && user.role],
-      ["권한 범위", "RM 업무지원 포털 · 역할 scope 데이터"], ["다음 액션", "권한 배정과 승인권자 상태 점검"],
-    ], chips: user ? [user.status, user.team] : [] };
+      ["권한 범위", role && role.permissionScope], ["승인권자 여부", user && user.role === "approver" ? "승인권자" : "일반 담당자"],
+      ["민감정보/금융확정", "원문 저장·금리·한도·신용평가 확정 금지"], ["다음 액션", "권한 배정과 승인권자 상태 점검"],
+    ], chips: user ? [user.status, user.team, user.role] : [], sections: [rmoContextList("최근 처리 케이스", assignedCases.map((c) => [c.caseNo, c.theme]))] };
   }
   if (rmoState.view === "audit-logs") {
-    const row = rmoTable("rm_officer_audit_logs", RMO_ROLE_KEY)[0];
+    const auditRows = rmoTable("rm_officer_audit_logs", RMO_ROLE_KEY);
+    const row = pickContextRow("audit", auditRows);
     return { kind: "generic", title: "감사 기록 요약", rows: [
       ["기록 ID", row && row.id], ["행위", row && row.action], ["대상", row && `${row.targetType} ${row.targetId || ""}`],
       ["위험도", row && (RMO_RISK_LABELS[row.riskLevel] || row.riskLevel)], ["검토 필요", row && row.reviewRequired ? "필요" : "기록 완료"],

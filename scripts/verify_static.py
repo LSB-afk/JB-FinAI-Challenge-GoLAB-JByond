@@ -207,6 +207,15 @@ js_needles = [
     "buildDashboardData",
     "auditChainRecords",
     "moveCaseToColumn",
+    "ROLE_ACTIVATION_PHASES",
+    "roleActivationLockedWorkspaceView",
+    "startRoleActivation",
+    "권한 확인",
+    "업무 데이터 연결",
+    "케이스 보드 생성",
+    "상세 패널 활성화",
+    "에이전트 실행 큐 표시",
+    "역할을 선택하면 업무 화면이 활성화됩니다.",
     "demoProfiles",
     "손은 놓고, 눈만",
     "liveAgentIds",
@@ -224,6 +233,18 @@ js_needles = [
 for needle in js_needles:
     if needle not in js:
         raise SystemExit(f"JS missing {needle!r}")
+
+role_activation_css_needles = [
+    ".role-lock-console",
+    ".role-skeleton-card",
+    ".role-activation-page",
+    ".role-activation-step.is-current",
+    ".activation-context-panel",
+    "@media (prefers-reduced-motion: reduce)",
+]
+for needle in role_activation_css_needles:
+    if needle not in css:
+        raise SystemExit(f"role activation CSS missing {needle!r}")
 
 wooricap_needles = [
     "JBWC_AFFILIATE_ID",

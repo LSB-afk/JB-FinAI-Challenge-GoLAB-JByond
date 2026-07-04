@@ -37,6 +37,10 @@ test("home and dashboard render without console errors", async ({ page }) => {
   await expect(page.getByText("신규 제안 14개 Agent와 27개 Skill")).toBeVisible();
   await expect(page.getByText("데이터 출처와 저장 상태")).toBeVisible();
   await expect(page.getByText("샘플·실제·오류 상태")).toBeVisible();
+  await expect(page.locator(".role-lock-console")).toContainText("역할을 선택하면 업무 화면이 활성화됩니다.");
+  await expect(page.locator(".role-lock-console")).toContainText("GM/Admin Console");
+  await expect(page.locator(".role-lock-role")).toHaveCount(4);
+  await expect(page.locator(".role-context-skeleton")).toBeVisible();
   await expect(page.locator('[data-state="sample"]')).toContainText("Sample");
   await expect(page.locator('[data-state="error"]')).toContainText("미연결");
   await expect(page.locator('[data-state="stale"]')).toContainText("샘플 스냅샷");
@@ -47,6 +51,25 @@ test("home and dashboard render without console errors", async ({ page }) => {
   await saveShot(page, "home-desktop.png");
   await saveShot(page, "dashboard-desktop.png");
   expect(errors).toEqual([]);
+});
+
+test("role selection shows GM activation sequence before opening the role console", async ({ page }) => {
+  await page.goto("/index.html");
+  await page.locator('[data-rail-toggle="role"]').click();
+  await page.locator('[data-role-filter="전세보호 담당자"]').click();
+
+  await expect(page.locator(".role-activation-page")).toBeVisible();
+  await expect(page.locator(".role-activation-page")).toContainText("전세사기 보호 업무지원 포털 활성화 중");
+  await expect(page.locator(".role-activation-steps")).toContainText("권한 확인");
+  await expect(page.locator(".role-activation-steps")).toContainText("업무 데이터 연결");
+  await expect(page.locator(".role-activation-steps")).toContainText("케이스 보드 생성");
+  await expect(page.locator(".role-activation-steps")).toContainText("상세 패널 활성화");
+  await expect(page.locator(".role-activation-steps")).toContainText("에이전트 실행 큐 표시");
+  await expect(page.locator(".activation-context-panel")).toContainText("전세사기 보호 업무지원 포털");
+
+  await expect(page).toHaveURL(/\/roles\/jeonse-protection\/board/);
+  await expect(page.locator("#page-content").getByRole("heading", { name: "전세사기 보호 업무지원 포털" })).toBeVisible();
+  await expect(page.locator("#context-panel")).toContainText(/전세사기 보호|위험 접수|데이터 범위/);
 });
 
 test("core routes render reachable grouped screens", async ({ page }) => {

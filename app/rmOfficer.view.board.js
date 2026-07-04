@@ -47,7 +47,7 @@ function rmoBoardCard(item, index) {
       <p class="rmo-case-subhead">다음 액션</p>
       <p class="rmo-case-next-action">${escapeHtml(nextAction)}</p>
     </div>
-    <footer class="rmo-case-card-foot">${rmoStagePill(rmoStageOf(item))}<span class="rmo-case-foot-hint">Enter로 계층도 이동</span></footer>
+    <footer class="rmo-case-card-foot">${rmoStagePill(rmoStageOf(item))}<span class="rmo-case-foot-hint">←→ 카드 슬라이드</span></footer>
   </article>`;
 }
 
@@ -242,7 +242,7 @@ function rmoDeliverableViewerSection(caseRow) {
   }
   return rmoPanel("통합 리포트 뷰어",
     `<div class="jbwc-tabs rmo-md-tabs" role="tablist">${tabBar}</div>
-    <div class="rmo-md-body jbwc-tabbody">${rmoRenderMarkdown(active.body)}</div>
+    <div class="rmo-md-body jbwc-tabbody">${rmoRenderMarkdownSections(active.body)}</div>
     <div class="settings-button-row"><button class="secondary-button" type="button" data-rmo-open-md="${escapeHtml(active.fileName)}">문서 모달로 크게 보기</button></div>
     ${extra}`);
 }

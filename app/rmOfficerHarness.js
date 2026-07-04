@@ -72,6 +72,22 @@ function rmoSetPendingScroll(target) {
   rmoState.pendingScrollTarget = target || null;
 }
 
+function rmoSelectBoardCase(caseId) {
+  if (!caseId) return false;
+  const exists = rmoState.boardOrder.includes(caseId) || rmoTable("rm_officer_cases", RMO_ROLE_KEY).some((c) => c.id === caseId);
+  if (!exists) return false;
+  rmoState.view = "board";
+  rmoState.detail = { kind: "case", id: caseId };
+  rmoState.workMapFocusIndex = -1;
+  rmoState.workMapExpandedNodeId = null;
+  rmoState.infoCaseId = null;
+  rmoSetPendingScroll({ cardId: caseId, slideOnly: true });
+  const boardHash = rmoHashForView("board");
+  if (window.location.hash !== boardHash) window.history.replaceState(null, "", boardHash);
+  render();
+  return true;
+}
+
 function rmoElementByDataAttr(attr, value) {
   if (!value) return null;
   return Array.from(document.querySelectorAll(`[${attr}]`)).find((el) => el.getAttribute(attr) === value) || null;
@@ -145,6 +161,7 @@ function rmoFlushPendingScroll() {
       const cardId = target.cardId || (rmoState.detail && rmoState.detail.kind === "case" ? rmoState.detail.id : null);
       const card = rmoElementByDataAttr("data-rmo-open-case", cardId);
       if (card) card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      if (target.slideOnly) return;
 
       let node = null;
       if (target.nodeId) node = rmoElementByDataAttr("data-rmo-node", target.nodeId);
@@ -207,9 +224,8 @@ function rmoHandleKeydown(event) {
   if (/^[1-9]$/.test(event.key) && rmoState.view === "board") {
     const id = rmoState.boardOrder[Number(event.key) - 1];
     if (id) {
-      rmoSetPendingScroll({ cardId: id, sub: true });
       rmoShowKeyOverlay(event.key, `Case ${event.key} 선택`);
-      rmoGo("board", { kind: "case", id });
+      rmoSelectBoardCase(id);
       event.preventDefault();
     }
     return;
@@ -222,9 +238,8 @@ function rmoHandleKeydown(event) {
       const nextIdx = event.key === "ArrowRight" ? Math.min(idx + 1, rmoState.boardOrder.length - 1) : Math.max(idx - 1, 0);
       const nextId = rmoState.boardOrder[nextIdx];
       if (nextId && nextId !== rmoState.detail.id) {
-        rmoSetPendingScroll({ cardId: nextId, sub: true });
         rmoShowKeyOverlay(event.key === "ArrowRight" ? "→" : "←", event.key === "ArrowRight" ? "다음 케이스" : "이전 케이스");
-        rmoGo("board", { kind: "case", id: nextId });
+        rmoSelectBoardCase(nextId);
       }
       event.preventDefault();
     }
@@ -298,8 +313,25 @@ function bindRmOfficerActions() {
   document.querySelectorAll("[data-rmo-view]").forEach((button) => {
     button.addEventListener("click", () => rmoGo(button.dataset.rmoView));
   });
+  document.querySelectorAll("[data-rmo-select-context]").forEach((row) => {
+    row.addEventListener("click", (event) => {
+      if (event.target.closest("button, a, input, textarea, select")) return;
+      const [kind, id] = String(row.dataset.rmoSelectContext || "").split(":");
+      if (!kind || !id) return;
+      rmoState.contextItem = { kind, id };
+      rmoShowKeyOverlay("Select", "선택 항목 요약");
+      render();
+    });
+  });
   document.querySelectorAll("[data-rmo-open-case]").forEach((row) => {
-    row.addEventListener("click", () => { rmoSetPendingScroll({ cardId: row.dataset.rmoOpenCase, sub: true }); rmoGo("board", { kind: "case", id: row.dataset.rmoOpenCase }); });
+    row.addEventListener("click", () => {
+      if (rmoState.view === "board" && row.classList.contains("rmo-case-card")) {
+        rmoSelectBoardCase(row.dataset.rmoOpenCase);
+        return;
+      }
+      rmoSetPendingScroll({ cardId: row.dataset.rmoOpenCase, sub: true });
+      rmoGo("board", { kind: "case", id: row.dataset.rmoOpenCase });
+    });
   });
   document.querySelectorAll("[data-rmo-open-detail]").forEach((row) => {
     row.addEventListener("click", (event) => {

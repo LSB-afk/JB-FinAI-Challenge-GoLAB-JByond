@@ -32,9 +32,9 @@ function rmoSeedData() {
     "JBG-198": { customerAlias: "오세라", region: "전북 군산시", bank: "전북은행" },
     "JBG-202": { customerAlias: "배주안", region: "전남 여수시", bank: "광주은행" },
     /* 신규 3종 — 코디네이터 지시대로 마스킹 이름 그대로 유지(나이 별도 필드) */
-    "JBG-210": { customerAlias: "오**", customerAge: 39, region: "전북 전주시", bank: "전북은행", affiliate: "JB우리캐피탈" },
-    "JBG-211": { customerAlias: "윤**", customerAge: 76, region: "전북 전주시", bank: "전북은행" },
-    "JBG-212": { customerAlias: "송**", customerAge: 50, region: "전북 김제시", bank: "전북은행" },
+    "JBG-210": { customerAlias: "오**", customerAge: 39, region: "전북 군산시", bank: "JB우리캐피탈", affiliate: "JB우리캐피탈" },
+    "JBG-211": { customerAlias: "윤**", customerAge: 76, region: "전남 나주시", bank: "전북은행" },
+    "JBG-212": { customerAlias: "송**", customerAge: 50, region: "전남 해남군", bank: "전북은행" },
     "JBG-213": { customerAlias: "차**", customerAge: 22, region: "전북 익산시", bank: "전북은행" },
     "JBG-214": { customerAlias: "박**", customerAge: 29, region: "전북 군산시", bank: "전북은행" },
     "JBG-215": { customerAlias: "김**", customerAge: 34, region: "광주 서구", bank: "광주은행" },
@@ -69,20 +69,20 @@ function rmoSeedData() {
       situation: "풍랑 경보로 원재료 입고가 지연되며 운전자금 상환일이 임박한 여수 수산 가공장 케이스로 담당자 검토 대기 중.",
       goal: "재해 노출 분석을 마무리하고 통합 보고서를 담당자가 최종 승인한다.",
       stage: "doing", status: "humanReview", riskLevel: "high", requestedAmountBand: "5천만원~1억", dueAt: plus(2), assignedRmId: "USR-RMO-01" },
-    { caseNo: "JBG-210", caseType: "bizCreditReferral", theme: "기업여신·기술신용 상담",
-      situation: "매출 입금 공백과 원자재 비용 인상이 겹치며 초기 시설투자 상환 부담이 커진 전주 소재 사업장의 기업여신·기술신용 상담 케이스.",
-      goal: "매출·비용·계약·기술신용 근거를 종합해 여신 담당자 검토 보고서를 완성한다.",
-      stage: "todo", status: "intake", riskLevel: "medium", requestedAmountBand: "5천만원~1억", dueAt: plus(3), assignedRmId: "USR-RMO-02",
+    { caseNo: "JBG-210", caseType: "bizCreditReferral", theme: "수주잔고·리스 비용 선집행 상담",
+      situation: "수주잔고는 늘었지만 납품 전 원자재 매입과 장비 리스 비용이 먼저 발생해 운전자금 공백이 커진 군산 기업여신·기술신용 케이스.",
+      goal: "수주·납품 일정, 원자재 선지출, 장비 리스 상환표, 기술신용 근거를 분리해 여신 담당자가 검토할 보고서를 완성한다.",
+      stage: "todo", status: "intake", riskLevel: "high", requestedAmountBand: "1억~3억", dueAt: plus(2), assignedRmId: "USR-RMO-02",
       rejectedAgentId: "rmo-biz-lease-review" },
-    { caseNo: "JBG-211", caseType: "fraudResponse", theme: "보이스피싱 대응",
-      situation: "평소와 다른 고액 이체 시도가 반복되고 고령자 사기 유형과 유사도가 높게 나타난 고령 고객 보이스피싱 의심 케이스.",
-      goal: "이상거래·위험 패턴 분석을 완료하고 송금 보류 여부를 담당자가 즉시 승인한다.",
+    { caseNo: "JBG-211", caseType: "fraudResponse", theme: "나주 고령 농가 보이스피싱 대응",
+      situation: "최근 30일 매출 입금 공백이 길어지는 중 농자재·시설 보수 지출이 늘었고, 보수업체 사칭 전화와 원격앱 설치 요청이 겹친 보이스피싱 의심 케이스.",
+      goal: "입출금 공백, 지출 증가, 상담 메모, 사칭 위험 신호를 분리해 송금 보류·담당자 콜백 여부를 즉시 검토한다.",
       stage: "doing", status: "humanReview", riskLevel: "high", requestedAmountBand: "-", dueAt: plus(0), assignedRmId: "USR-RMO-01",
       allBranchesCompleted: true },
-    { caseNo: "JBG-212", caseType: "agriPostMonitoring", theme: "농수산 여신 사후관리",
-      situation: "출하 대금 입금 공백과 농자재 지출 증가가 계절적 저점 구간과 겹치는 김제 농가의 사후관리 케이스.",
-      goal: "지출·계절 요인을 종합해 상환유예 검토 필요 여부를 판단한다.",
-      stage: "todo", status: "intake", riskLevel: "medium", requestedAmountBand: "3천만원~5천만원", dueAt: plus(5), assignedRmId: "USR-RMO-03" },
+    { caseNo: "JBG-212", caseType: "agriPostMonitoring", theme: "해남 농수산 여신 사후관리",
+      situation: "최근 30일 매출 입금 공백이 길어지는 데 반해 농자재·시설 보수 지출은 증가해 해남 농수산 사업장의 상환 부담 신호가 커진 사후관리 케이스.",
+      goal: "출하대금 입금 지연, 농자재·시설 보수 지출, 계절성 매출 변동을 종합해 상환유예 검토 필요 여부를 판단한다.",
+      stage: "todo", status: "intake", riskLevel: "high", requestedAmountBand: "3천만원~5천만원", dueAt: plus(4), assignedRmId: "USR-RMO-03" },
     { caseNo: "JBG-213", caseType: "dailyFinance", theme: "학자금 납부 일정 점검",
       situation: "학사 일정과 장학금 입금 예정일 사이에 등록금·생활비 공백이 생겨 단기 소액자금 상담을 요청한 대학생 케이스.",
       goal: "학자금·장학금 입금 구간을 확인하고 고금리 대체 이용 전 상담 안내를 준비한다.",
@@ -242,9 +242,16 @@ function rmoSeedData() {
   ];
 
   const rm_officer_policy_checklists = [
-    scope({ id: "RMO-POL-0001", caseId: caseByNo("JBG-208").id, program: "소상공인 정책자금", item: "매출 규모·업력 요건 확인", status: "open", reviewRequired: true, createdAt: now }),
-    scope({ id: "RMO-POL-0002", caseId: caseByNo("JBG-208").id, program: "지역 협약대출", item: "이차보전 대상 여부 확인", status: "open", reviewRequired: true, createdAt: now }),
-    scope({ id: "RMO-POL-0003", caseId: caseByNo("JBG-204").id, program: "재해 정책자금", item: "재해 피해 확인 서류 안내", status: "open", reviewRequired: true, createdAt: now }),
+    scope({ id: "RMO-POL-0001", caseId: caseByNo("JBG-208").id, program: "소상공인 정책자금", item: "매출 규모·업력 요건 확인", status: "open", reviewRequired: true, reason: "매출 규모와 업력 기준을 공개 요건과 비교해야 함", nextAction: "사업자등록일과 최근 매출자료 후보 확인", output: "policy-finance.md", createdAt: now }),
+    scope({ id: "RMO-POL-0002", caseId: caseByNo("JBG-208").id, program: "지역 협약대출", item: "이차보전 대상 여부 확인", status: "open", reviewRequired: true, reason: "지역 협약대출 이차보전 가능성은 은행 담당자 확인 필요", nextAction: "지역/업종/사업장 소재지 확인 질문 생성", output: "policy-finance.md", createdAt: now }),
+    scope({ id: "RMO-POL-0003", caseId: caseByNo("JBG-204").id, program: "재해 정책자금", item: "재해 피해 확인 서류 안내", status: "open", reviewRequired: true, reason: "재해 피해 확인 서류가 있어야 안내 문안 신뢰도가 높아짐", nextAction: "피해 확인서 또는 상담 메모 요청", output: "marine-risk.md", createdAt: now }),
+    scope({ id: "RMO-POL-0004", caseId: caseByNo("JBG-216").id, program: "지역 협약대출", item: "사업자등록 직후 신청 가능 여부", status: "open", reviewRequired: true, reason: "신규 사업자는 업력 기준 충족 여부가 불확실함", nextAction: "사업자등록일·개업일·업종 코드 확인", output: "policy-finance.md", createdAt: now }),
+    scope({ id: "RMO-POL-0005", caseId: caseByNo("JBG-216").id, program: "창업지원 자금", item: "청년 창업 지원 대상 여부", status: "open", reviewRequired: true, reason: "연령·창업 시점·업종 제한을 별도로 확인해야 함", nextAction: "청년 창업 요건 체크 질문 생성", output: "policy-finance.md", createdAt: now }),
+    scope({ id: "RMO-POL-0006", caseId: caseByNo("JBG-210").id, program: "기업여신·기술신용", item: "기술신용 근거 자료 최신성", status: "open", reviewRequired: true, reason: "특허·인증 현황의 갱신일이 오래되면 보완 필요", nextAction: "기술신용 근거 자료 최신성 확인", output: "tech-credit-review.md", createdAt: now }),
+    scope({ id: "RMO-POL-0007", caseId: caseByNo("JBG-210").id, program: "시설·장비 리스", item: "장비 리스 계약 사본 필요", status: "open", reviewRequired: true, reason: "상환 스케줄과 계약서 사본 일부 확인 필요", nextAction: "리스 계약서 사본 연결 여부 확인", output: "biz-lease-review.md", createdAt: now }),
+    scope({ id: "RMO-POL-0008", caseId: caseByNo("JBG-212").id, program: "농수산 재해/사후관리", item: "출하대금 입금 지연 근거", status: "open", reviewRequired: true, reason: "계절성 매출 변동과 실제 입금 지연을 분리해야 함", nextAction: "출하대금 예정일과 최근 매출 입금 샘플 비교", output: "agri-cashflow-gap.md", createdAt: now }),
+    scope({ id: "RMO-POL-0009", caseId: caseByNo("JBG-207").id, program: "생활금융 상담", item: "학사일정·장학금 예상 입금 구간", status: "draft", reviewRequired: false, reason: "생활비 공백 기간 산정에 필요한 일정 후보", nextAction: "장학금 구간과 소액 상환일 비교", output: "youth-finance.md", createdAt: now }),
+    scope({ id: "RMO-POL-0010", caseId: caseByNo("JBG-214").id, program: "청년 생활금융", item: "중복지원 가능성 점검", status: "open", reviewRequired: true, reason: "기존 지원/대출과의 중복 여부는 담당자 확인 필요", nextAction: "기존 이용 상품과 지원 후보 분리", output: "youth-finance.md", createdAt: now }),
   ];
 
   const rm_officer_agent_runs = [];
@@ -284,18 +291,31 @@ function rmoSeedData() {
     scope({ id: "RMO-APR-0004", caseId: caseByNo("JBG-211").id, approvalType: "고위험 통합 리포트 검토 승인", status: "pending", requestedById: "USR-RMO-01", approverId: "USR-RMO-APR-01", requestedAt: now }),
   ];
 
-  const rm_officer_evidence_items = caseRows.slice(0, 5).map((c, index) => scope({
-    id: `RMO-EVD-${String(index + 1).padStart(4, "0")}`,
-    caseId: c.id,
-    evidenceType: ["intake", "priority", "marine", "repayment", "policy"][index % 5],
-    title: "운영 근거 요약",
-    summary: "민감 원문 없는 담당자 입력/샘플 기준 근거",
-    sourceMode: "sample",
-    createdAt: c.createdAt,
-    reviewRequired: index % 2 === 0,
-  }));
+  let evSeq = 1;
+  const rm_officer_evidence_items = caseRows.flatMap((c, index) => [
+    scope({
+      id: `RMO-EVD-${String(evSeq++).padStart(4, "0")}`,
+      caseId: c.id,
+      evidenceType: ["intake", "priority", "marine", "repayment", "policy"][index % 5],
+      title: `${RMO_CASE_TYPES[c.caseType].label} 접수 근거`,
+      summary: `${c.caseNo} · ${c.situation}`,
+      sourceMode: "sample",
+      createdAt: c.createdAt,
+      reviewRequired: ["high", "critical"].includes(c.riskLevel),
+    }),
+    scope({
+      id: `RMO-EVD-${String(evSeq++).padStart(4, "0")}`,
+      caseId: c.id,
+      evidenceType: "priority",
+      title: "우선순위 산정 근거",
+      summary: `${c.priorityReason} · ${(c.prioritySources || []).map((s) => s.label).join(" · ")}`,
+      sourceMode: "sample",
+      createdAt: now,
+      reviewRequired: c.requiresHumanReview,
+    }),
+  ]);
 
-  const rm_officer_audit_logs = caseRows.slice(0, 6).map((c, index) => scope({
+  const rm_officer_audit_logs = caseRows.map((c, index) => scope({
     id: `RMO-AUD-${String(index + 1).padStart(4, "0")}`,
     caseId: c.id,
     actorId: index % 2 ? "rmo-triage" : c.assignedRmId,
@@ -308,10 +328,16 @@ function rmoSeedData() {
   }));
 
   const rm_officer_external_connectors = [
-    scope({ id: "RMO-CON-0001", name: "기상특보·고수온 예보(공개)", category: "marine", status: "active", health: "healthy", dataMode: "sample", lastSyncAt: now }),
-    scope({ id: "RMO-CON-0002", name: "상환일정·급여주기(샘플)", category: "repayment", status: "active", health: "healthy", dataMode: "sample", lastSyncAt: plus(-1) }),
-    scope({ id: "RMO-CON-0003", name: "정책자금 요건 안내(공개)", category: "policy", status: "active", health: "healthy", dataMode: "sample", lastSyncAt: plus(-2) }),
-    scope({ id: "RMO-CON-0004", name: "학사일정·장학금 구간(샘플)", category: "dailyFinance", status: "manualRequired", health: "degraded", dataMode: "manualRequired", lastSyncAt: "" }),
+    scope({ id: "RMO-CON-0001", name: "기상특보·고수온 예보(공개)", category: "marine", status: "active", health: "healthy", dataMode: "sample", lastSyncAt: now, description: "해상 기상·고수온 예보를 재해 권역 매칭에 사용", agentIds: ["rmo-marine-risk"], fields: ["권역", "특보 단계", "예보일"], nextAction: "정상 연결 상태 유지" }),
+    scope({ id: "RMO-CON-0002", name: "상환일정·급여주기(샘플)", category: "repayment", status: "active", health: "healthy", dataMode: "sample", lastSyncAt: plus(-1), description: "상환일 집중도와 급여 입금 주기 비교", agentIds: ["rmo-credit-care", "rmo-salary-flow"], fields: ["상환일", "급여주기", "입금 예정일"], nextAction: "월말 집중 구간 샘플 갱신" }),
+    scope({ id: "RMO-CON-0003", name: "정책자금 요건 안내(공개)", category: "policy", status: "active", health: "healthy", dataMode: "sample", lastSyncAt: plus(-2), description: "공개 정책자금 요건 안내를 체크리스트 근거로 사용", agentIds: ["rmo-policy-finance"], fields: ["프로그램", "업력", "업종", "지역"], nextAction: "공개 안내 최신성 확인" }),
+    scope({ id: "RMO-CON-0004", name: "학사일정·장학금 구간(샘플)", category: "dailyFinance", status: "manualRequired", health: "degraded", dataMode: "manualRequired", lastSyncAt: "", description: "장학금 예상 입금 구간과 생활비 공백 검토", agentIds: ["rmo-youth-finance"], fields: ["학사 일정", "장학금 구간"], failureReason: "학교별 구간이 샘플 기준이라 담당자 확인 필요", nextAction: "수동 확인 후 샘플 데이터 갱신" }),
+    scope({ id: "RMO-CON-0005", name: "매출 입금내역 샘플", category: "bizCreditReferral", status: "active", health: "healthy", dataMode: "sample", lastSyncAt: now, description: "매출 입금 주기와 공백 구간 분석", agentIds: ["rmo-biz-cashflow-gap"], fields: ["입금일", "입금액 밴드", "공백 구간"], nextAction: "최근 3개월 패턴 확인" }),
+    scope({ id: "RMO-CON-0006", name: "원자재 가격 지수(샘플)", category: "bizCreditReferral", status: "active", health: "healthy", dataMode: "sample", lastSyncAt: plus(-1), description: "원자재 비용 증가 신호를 기업여신 상담에 연결", agentIds: ["rmo-biz-material-cost"], fields: ["품목", "지수", "변동률"], nextAction: "업종 평균 대비 상승률 확인" }),
+    scope({ id: "RMO-CON-0007", name: "장비 리스 계약 샘플", category: "bizCreditReferral", status: "manualRequired", health: "degraded", dataMode: "manualRequired", lastSyncAt: "", description: "리스 계약 조건과 상환 스케줄 적합성 검토", agentIds: ["rmo-biz-lease-review"], fields: ["계약기간", "상환표", "잔존가"], failureReason: "계약서 사본 연결 확인 필요", nextAction: "담당자 수동 확인 후 재실행" }),
+    scope({ id: "RMO-CON-0008", name: "기술신용 근거 자료", category: "bizCreditReferral", status: "active", health: "healthy", dataMode: "sample", lastSyncAt: plus(-2), description: "기술신용 근거 자료의 최신성·형식 확인", agentIds: ["rmo-tech-credit"], fields: ["특허", "인증", "평가일"], nextAction: "갱신일 오래된 자료 표시" }),
+    scope({ id: "RMO-CON-0009", name: "상담 메모·콜백 기록", category: "fraudResponse", status: "active", health: "healthy", dataMode: "sample", lastSyncAt: now, description: "보이스피싱 의심 상담의 메모 패턴 확인", agentIds: ["rmo-fraud-consult-notes"], fields: ["상담채널", "콜백여부", "의심키워드"], nextAction: "고위험 문구 담당자 콜백 연결" }),
+    scope({ id: "RMO-CON-0010", name: "감사 로그 스트림", category: "governance", status: "active", health: "healthy", dataMode: "sample", lastSyncAt: now, description: "승인·재실행·반려·검토 필요 이벤트 기록", agentIds: ["rmo-compliance", "rmo-approval-router"], fields: ["행위자", "행위", "대상", "시각"], nextAction: "고위험 자동완료 차단 로그 확인" }),
   ];
 
   const rm_officer_role_assignments = users.map((u, index) => scope({
