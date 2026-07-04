@@ -3,92 +3,116 @@ tags:
   - area/product
   - type/reference
   - status/active
-date: 2026-07-03
+date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [스킬 명세, skillRack 명세, 내부 스킬 카탈로그]
+aliases: [스킬 명세, skillRack 명세, 내부 스킬 카탈로그, per-console 스킬 카탈로그]
 ---
 
 # 스킬 명세
 
-> `02_제품/app/app.js`의 `skillRack`(실제 구현, 25종)을 정본으로 삼아 담당 에이전트·입력·출력·도구/데이터소스·PII 등급을 명세한다. **데모의 내부 스킬 = 우리 차별점**(범용 RAG/챗봇이 아니라 금융 도메인 판단 단위로 스킬을 쪼갠 것). 근거: `_vendor/harness-engineering-skills/skills/agent-loop/SKILL.md`, `08_본선/03_제품/00_결정-준비/설계/skills-스킬·플러그인·외부 플러그인·데이터 구상.md`, `02_제품/app/app.js`(`skillRack`).
+> **갱신 노트(2026-07-04)**: 이전 버전(07-03)은 예선 `app.js`의 단일 `skillRack`(25종)을 정본으로 삼았다. 본선 실 프로토타입(JB_project2)은 **콘솔별 정적 스킬 배열**(`cclConsoleSkills`·`fdrConsoleSkills`·`jeonseProtectionSkills`·`jbWooriCapitalSkills`)로 완전히 분리돼 있고, 아직 paperclip식 **런타임 registry(`registerPlugin`/`requirePlugin`)로 승격되지 않았다** — 지금은 코드에 박힌 정적 배열이다. **데모의 내부 스킬 = 우리 차별점**(범용 RAG/챗봇이 아니라 금융 도메인 판단 단위로 스킬을 쪼갠 것)이라는 원칙은 유지된다.
 >
-> **입력/출력/도구 열은 우리 설계안**(SSOT 수치 인용이 아니라 팀이 만드는 스킬 계약)이며, `approval`/`risk` 열은 app.js `skillRack` 배열 값을 그대로 인용한 사실이다. PII 등급은 데이터 등급제(public/internal/confidential/restricted, §3 참고) 기준 제안값이며 최종 확정은 [미결/7-4].
+> 근거: `_vendor/JB_project2/app/cclConsole.core.js`·`fdrConsole.core.js`·`jeonseProtectionAgents.registry.js`·`jbWooriCapitalAgents.registry.js`, [[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]](스킬 설정 메커니즘의 목표 상태), [[08_본선/03_제품/00_결정-준비/설계/paperclip-통합-블루프린트|paperclip-통합-블루프린트]] §2 #3·#11(스킬 카탈로그·플러그인 registry 이식 설계).
 
 ---
 
 ## 1. 스킬 설계 원칙
 
-- 각 에이전트는 스킬(Tool)을 장착해 특정 기능을 수행한다. 스킬은 독립적이고 재사용 가능해야 하며, company(콘솔) 단위로 장착·버전관리된다(paperclip `companySkills`/`SKILL.md` 패턴).
-- 스킬 실행은 `AgentRun`의 판단/행동초안/검증 단계 중 하나에 속하며([[08_본선/03_제품/02_agent-design/orchestrator|오케스트레이터]] §3), 모든 실행은 Audit 이벤트로 기록된다.
-- `agent-loop` SKILL.md의 품질 게이트를 그대로 채택한다: **검증 없는 생성은 미완성**, **사람 승인 없는 고위험 행동은 차단**.
+- 각 에이전트는 스킬(재사용 업무 단위)을 장착해 특정 기능을 수행한다. 스킬은 콘솔(하네스) 단위로 정의되며, 콘솔 경계를 넘어 공유되지 않는다(`jeonseProtectionAgents.registry.js` 주석: "메인/계열사 registry를 alias하지 않는다").
+- 스킬 실행은 AgentRun의 판단/행동초안/검증 단계 중 하나에 속하며([[08_본선/03_제품/02_agent-design/orchestrator|오케스트레이터]] §3), 모든 실행은 콘솔별 audit 테이블에 기록된다.
+- **목표 상태(아직 미구현)**: 담당자가 케이스 유형별로 스킬·외부 API/MCP·내부 DB 접근을 **설정(on/off)**하면 그 설정이 근거 수집 범위를 넓힌다는 것이 실차별성이다([[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]] §3). 현재 코드는 이 설정 레이어가 없고, 콘솔별 스킬 배열이 정적으로 고정돼 있다 — settings 계층·plugin registry 승격은 [[08_본선/03_제품/00_결정-준비/설계/paperclip-통합-블루프린트|블루프린트]] §6 Task 1~2(미착수)에 명시.
+- `agent-loop` SKILL.md의 품질 게이트를 그대로 채택: **검증 없는 생성은 미완성**, **사람 승인 없는 고위험 행동은 차단**.
 
 ---
 
-## 2. 스킬 카탈로그 (25종, `skillRack` 정본)
+## 2. 콘솔별 스킬 카탈로그 (코드 정본)
 
-> 담당 에이전트는 [[08_본선/03_제품/02_agent-design/agent-roster|에이전트 로스터]]의 `skills` 배열과 대조. `approval`/`risk`는 app.js 값 그대로.
+### 2.1 기업여신(CCL) — 6종, 히어로 콘솔
 
-| 스킬 ID(slug) | 유형 | 담당 에이전트 | 입력(설계안) | 도구/데이터소스(설계안) | 출력(설계안) | approval(app.js) | risk(app.js) | PII 등급(제안) |
-|---|---|---|---|---|---|---|---|---|
-| `case-os-core` | orchestration | 운영 조율 에이전트, 전세위험 관리 리드 | Case 상태 변경 요청 | 내부 Case DB | 상태 전이 이벤트, 담당 에이전트 배정 | internal only | low | internal |
-| `evidence-harvest` | research | 위험신호 조기감지 에이전트 | 뉴스/공시/상담메모 스트림 | `news-local`, 내부 상담 이력(jb-db) | 위험 근거 후보 목록 | internal only | low | internal |
-| `source-ranker` | research | 위험신호 조기감지 에이전트 | evidence-harvest 출력 | 내부 점수화 규칙 | 공식성·최신성·관련성 점수 | internal only | low | internal |
-| `pain-classifier` | reasoning | 위험신호 조기감지 에이전트 | 순위화된 근거 | 내부 분류 모델(로컬) | 상환/금리/사기/정책금융/디지털장벽 분류 | internal only | low | internal |
-| `cashflow-stress` | finance | 상환위험 분류 에이전트 | 매출·거래 이력(집계) | jb-db, ECOS API(금리) | 상환 압박 지표 | RM review | medium | confidential |
-| `rate-relief` | finance | 상환위험 분류 에이전트 | 대출 조건 + 금리지표 | ECOS API | 대환 검토 필요성 판정 | RM review | medium | internal |
-| `policy-match` | finance | 정책금융 매칭 에이전트 | 비식별 고객 프로필 + 위험 밴드 | `policy-sema`, `policy-assembly` | 정책자금/대환/보증 후보 목록 | RM review | medium | internal |
-| `document-checklist` | operations | 정책금융 매칭 에이전트, 상담 준비 | 케이스 유형 | 내부 규칙(체크리스트 템플릿) | 필요 서류·확인 질문 목록 | RM review | low | internal |
-| `fraud-shield` | risk | 이상거래 탐지·차단 에이전트 | 거래/콜백/URL 로그 | 내부 FDS, 금융위 보이스피싱 경보(public) | 사기 위험 플래그 + 차단 필요 여부 | blocks external action | high | confidential |
-| `do-not-contact-rule` | risk | 이상거래 탐지·차단 에이전트 | fraud-shield 출력 | 내부 룰엔진 | 고객 접촉 금지 플래그(mandatory) | mandatory | high | confidential |
-| `notification-brief` | communication | RM 보좌 에이전트, 은행 연계 에이전트 | 승인된 판단 + 고객 메모 | Claude/OpenAI API(비식별 초안) 또는 로컬모델 | RM 메모, 콜백 스크립트 초안 | approval required | medium | confidential |
-| `compliance-guard` | compliance | 준법 검토 에이전트, 계약 체크리스트 에이전트 | 고객향 초안 텍스트 | `law-moleg`(법령 RAG), 내부 반출 스캔 | 금지표현/개인정보/준법 리스크 플래그 | mandatory | high | restricted-scan |
-| `approval-gate` | control | 운영 조율 에이전트, 전세위험 관리 리드 | AgentRun 결과 + 승인 레벨 | 내부 승인 큐 | 승인 요청 이벤트(`approval.requested`) | mandatory | high | internal |
-| `audit-ledger` | control | 운영 조율 에이전트, 전세위험 관리 리드 | 모든 이벤트 스트림 | 내부 해시체인(`auditChainRecords`) | 감사 레코드(근거·검토·행동·승인) | mandatory | low | internal |
-| `portfolio-signal` | analytics | 포트폴리오 분석 에이전트 | 지점/계열사별 집계 데이터 | jb-db 집계 | 위험 클러스터 요약 | internal only | low | internal |
-| `jeonse-price-ratio` | jeonse-risk | 전세위험 관리 리드, 전세가율 분석 에이전트 | 매매 추정가 + 보증금 | 국토부 실거래가·공시가격 API | 전세가율 위험 산정 | RM review | high | confidential |
-| `local-market-compare` | jeonse-risk | 전세가율 분석 에이전트 | 대상 매물 + 주변 시세 | 국토부 실거래가, `realestate-redev` | 시세 대비 보증금 과다 여부 | RM review | medium | internal |
-| `registry-rights-scan` | legal-risk | 등기 권리 분석 에이전트 | 등기부 조회 결과(원문 미저장) | 인터넷등기소 등기사항증명서 조회 | 근저당/압류/가압류/신탁등기 위험 목록 | human/legal review | high | confidential |
-| `ownership-transfer-delta` | legal-risk | 등기 권리 분석 에이전트 | 소유권 이전 이력 | 인터넷등기소 | 단기 이전·매매가 급변·임대인 변경 신호 | human/legal review | high | confidential |
-| `guarantee-feasibility` | guarantee | 임차인 손실위험 에이전트, 은행 연계 에이전트 | 선순위 채권 + 보증 한도 | HUG 안심전세 기준 | 보증보험 가입 가능성 분류 | RM review | high | confidential |
-| `tenant-asset-exposure` | asset-risk | 임차인 손실위험 에이전트 | 총자산 + 보증금 | jb-db(고객 신고값) | 자산 대비 보증금 노출 비중 | advisor review | medium | confidential |
-| `housing-cost-burden` | asset-risk | 임차인 손실위험 에이전트 | 월소득 + 주거비 | jb-db | 소득 대비 주거비 부담률 | advisor review | medium | confidential |
-| `pre-contract-checklist` | contract | 계약 체크리스트 에이전트 | 계약 유형(전세/여신) | 내부 규칙 | 계약 전 확인 서류·질문 목록 | approval required | medium | internal |
-| `special-clause-drafter` | contract | 계약 체크리스트 에이전트 | 위험 판정 결과 | 로컬모델(법률 문구, PII 미개입) | 근저당말소·보증보험·잔금조건 특약 초안 | legal review | high | internal |
-| `bank-linkage-brief` | banking | 은행 연계 에이전트 | 상담 요청 + 승인 결과 | jb-db, 내부 API gateway | 계열사 시스템 연동/상담 연결 초안 | RM approval | medium | confidential |
+| 스킬 key | 라벨 | 담당 에이전트 | 입력 | 출력 |
+|---|---|---|---|---|
+| `credit-intake-triage` | 여신 접수 분류 | `ccl-intake` | loanType, amountBand | status, handoffs |
+| `financial-brief` | 재무자료 요약 브리프 | `ccl-financial` | caseId | summary, flags |
+| `repayment-band-check` | 상환 부담 구간 체크 | `ccl-repayment` | caseId | burdenBand, checklist |
+| `doc-gap-check` | 서류 누락 확인 | `ccl-doc` | caseId | missingDocs |
+| `policy-candidates` | 정책금융 후보 정리 | `ccl-policy` | caseId | candidates |
+| `approval-memo-draft` | 승인 품의 초안 | `ccl-memo` | caseId | memoDraft, approvalRequest |
+
+### 2.2 FDS/피싱(FDR) — 6종
+
+| 스킬 key | 라벨 | 담당 에이전트 | 입력 | 출력 |
+|---|---|---|---|---|
+| `alert-triage` | 경보 분류·라우팅 | `fdr-intake` | alertType, riskLevel | status, handoffs |
+| `signal-brief` | 위험 신호 요약 | `fdr-signal` | caseId | summary |
+| `elder-priority` | 고령·취약 우선 보호 | `fdr-elder` | caseId | priorityFlag, checklist |
+| `contact-script` | 송금 전 확인 스크립트(승인 대기) | `fdr-contact` | caseId | script, approvalRequest |
+| `hold-block-recommend` | 차단/보류 권고 | `fdr-block` | caseId | recommendation |
+| `report-guide` | 지급정지·신고 절차 안내 후보 | `fdr-report` | caseId | guideCandidates |
+
+### 2.3 전세보호(JPO) — 10종(+ 검증 스킬 1종은 §2.3.1)
+
+| 스킬 key | 라벨 | 담당 에이전트 | 입력 | 출력 |
+|---|---|---|---|---|
+| `loop-evaluate` | 루프 검증(확정표현·근거·PII·연계상태) | `jpo-evaluator` | caseId, outputSummary | verdict, notes |
+| `intake-triage` | 접수 분류·초기 상태 산정 | `jpo-intake` | intakeType, riskSignals | status, handoffs |
+| `market-median-enrich` | 실거래 중앙값 보강 | `jpo-price` | housingType, lawdCode, dealYm | saleMedian, jeonseMedian, sourceMode |
+| `jeonse-ratio-signal` | 전세가율/과다 신호 산출 | `jpo-price` | depositAmount, saleMedian, jeonseMedian | riskSignals |
+| `registry-checklist` | 권리관계 체크리스트 | `jpo-registry` | caseId | checkItems, manualRequired |
+| `guarantee-checklist` | 보증·HUG 확인 체크리스트 | `jpo-guarantee` | caseId | checkItems, manualRequired |
+| `auction-deadline-watch` | 경·공매 기한 감시 | `jpo-auction` | caseId, auctionDeadline | urgentSignal, escalation |
+| `victim-doc-checklist` | 피해자 신청 서류 체크리스트 | `jpo-victim` | caseId | docChecklist |
+| `consult-summary-draft` | 상담 요약·안내 초안(승인 대기) | `jpo-comms` | caseId, context | summary, approvalRequest |
+| `source-quality-report` | 데이터 품질/증적 리포트 | `jpo-dataquality` | caseId | sourceMode, confidence |
+
+#### 2.3.1 검증 전담 스킬(v3 신설) — 왜 별도 스킬/에이전트인가
+
+`loop-evaluate`는 **생성 스킬과 같은 함수가 검증을 겸하지 않는다**는 원칙의 코드 구현이다(`jpo-evaluator` guardrails: "생성과 검증은 같은 함수가 수행하지 않는다"). 확정 표현(전세사기/법률/보증/피해자 결정 단정) 탐지, 근거 수 점검, PII 원문 노출 탐지, high/critical 자동 완료 차단을 담당하며, 통과 시 `EVALUATOR_CHECKED` 감사 이벤트를 남긴다. 이 분리는 [[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]]이 요구하는 "판단 직전까지만 AI가 돕는다"는 원칙을 스킬 단위에서 강제하는 구조다.
+
+### 2.4 JB우리캐피탈(JBWC) — 6종(13 에이전트 대비 다대다 매핑)
+
+| 스킬 key | 라벨 | 담당 에이전트 | 입력 | 출력 |
+|---|---|---|---|---|
+| `ops-triage` | 운영 건 분류·라우팅 | `jbwc-orchestrator` | domain, riskLevel | recommendedAgent, initialStatus |
+| `document-status-check` | 문서·전자약정 상태 점검 | `jbwc-doc` | caseId | pendingDocuments |
+| `vehicle-task-runner` | 차량 태스크 생성·추적 | `jbwc-vehicle`, `jbwc-auto` | vehicleRefId | taskId |
+| `fds-escalation` | FDS 고위험 에스컬레이션 | `jbwc-fds` | alertType, severity | escalation, approvalRequest |
+| `consumer-right-review` | 소비자 권리 검토 플로우 | `jbwc-protect` | reviewType | checklist, reviewFlag |
+| `ops-audit-writer` | 운영 감사 기록 | `jbwc-compliance` | action, targetId | auditId |
+
+> 캐피탈은 13 에이전트 대비 스킬이 6종뿐이다 — 나머지 에이전트(`jbwc-personal`/`jbwc-mortgage`/`jbwc-enterprise`/`jbwc-care`/`jbwc-complaint`/`jbwc-metrics`)는 전용 스킬이 아직 코드에 없고 공통 스킬을 재사용하거나 스킬 없이 상태 추적만 한다 — **정합성 결함, 보강 대상**([[08_본선/03_제품/08_feature-spec|08_feature-spec]] §3 약근거 표에 준하는 성격) [미검증/7-4].
 
 ---
 
-## 3. PII 등급제 (참고, `08_본선/03_제품/00_결정-준비/설계/skills-스킬·플러그인·...md` §5)
+## 3. PII 등급제
 
-`public` / `internal` / `confidential` / `restricted` 4등급. `restricted`(성명·주민번호·계좌·연락처·주소 등 원본 식별정보)는 외부 반출 금지 — 이 등급이 필요한 스킬(`fraud-shield`, `registry-rights-scan` 등)은 내부/온프레 모델로만 라우팅하고, 외부 LLM에는 토큰화·비식별 컨텍스트만 전달한다(신용정보법 §40조의2). `restricted-scan`(compliance-guard)은 원본을 처리하는 것이 아니라 원본이 섞여 있는지 **스캔만** 하는 특수 등급이다.
+`public` / `internal` / `confidential` / `restricted` 4등급([[08_본선/03_제품/05_domain-model|05_domain-model]] §2.1과 동일 기준). `restricted`(성명·주민번호·계좌·연락처·주소 등 원본 식별정보)는 외부 반출 금지 — 이 등급이 필요한 스킬(등기부 조회, 재무자료 원본 등)은 내부/온프레 모델로만 라우팅하고, 외부 LLM에는 토큰화·비식별 컨텍스트만 전달한다(신용정보법 §40조의2). 콘솔 코드는 스킬별 PII 등급 필드를 아직 명시적으로 갖고 있지 않다 — `dbReads`/`dbWrites` 화이트리스트와 `blockedActions`(원문 저장/출력 금지 문구)로 사실상 등급을 강제하는 형태다 [E4, 필드화는 [미검증/7-4]].
 
 ---
 
 ## 4. 정합성 결함 — 보강 대상 (미해결)
 
-`agents` 배열의 `skills` 필드와 표시명 사전에는 있으나 `skillRack` 카탈로그(위 25종)에는 **없는** 5개 스킬이 있다 — MVP 자체의 데이터 정합성 결함이며 문서 문제가 아니다.
+| 항목 | 상태 |
+|---|---|
+| 콘솔별 스킬 배열에 PII 등급 필드 부재(§3) | [미결/7-4] |
+| JBWC 13 에이전트 대비 스킬 6종 — 나머지 7개 에이전트 전용 스킬 미정의(§2.4) | [미결/7-4] 담당자 확인 필요 |
+| 담당자 설정(config) 레이어 전체 미구현 — 정적 배열을 런타임 registry로 승격 필요 | [[08_본선/03_제품/00_결정-준비/설계/paperclip-통합-블루프린트|블루프린트]] §6 Task 1~2, 미착수 |
+| 콘솔 간 공용 스킬 없음(4개 레지스트리가 이름·형식이 겹쳐도 완전 독립) — 통합/재사용 여부 | [미결/7-4] |
+| 예선 `skillRack`(25종, canon 인용)과 4콘솔 스킬 합(6+6+10+6=28종) 간 이름 매핑 없음 | [Open Question] — 제출 문서에서 canon 25 인용 시 "발표 요약", 코드 근거는 콘솔별 표 인용으로 구분 |
 
-| 스킬 | 등장 위치 | 담당 에이전트 | 상태 |
-|---|---|---|---|
-| `tone-control` | agents 배열 | RM 보좌 에이전트 | [미결/7-4] `skillRack` 편입 or 제거 |
-| `trend-summary` | agents 배열 | 포트폴리오 분석 에이전트 | [미결/7-4] |
-| `case-metrics` | agents 배열 | 포트폴리오 분석 에이전트 | [미결/7-4] |
-| `privacy-redaction` | agents 배열 | 준법 검토 에이전트 | [미결/7-4] |
-| `claim-limiter` | agents 배열 | 준법 검토 에이전트 | [미결/7-4] |
-
-담당자·기한 미정 — 앱 구현 담당자 확인 필요(→담당자 확인). 제출 문서에서는 canon 기준 스킬 25를 정본으로 쓴다.
+담당자·기한 미정 — 앱 구현 담당자 확인 필요.
 
 ---
 
-## 5. 최소 eval 장치 (스킬 단위)
+## 5. 최소 eval 장치 (스킬 단위, 콘솔 공통)
 
 | 평가축 | 최소 장치 | 통과 기준 |
 |---|---|---|
-| 승인 안전 | `mandatory`/`approval required` 스킬 실행 후 반드시 `approval.requested` | 100% |
-| 근거 연결 | 판단형 스킬(`reasoning`/`finance`/`jeonse-risk`/`legal-risk`) 출력은 Evidence id와 연결 | 100% |
-| PII 반출 | `restricted`/`restricted-scan` 등급 스킬의 원본 필드가 외부 LLM 프롬프트에 포함되지 않음 | hard fail 없음 |
-| 회사 경계 | 스킬 실행 시 케이스의 계열사 스코프 밖 데이터 접근 없음 | hard fail 없음 |
-| 자동종결 금지 | `do-not-contact-rule`/`fraud-shield`가 high/critical 케이스를 자동 종결하지 않음 | hard fail 없음(승보 SECURITY_GUARDRAILS 채택 권고, [[08_본선/03_제품/02_agent-design/orchestrator|오케스트레이터]] §4) |
+| 승인 안전 | `approvalRequest` 산출 스킬 실행 후 반드시 `approvals` 테이블 pending 등록 | 100% |
+| 근거 연결 | 판단형 스킬 출력이 콘솔별 Evidence 테이블(`*_review_notes`/`*_risk_signals`)과 연결 | 100% |
+| PII 반출 | `restricted` 등급 스킬의 원본 필드가 외부 LLM 프롬프트에 포함되지 않음 | hard fail 없음 |
+| 스코프 경계 | 스킬 실행 시 케이스의 계열사/역할 스코프 밖 데이터 접근 없음(`role scope is required`) | hard fail 없음 |
+| 자동종결 금지 | high/critical 케이스를 자동 종결하지 않음(`harnessGuardCheckAutoClose`) | hard fail 없음 |
+| 생성-검증 분리(전세보호 특유) | `loop-evaluate`가 생성 스킬과 별도 함수로 실행됨 | hard fail 없음(v3 신설 원칙) |
 
 ---
 
@@ -96,5 +120,6 @@ aliases: [스킬 명세, skillRack 명세, 내부 스킬 카탈로그]
 
 - [[08_본선/03_제품/02_agent-design/agent-roster|에이전트 로스터]]
 - [[08_본선/03_제품/02_agent-design/orchestrator|오케스트레이터]]
-- [[08_본선/03_제품/04_tech/rag-rule-engine|RAG·규칙 엔진]]
-- [[08_본선/03_제품/00_결정-준비/설계/skills-스킬·플러그인·외부 플러그인·데이터 구상]]
+- [[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]]
+- [[08_본선/03_제품/00_결정-준비/설계/paperclip-통합-블루프린트|paperclip-통합-블루프린트]]
+- [[08_본선/03_제품/05_domain-model|도메인 모델]]

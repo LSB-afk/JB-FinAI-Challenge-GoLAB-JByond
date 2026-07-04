@@ -3,96 +3,129 @@ tags:
   - area/product
   - type/reference
   - status/active
-date: 2026-07-03
+date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
-aliases: [오케스트레이터, Case FSM, AgentRun 파이프라인]
+aliases: [오케스트레이터, Case FSM, AgentRun 파이프라인, 콘솔 라우팅]
 ---
 
 # 오케스트레이터
 
-> 운영 조율 에이전트(LocalGuard Orchestrator)의 역할을 **Case FSM 5단** + **AgentRun 파이프라인(판단→행동초안→검증)** + **실패정책**으로 명세한다. 근거: `_vendor/harness-engineering-skills/skills/agent-loop/SKILL.md`(Agent Capability Card), `_vendor/harness-engineering-skills/examples/jb-localguard-os/rules/agent-rules.md`(판단/검증 경계), `08_본선/03_제품/00_결정-준비/설계/승보-프로토타입-반영.md` §3(harnessCore 3계층), `02_제품/app/app.js`(`computeRiskDecision`/`buildDashboardData`/`moveCaseToColumn`/`auditChainRecords`, canon §9의 "서버 API 1:1 승격 대상").
+> **갱신 노트(2026-07-04)**: 이전 버전(07-03)은 예선 `app.js`의 단일 5컬럼 FSM + 승인 매트릭스(L0~L4)를 정본으로 삼았다. 본선 실 프로토타입(JB_project2)은 **콘솔별 독립 FSM + 오케스트레이터(콘솔 내부 `*-intake` 에이전트) + hashchange 기반 라우팅**으로 구현돼 있다. 이 문서는 **CCL(기업여신, 히어로 콘솔)을 정본 예시로** 재작성하고, 나머지 3콘솔·상위 라우팅 계층을 그 위에 정합한다.
+>
+> 근거: `_vendor/JB_project2/app/cclConsole.core.js`·`cclConsole.app.js`(hash 라우팅)·`harnessCore.js`(훅 실행기)·`harnessRegistry.js`(manifest), [[08_본선/03_제품/05_domain-model|05_domain-model]] §3·§5, [[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]](담당자 설정→근거상향 시퀀스).
 
 ---
 
-## 1. 오케스트레이터 역할
+## 1. 두 계층의 오케스트레이션 — 콘솔 선택 라우팅 + 콘솔 내부 FSM
 
-운영 조율 에이전트는 스스로 판단을 내리지 않는다 — Case를 적절한 도메인 에이전트(또는 전세보호팩 리드 같은 하위 오케스트레이터)에 라우팅하고, FSM 상태 전이·승인 레벨 산정·승인 대기 중 상태 보존을 담당한다. paperclip 용어로는 Wakeup Coordinator + Run Executor의 역할과 같다: wakeup source가 발생하면 큐잉하고, 담당 에이전트가 claim해 AgentRun을 만들도록 조율한다.
+**상위 계층(콘솔 라우팅)**: 사용자가 계열사(전북은행/JB우리캐피탈) → 역할(여신심사/FDS/전세보호/캐피탈 다도메인)을 선택하면 `window.location.hash`가 콘솔 전용 프리픽스로 바뀌고, 전역 `hashchange` 리스너(`app.js:5757`)가 `cclRouteFromHash`/`fdrRouteFromHash`/`jpoRouteFromHash`/`jbwcRouteFromHash` 중 매칭되는 라우터에 렌더링을 위임한다. 각 콘솔은 자기 라우터·자기 렌더 함수(`cclConsole.app.js` 등)를 가진 **독립 SPA 조각**이며, 공용 "메인 오케스트레이터"가 콘솔 내부 케이스를 직접 만지지 않는다 — 공용 계층이 하는 일은 **라우팅 진입점 결정 + `harnessRegistry`를 통한 manifest 조회**뿐이다.
 
-**금지**(`agent-rules.md`와 동형): 고객 대상 행동을 직접 실행하지 않는다, 승인·계좌상태 변경을 하지 않는다, 누락된 근거를 숨기지 않는다.
+**하위 계층(콘솔 내부 FSM)**: 콘솔에 진입하면 그 콘솔의 `*-intake` 에이전트(예: `ccl-intake`)가 paperclip의 Wakeup Coordinator + Run Executor 역할을 콘솔 스코프 안에서 수행한다 — Case를 적절한 전문 에이전트로 라우팅하고, 상태 전이·승인 등록·핸드오프 생성을 조율한다.
+
+**공통 금지**(콘솔 공통): 고객 대상 행동을 직접 실행하지 않는다, 승인·계좌상태 변경을 하지 않는다, 근거 누락을 숨기지 않는다, high/critical 케이스를 자동 종결하지 않는다(`harnessGuardCheckAutoClose`).
 
 ---
 
-## 2. Case FSM 5단
+## 2. Case FSM — CCL(히어로 콘솔) 6단
 
-`02_제품/app/app.js`의 실제 칸반 컬럼(`columns`, `statusToColumn`)을 그대로 FSM 정의로 채택한다.
+`cclConsole.core.js`의 `CCL_BOARD_COLUMNS`를 그대로 FSM 정의로 채택한다([[08_본선/03_제품/05_domain-model|05_domain-model]] §3.1과 동일).
 
-```
-new(접수됨) → in_progress(검토 준비 중) → review(담당자 승인 대기) → done(검토 완료)
-                                                                  ↳ blocked(보류)
+```mermaid
+stateDiagram-v2
+    [*] --> received: 신규 접수
+    received --> collecting: 자료 수집
+    collecting --> aiReview: AI 검토
+    aiReview --> humanReview: 담당자 검토 필요(high/critical·서류누락·정책금융)
+    aiReview --> memoDraft: 저위험 → 품의 진행
+    humanReview --> memoDraft: 검토 통과
+    memoDraft --> doneHold: 완료·보류
+    doneHold --> [*]
 ```
 
 | 상태 | 의미 | 전이 조건 | 담당 |
 |---|---|---|---|
-| `new` | Case 접수(위험신호가 승격되거나 수동 개설) | 위험신호 조기감지 에이전트의 `case.created` 또는 수동 접수 | 운영 조율 에이전트 |
-| `in_progress` | 도메인 에이전트 AgentRun 실행 중(판단→행동초안 단계) | 담당 에이전트 배정 완료 | 배정된 도메인 에이전트 |
-| `review` | 담당자 승인 대기(승인 게이트 통과 전) | `computeRiskDecision` 산출 + 준법 검토 통과 | RM/준법 최종 승인자 |
-| `done` | 검토 완료(승인 후 실행 또는 내부 종결) | 승인 게이트 통과 | 운영 조율 에이전트 |
-| `blocked` | 보류(고위험 차단, 승인 반려, 근거 부족) | L4 차단 판정 또는 반려 | 운영 조율 에이전트 → 상위 검토 |
+| `received` | 케이스 접수(신규 여신 검토) | `ccl-intake` 분류 완료 | 담당자 |
+| `collecting` | 자료 수집 중 | 재무·서류 자료 요청 발송 | `ccl-financial`/`ccl-doc` |
+| `aiReview` | AI 검토 진행(요약·체크·초안) | 활성 에이전트 실행 중 | 배정된 콘솔 에이전트 |
+| `humanReview` | 담당자 검토 필요 | high/critical·서류누락·정책금융 시 강제 `requiresHumanReview=true` | 담당자 |
+| `memoDraft` | 품의 진행 | 검토 통과 또는 저위험 즉시 진행 | `ccl-memo` |
+| `doneHold` | 완료·보류(비활성) | 승인/반려 확정 | 감독 |
 
-`moveCaseToColumn(caseId, column)`이 이 전이의 서버 API 승격 대상 함수다(canon §9).
+**활성 상태**(`CCL_ACTIVE_STATUSES`): `received·collecting·aiReview·humanReview·memoDraft` — `doneHold`만 비활성. 은행 실무 `상담→심사→승인→약정·실행→사후관리`의 **심사~품의 구간**에 대응하며, 약정·기표·회수·EOD는 콘솔 범위 밖([TBD]).
+
+**나머지 3콘솔의 FSM**은 각 콘솔 코드(`fdrConsole.core.js`·`jeonseProtectionAgents.registry.js`의 status 값·`jbWooriCapitalAgents.registry.js`)에 개별 정의돼 있으며, 공통 골격(접수→검토→승인 대기→완료, high/critical 자동종결 금지)은 동일하나 컬럼 라벨은 콘솔마다 다르다 — 상세 이관은 [TBD].
 
 ---
 
-## 3. AgentRun 파이프라인 (판단 → 행동초안 → 검증)
+## 3. AgentRun 파이프라인 (판단 → 행동초안 → 검증) + 담당자 설정 → 근거상향
 
-Case가 `in_progress`로 들어가면 오케스트레이터는 아래 3단 파이프라인이 순서대로(재실행 가능) 돌도록 조율한다. 각 단계는 별도 Evidence를 남겨야 하며, 다음 단계로 넘어가기 전 이전 단계 산출물이 있어야 한다(`agent-loop` SKILL.md "Generation without verification is incomplete").
+콘솔에 진입한 케이스는 3단 파이프라인을 돈다. **[[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]]**이 이 파이프라인 앞에 신설을 요구하는 **"설정(Configuration)" 단계**를 포함해 정식화하면 아래와 같다.
 
-| 단계 | 함수/책임 | 산출물 | 담당 |
+```mermaid
+sequenceDiagram
+  participant D as 담당자(설정자)
+  participant S as Settings Store(역할·케이스별 소스 구성, [조건부/미구현])
+  participant G as harnessCore(훅·가드)
+  participant K as Skill 실행
+  participant E as Evidence(콘솔별 테이블)
+  participant R as AgentRun(판단→행동초안)
+  participant H as 사람(담당자·감독)
+  D->>S: 이 케이스에 붙일 스킬·외부API·내부DB 선택(on/off) — [조건부, 아직 정적 seed]
+  S->>G: beforeAgentRun 훅 실행
+  G->>K: 스코프·PII·승인 규칙 통과분만 실행 허용
+  K-->>E: 근거 항목 적재(요약·구간값, 원문 비저장)
+  E->>R: 근거로 판단초안 생성
+  R->>H: 판단 직전까지 준비된 케이스 제출
+  H-->>R: 승인/거부/수정후승인(판단=사람)
+  R->>E: 결정·근거 감사 기록(Audit)
+```
+
+| 단계 | 함수/책임(CCL 기준) | 산출물 | 담당 |
 |---|---|---|---|
-| **1. 판단(Judgment)** | `computeRiskDecision(item)` — actionType(`contract`/`fraud`/기본)별로 가중 signal 5개 안팎을 합산해 `score`·`level`·`route`·`matrixReason` 산출 | risk score, 승인 레벨(L0~L4), 사유코드 | 도메인 판단 에이전트(상환위험 분류/전세위험 리드/이상거래 탐지) |
-| **2. 행동초안(Draft)** | `createAnalysisResult(item, mode)` — 체크리스트, RM 메모, 콜백 스크립트, 특약 문구 등 고객 대상/내부 대상 초안 생성 | RecommendationDraft(체크리스트 + 초안 문서) | RM 보좌 / 계약 체크리스트 / 정책금융 매칭 |
-| **3. 검증(Verification)** | 준법 검토 에이전트의 `compliance-guard`/`privacy-redaction`/`claim-limiter` 통과 + Evidence 연결 확인 | 검증 통과/반려, PII 반출 스캔 결과 | 준법 검토 에이전트 |
+| **0. 설정**(신설, [조건부/미구현]) | 담당자가 케이스 유형별 스킬·커넥터를 켬 — 현재는 정적 seed, 런타임 토글 UI 미착수([[08_본선/03_제품/00_결정-준비/설계/paperclip-통합-블루프린트|블루프린트]] §6 Task 1~3) | 근거 소스 구성 | 담당자 |
+| **1. 판단(Judgment)** | `ccl-financial`/`ccl-repayment` — 재무 요약·상환부담 구간 산출 | riskLevel, 확인 필요 표시 | 도메인 에이전트 |
+| **2. 행동초안(Draft)** | `ccl-doc`/`ccl-policy`/`ccl-memo`/`ccl-reply` — 체크리스트·정책후보·품의초안·회신초안 | RecommendationDraft(체크리스트+초안) | 초안 에이전트 |
+| **3. 검증(Verification)** | `beforeCustomerMessage`/`beforeCaseCreate` 훅 + `ccl-supervisor` 검토 등록 | 검증 통과/차단, PII·단정표현 스캔 결과 | 훅 + 감독 |
 
-이 3단은 `agent-rules.md`의 Judgment/Verification Boundary와 1:1 대응한다 — "Every RecommendationDraft must pass policy guard checks and human approval before being treated as actionable."
+이 3단은 `agent-loop` SKILL.md의 Judgment/Verification Boundary와 대응한다 — "검증 없는 생성은 미완성".
 
 ### 3.1 승인 게이트 → 실행 → 감사
 
 ```
-판단(computeRiskDecision) → 행동초안(createAnalysisResult) → 검증(준법 검토)
-  → 승인 게이트 [approvalLevelFor: L0~L4, L3=RM+준법 공동]
-    ├─ 승인(approved) → 행동 실행 → done
-    ├─ 반려(rejected)  → blocked → 재작업 루프(1단으로 복귀)
-    └─ 미승인·근거 부족 → review 유지(자동 실행 금지)
-  → auditChainRecords 해시체인 기록(모든 분기 공통 — 승인/반려/차단 전부 기록)
+판단(재무/상환 요약) → 행동초안(체크리스트/품의/회신) → 검증(훅 파이프라인)
+  → 승인 게이트 [requiresHumanReview=true 시 감독 결재, 잠정 L레벨 매핑은 agent-roster §3]
+    ├─ 승인(approved) → 행동 실행 → doneHold
+    ├─ 반려(rejected)  → 재작업 루프(0~1단으로 복귀)
+    └─ 미승인·근거 부족 → humanReview 유지(자동 실행 금지)
+  → *_audit_logs append-only 기록(모든 분기 공통)
 ```
 
-`approvalLevelFor(score)`가 `approvalLevelMatrix`(L0~L4)를 조회해 라우트를 결정한다. 고위험(fraud, L4) 케이스는 외부 접촉 자체가 차단되며, 승인 게이트를 우회하는 자동 실행 경로는 존재하지 않는다([[08_본선/03_제품/02_agent-design/agent-roster|에이전트 로스터]] §4).
+훅 파이프라인(코드 강제, 콘솔 공통 골격) [E4]: `onRoleEnter → beforeCaseCreate → afterCaseCreate → beforeAgentRun → afterAgentRun → beforeCustomerMessage → afterApprovalDecision → onAuditWrite`. 고위험(critical) 케이스는 `harnessGuardCheckAutoClose`가 자동완료 자체를 차단한다.
 
-### 3.2 히어로 케이스(JBG-104) 트레이스 예시
+### 3.2 히어로 케이스(CCL-0001) 트레이스 예시
 
-1. 위험신호 조기감지 에이전트가 매출 둔화 신호를 감지 → `case.created`(전주 중앙로 카페, JBG-104)
-2. 상환위험 분류 에이전트가 `in_progress`에서 `cashflow-stress`/`rate-relief` 실행 → riskScore 88 → `risk.decision.computed`(L3)
-3. 정책금융 매칭 에이전트가 정책자금 후보 + 서류 체크리스트 초안(행동초안 단계)
-4. 준법 검토 에이전트가 PII·과장표현 검토(검증 단계) → 통과
-5. `review` 상태에서 RM 최종 승인자 + 준법 최종 승인자 공동 승인(L3) → `approval.approved`
-6. RM 콜백/정책금융 안내 실행 → `done` → `audit.sealed`
+1. `ccl-intake`가 신규 여신 검토 접수 감지 → `CASE_CREATED`(전주 카페 운전자금, CCL-0001, `BIZ-REF-0001`)
+2. `ccl-financial`/`ccl-repayment`가 재무 요약·상환부담 구간 산출 → riskScore 88(예선 스냅샷 기준, 재현식은 [[08_본선/03_제품/08_feature-spec|08_feature-spec]] F-1.1.1) → `requiresHumanReview=true`
+3. `ccl-policy`가 정책자금 후보 정리(행동초안 단계)
+4. `beforeCustomerMessage` 훅이 PII·단정표현 검토(검증 단계) → 통과
+5. `humanReview` 상태에서 감독(`USR-*`) 결재 → `CCL_APPROVAL_DECIDED`
+6. `ccl-reply` 초안 발송(승인 후) → `memoDraft`/`doneHold` → 감사 기록
+
+> 라이브 LLM 연결(초안 문장 생성)은 [목표/7-4] — 7/3 기준 미연결, 미연결 시 결정형 골든패스로 폴백한다([[08_본선/03_제품/08_feature-spec|08_feature-spec]] F-2.1.1).
 
 ---
 
 ## 4. 실패정책
 
-paperclip의 heartbeat 실행 상태(`queued`/`running`/`succeeded`/`failed`/`timed_out`/`cancelled`)를 AgentRun 상태로 채택하고, 실패 시 아래 정책을 적용한다.
-
 | 실패 유형 | 정책 | 근거 |
 |---|---|---|
-| AgentRun 실행 오류/timeout | 제한된 횟수 재시도 → 지속 실패 시 `blocked` 전이 + 사람에게 escalate, `heartbeat_run_events`에 error 기록 | paperclip 실행 모델([[08_본선/03_제품/00_결정-준비/설계/agents-v2-paperclip기반-재설계]] §3) |
-| 승인 SLA 초과 | 상위 보고(운영 조율 에이전트가 재알림) — **세부 재시도/우회 규칙은 아직 구체화 필요** | `agentReadinessGaps`("실행 실패 복구") — [미결/7-4] |
-| 고위험(fraud) 신호의 오탐 가능성 | high/critical Case는 **자동종결 금지** — 안전 강등(`needsReview`)만 허용, 위반 시도는 `HOOK_VIOLATION` 유형으로 감사 기록 | 승보 프로토타입 SECURITY_GUARDRAILS 채택 권고(`08_본선/03_제품/00_결정-준비/설계/승보-프로토타입-반영.md` §4.2) — 현재 app.js에 미구현, 설계 원칙으로 채택 제안 |
-| PII 반출 스캔 실패/재식별 위험 발생 | 즉시 중단·회수·파기, 원본 재사용 금지 | 신용정보법 §40조의2 ⑥⑦ |
-| 계열사/케이스 경계 침범(scope 위반) | hard fail — 승인 불가, 즉시 차단 | 계열사 스코프 원칙([[08_본선/03_제품/02_agent-design/agent-roster|에이전트 로스터]] §1) |
-| 준법 검토 반려 | `review`에서 `blocked`로 전이하지 않고 1단(판단)으로 재작업 루프 — 반려 사유를 Evidence에 첨부 | `agent-rules.md` Verification Boundary |
+| AgentRun 실행 오류 | 자동종결 대신 `needsReview`로 안전 강등 + 감사 기록 | `harnessGuardCheckAutoClose`, [[08_본선/03_제품/08_feature-spec|08_feature-spec]] F-2.2.2 |
+| 고위험(critical) 오탐 가능성 | high/critical Case는 **자동종결 금지** — 안전 강등만 허용, 위반 시도는 훅 위반 로그(`harnessStore.hookLog`)에 기록 | `harnessCore.js` 공통 가드 |
+| PII 반출 스캔 실패 | 즉시 중단·회수, 원본 재사용 금지 | 신용정보법 §40조의2 ⑥⑦ |
+| 스코프 위반(계열사/역할 경계 침범) | hard fail — `role scope is required` 예외, 승인 불가 즉시 차단 | `cclTable()`/`jpoTable()`/`jbwcTable()` 공통 가드 |
+| 검증 반려(전세보호 `jpo-evaluator` 특유) | 검증 실패는 담당자 검토 큐(Human Inbox)로 회부, 생성 에이전트가 자체 수정하지 않는다 | `jpo-evaluator` guardrails |
 
-**원칙**: "차단 가능 지점(생성·발송·반출)은 차단 + 감사기록, 이미 발생한 지점은 안전 강등 + reviewRequired 감사기록"(승보 SECURITY_GUARDRAILS 원칙 인용) — 실패를 숨기는 대신 항상 `audit.sealed`로 귀결시킨다.
+**원칙**: "차단 가능 지점(생성·발송·반출)은 차단 + 감사기록, 이미 발생한 지점은 안전 강등 + reviewRequired 감사기록" — 실패를 숨기는 대신 항상 append-only 로그로 귀결시킨다. 04_tech 원안의 GENESIS 해시체인과 JB_project2의 append-only + `reviewRequired` 플래그 사이의 통합 여부는 [Open Question]([[08_본선/03_제품/05_domain-model|05_domain-model]] §7).
 
 ---
 
@@ -100,7 +133,7 @@ paperclip의 heartbeat 실행 상태(`queued`/`running`/`succeeded`/`failed`/`ti
 
 - [[08_본선/03_제품/02_agent-design/agent-roster|에이전트 로스터]]
 - [[08_본선/03_제품/02_agent-design/skill-spec|스킬 명세]]
-- [[08_본선/03_제품/05_diagrams/01_agent-flow|에이전트 흐름 다이어그램]]
-- [[08_본선/03_제품/05_diagrams/03_approval-gate|승인 게이트]]
-- [[08_본선/03_제품/00_결정-준비/설계/agents-v2-paperclip기반-재설계]]
-- [[08_본선/03_제품/00_결정-준비/설계/승보-프로토타입-반영]]
+- [[08_본선/03_제품/05_domain-model|도메인 모델]]
+- [[08_본선/03_제품/07_architecture|아키텍처]](Data flow §3, Human approval §10)
+- [[08_본선/03_제품/00_vision/차별성-설정근거상향-흐름|차별성-설정근거상향-흐름]]
+- [[08_본선/03_제품/00_결정-준비/설계/paperclip-통합-블루프린트|paperclip-통합-블루프린트]]
