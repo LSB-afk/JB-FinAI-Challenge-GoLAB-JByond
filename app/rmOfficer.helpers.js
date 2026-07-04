@@ -12,8 +12,10 @@ let rmoState = {
   search: { q: "", loading: false, error: false, blocked: null, results: null },
   boardFilter: "todo",
   boardOrder: [],
-  selectedAssignmentIndex: 0,
-  assignmentOrder: [],
+  /* 업무 계층도(Agent Work Map) 키보드 상태 — ↑↓로 노드 이동, Space로 상세 펼치기 */
+  workMapFocusIndex: 0,
+  workMapNodeOrder: [],
+  workMapExpandedNodeId: null,
   mdTab: "통합본",
   modal: null,
   lastRun: null,
@@ -65,7 +67,7 @@ function rmoRouteFromHash(hash) {
 function rmoGo(view, detail) {
   rmoState.view = view;
   rmoState.detail = detail || null;
-  if (detail && detail.kind === "case") { rmoState.selectedAssignmentIndex = 0; }
+  if (detail && detail.kind === "case") { rmoState.workMapFocusIndex = -1; rmoState.workMapExpandedNodeId = null; }
   const next = detail && detail.kind === "case" ? rmoHashForView("cases", detail.id) : rmoHashForView(view);
   if (window.location.hash !== next) window.location.hash = next;
   else if (typeof render === "function") render();

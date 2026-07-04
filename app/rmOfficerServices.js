@@ -160,24 +160,40 @@ function createRmOfficerCase(form) {
     tags: [RMO_CASE_TYPES[type].label, form.bank || "전북은행"],
   }));
 
-  preview.agentPlan.forEach((agentId, order) => {
+  const wm = rmoWorkMapAgentsForCaseType(type);
+  function insertWorkMapNode(agentId, order, kind, status) {
     const agent = rmOfficerAgents.find((a) => a.id === agentId) || rmOfficerAgents[0];
     const tpl = rmoDeliverableTemplate(agentId);
+    const fields = rmoNodeFieldsFor(agentId);
     rmoInsert("rm_officer_agent_assignments", rmoScopedRow({
       id: rmoNextId("RMO-ASG", "rm_officer_agent_assignments"),
       caseId: row.id,
       agentId,
       order,
-      status: "pendingApproval",
+      kind,
+      status,
       expectedOutput: agent.deliverableFile,
+      outputMdPath: agent.deliverableFile,
       estimatedMinutes: agent.estimatedMinutes,
       reason: agent.description,
+      role: fields.role,
+      inputData: fields.inputData,
+      tools: fields.tools,
+      riskLevel: fields.riskLevel || row.riskLevel,
+      requiresApproval: true,
       expectedValue: tpl.expectedValue,
       dataChips: (tpl.sources || []).map((s) => s.label),
       progress: 0,
       createdAt: now,
     }));
-  });
+  }
+  wm.branches.forEach((agentId, order) => insertWorkMapNode(agentId, order, "branch", "pendingApproval"));
+  insertWorkMapNode(wm.report, wm.branches.length, "report", "notStarted");
+
+  /* 총괄(orchestrator) 노드는 자동 완료 — 우선순위 근거 산정 결과를 priority-brief.md로 즉시 남긴다 */
+  const orchestratorDoc = rmoBuildAgentDeliverable(row, "rmo-triage");
+  orchestratorDoc.id = rmoNextId("RMO-DLV", "rm_officer_deliverables");
+  rmoInsert("rm_officer_deliverables", rmoScopedRow(orchestratorDoc));
 
   rmoInsert("rm_officer_evidence_items", rmoScopedRow({
     id: rmoNextId("RMO-EVD", "rm_officer_evidence_items"),
@@ -242,15 +258,24 @@ function recordRmOfficerAgentRun(input) {
   return run;
 }
 
-/* 키보드 Enter 승인 — 선택된 배정 에이전트를 (모의) 실행하고 개별 md 산출물을 만든다.
-   케이스 배정이 모두 끝나면 통합본을 만들고, high/critical은 자동 완료하지 않고 담당자 검토로 라우팅한다. */
+/* 키보드 Enter 승인 — 선택된 업무 계층도 노드(branch/report)를 (모의) 실행하고 개별 md 산출물을 만든다.
+   report 노드는 모든 branch 노드가 완료된 뒤에만 실행 가능(선행 완료 게이팅). report 실행 시 통합본을
+   만들고, high/critical은 자동 완료하지 않고 report 노드를 needsApproval(보라)로 남겨 담당자 검토로 라우팅한다. */
 function approveRmOfficerAssignment(assignmentId) {
   const now = rmoNow();
   const asg = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY).find((a) => a.id === assignmentId);
   if (!asg) return { error: "배정을 찾을 수 없습니다." };
-  if (asg.status === "completed") return { alreadyDone: true, assignment: asg };
+  if (["completed", "needsApproval"].includes(asg.status)) return { alreadyDone: true, assignment: asg };
   const caseRow = rmoTable("rm_officer_cases", RMO_ROLE_KEY).find((c) => c.id === asg.caseId);
   if (!caseRow) return { error: "케이스를 찾을 수 없습니다." };
+
+  if (asg.kind === "report") {
+    const incompleteBranches = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY)
+      .filter((a) => a.caseId === caseRow.id && a.kind !== "report" && a.status !== "completed");
+    if (incompleteBranches.length) return { error: "선행 분석 노드를 먼저 완료해야 합니다." };
+  } else if (asg.status !== "pendingApproval") {
+    return { error: "아직 실행할 수 없는 노드입니다." };
+  }
 
   const built = rmoBuildAgentDeliverable(caseRow, asg.agentId);
   built.id = rmoNextId("RMO-DLV", "rm_officer_deliverables");
@@ -264,33 +289,89 @@ function approveRmOfficerAssignment(assignmentId) {
     status: "completed",
     riskLevel: caseRow.riskLevel,
   });
-  rmoUpdate("rm_officer_agent_assignments", asg.id, { status: "completed", progress: 100 });
   rmoWriteAudit({ id: rmoNextId("RMO-AUD", "rm_officer_audit_logs"), caseId: caseRow.id, actorId: asg.agentId, action: "DELIVERABLE_CREATED", targetType: "rm_officer_deliverable", targetId: built.id, riskLevel: caseRow.riskLevel, reviewRequired: true, createdAt: now });
 
   let stage = caseRow.stage;
   let status = caseRow.status;
   if (rmoStageOf(caseRow) === "todo") { stage = "doing"; status = "analyzing"; }
 
-  const remaining = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY).filter((a) => a.caseId === caseRow.id && !["completed", "skipped"].includes(a.status));
   let integrated = null;
-  if (!remaining.length) {
+  if (asg.kind === "report") {
     const agentDeliverables = rmoTable("rm_officer_deliverables", RMO_ROLE_KEY).filter((d) => d.caseId === caseRow.id && d.kind === "agent");
     integrated = rmoBuildIntegratedDeliverable(caseRow, agentDeliverables);
     integrated.id = rmoNextId("RMO-DLV", "rm_officer_deliverables");
     rmoInsert("rm_officer_deliverables", rmoScopedRow(integrated));
-    /* high/critical은 자동 종결 금지 → 담당자 검토 + 승인 라우팅 */
+    /* high/critical은 자동 종결 금지 → report 노드를 사람 승인 필요(보라) 상태로 남기고 승인 라우팅 */
     if (["high", "critical"].includes(caseRow.riskLevel)) {
       status = "humanReview"; stage = "doing";
+      rmoUpdate("rm_officer_agent_assignments", asg.id, { status: "needsApproval", progress: 100 });
       rmoInsert("rm_officer_approvals", rmoScopedRow({ id: rmoNextId("RMO-APR", "rm_officer_approvals"), caseId: caseRow.id, approvalType: "고위험 통합 리포트 검토 승인", status: "pending", requestedById: caseRow.assignedRmId, approverId: "USR-RMO-APR-01", requestedAt: now }));
       rmoInsert("rm_officer_agent_handoffs", rmoScopedRow({ id: rmoNextId("RMO-HND", "rm_officer_agent_handoffs"), fromAgentId: "rmo-compliance", toAgentId: "rmo-approval-router", caseId: caseRow.id, reason: "high/critical 통합 리포트 — 승인 라우팅", status: "escalated", createdAt: now }));
     } else {
       status = "completed"; stage = "done";
+      rmoUpdate("rm_officer_agent_assignments", asg.id, { status: "completed", progress: 100 });
     }
     rmoWriteAudit({ id: rmoNextId("RMO-AUD", "rm_officer_audit_logs"), caseId: caseRow.id, actorId: "rmo-triage", action: "INTEGRATED_REPORT_CREATED", targetType: "rm_officer_deliverable", targetId: integrated.id, riskLevel: caseRow.riskLevel, reviewRequired: status === "humanReview", createdAt: now });
+  } else {
+    rmoUpdate("rm_officer_agent_assignments", asg.id, { status: "completed", progress: 100 });
+    /* 모든 branch가 완료되면 report 노드를 notStarted(회색)에서 실행 가능(파랑)으로 전환한다 */
+    const branchSiblings = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY).filter((a) => a.caseId === caseRow.id && a.kind !== "report");
+    const allBranchesDone = branchSiblings.every((a) => a.id === asg.id || a.status === "completed");
+    if (allBranchesDone) {
+      const reportNode = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY).find((a) => a.caseId === caseRow.id && a.kind === "report");
+      if (reportNode && reportNode.status === "notStarted") rmoUpdate("rm_officer_agent_assignments", reportNode.id, { status: "pendingApproval" });
+    }
   }
   rmoUpdate("rm_officer_cases", caseRow.id, { stage, status, updatedAt: now });
 
-  return { assignment: asg, deliverable: built, run, integrated, case: rmoTable("rm_officer_cases", RMO_ROLE_KEY).find((c) => c.id === caseRow.id) };
+  return {
+    assignment: rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY).find((a) => a.id === asg.id),
+    deliverable: built,
+    run,
+    integrated,
+    case: rmoTable("rm_officer_cases", RMO_ROLE_KEY).find((c) => c.id === caseRow.id),
+  };
+}
+
+/* 키보드 R — 완료/반려 노드를 재실행한다. 이전 산출물(개별 md, report면 통합본까지)을 정리한 뒤
+   pendingApproval로 되돌려 approveRmOfficerAssignment를 다시 태운다. */
+function rmoRerunWorkMapNode(assignmentId) {
+  const asg = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY).find((a) => a.id === assignmentId);
+  if (!asg) return { error: "노드를 찾을 수 없습니다." };
+  if (!["completed", "rejected", "needsApproval"].includes(asg.status)) return { error: "재실행할 수 없는 상태입니다." };
+  const db = rmoLoadDb();
+  db.rm_officer_deliverables = (db.rm_officer_deliverables || []).filter((d) => {
+    if (d.caseId !== asg.caseId) return true;
+    if (asg.kind === "report" && d.kind === "integrated") return false;
+    if (d.agentId === asg.agentId && d.kind === "agent") return false;
+    return true;
+  });
+  rmoSaveDb();
+  rmoUpdate("rm_officer_agent_assignments", asg.id, { status: "pendingApproval", progress: 0 });
+  return approveRmOfficerAssignment(assignmentId);
+}
+
+/* 키보드 A — 케이스 통합 보고서 최종 승인(직원 최종 승인). report 노드가 완료/승인대기 상태여야 하며,
+   high/critical로 승인 라우팅된 케이스는 대기 중인 approval을 함께 승인 처리한다. */
+function rmoApproveCaseReport(caseId, decidedBy) {
+  const now = rmoNow();
+  const caseRow = rmoTable("rm_officer_cases", RMO_ROLE_KEY).find((c) => c.id === caseId);
+  if (!caseRow) return { error: "케이스를 찾을 수 없습니다." };
+  const reportNode = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY).find((a) => a.caseId === caseId && a.kind === "report");
+  if (!reportNode || !["needsApproval", "completed"].includes(reportNode.status)) {
+    return { error: "아직 승인할 통합 보고서가 없습니다. 먼저 분석 노드를 모두 완료하세요." };
+  }
+  if (caseRow.status === "completed") return { alreadyDone: true, case: caseRow };
+  const actor = decidedBy || "USR-RMO-APR-01";
+  const pendingApproval = rmoTable("rm_officer_approvals", RMO_ROLE_KEY).find((a) => a.caseId === caseId && a.status === "pending");
+  if (pendingApproval) rmoDecideApproval(pendingApproval.id, "approve", actor);
+  rmoUpdate("rm_officer_agent_assignments", reportNode.id, { status: "completed", progress: 100 });
+  rmoUpdate("rm_officer_cases", caseId, { status: "completed", stage: "done", updatedAt: now });
+  rmoWriteAudit({ id: rmoNextId("RMO-AUD", "rm_officer_audit_logs"), caseId, actorId: actor, action: "CASE_REPORT_APPROVED", targetType: "rm_officer_case", targetId: caseId, riskLevel: caseRow.riskLevel, reviewRequired: false, createdAt: now });
+  return {
+    case: rmoTable("rm_officer_cases", RMO_ROLE_KEY).find((c) => c.id === caseId),
+    report: rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY).find((a) => a.id === reportNode.id),
+  };
 }
 
 function rmoDecideApproval(approvalId, decision, decidedBy) {

@@ -54,28 +54,35 @@ function rmoBoardView() {
     </div>
     <p class="rmo-keyboard-hint" aria-hidden="false">키보드 숫자를 눌러 Case를 확인하세요 · 방향키로 에이전트 이동 · Enter로 승인·실행</p>
   </section>`;
-  const sub = rmoState.detail && rmoState.detail.kind === "case" ? rmoCaseSubSection(rmoState.detail.id) : `<section class="workspace-panel jbwc-panel rmo-sub-empty"><p class="eyebrow">케이스 상세(SUB)</p><div class="jbwc-empty">위 목록에서 케이스를 선택(숫자키/클릭)하면 에이전트 승인 큐와 통합 리포트가 열립니다.</div></section>`;
+  const subBody = rmoState.detail && rmoState.detail.kind === "case" ? rmoCaseSubSection(rmoState.detail.id) : `<section class="workspace-panel jbwc-panel rmo-sub-empty"><p class="eyebrow">케이스 상세(SUB)</p><div class="jbwc-empty">위 목록에서 케이스를 선택(숫자키/클릭)하면 업무 계층도와 통합 리포트가 열립니다.</div></section>`;
+  /* 요구3 — 업무보드(위)와 SUB(케이스 상세, 아래) 사이 시각적 구분: 좌측 레일 라벨 + 배경 밴드 */
+  const sub = `<div class="rmo-sub-band" aria-hidden="true"><span class="rmo-sub-rail-label">SUB</span><span class="rmo-sub-rail-text">케이스 상세 · 업무 계층도</span></div><div class="rmo-sub-region">${subBody}</div>`;
   return `${banner}
     ${rmoCountHeader(allCases)}
     ${rmoBoardFilters()}
     <section class="workspace-panel jbwc-panel"><p class="eyebrow">업무보드 (${sorted.length}건 · 급한 순)</p><div class="rmo-case-rail">${cards}</div></section>
+    <div class="rmo-board-sub-divider" aria-hidden="true"></div>
     ${sub}
     ${rmoMockNote()}`;
 }
 
-/* 케이스 SUB — 헤더 카드 + 상태 칩 + 에이전트 승인 큐 + (완료 시)통합 MD 뷰어 */
+/* 케이스 SUB [상단] — 케이스 요약: 고객/사업자·도메인·계열사·현재 위험 신호·처리 목표 */
 function rmoCaseSubSection(caseId) {
   const caseRow = rmoTable("rm_officer_cases", RMO_ROLE_KEY).find((c) => c.id === caseId);
   if (!caseRow) return `<section class="workspace-panel jbwc-panel"><div class="jbwc-empty">케이스를 찾을 수 없습니다.</div></section>`;
   const stageChips = RMO_STAGES.map((s) => `<span class="rmo-stage-chip ${rmoStageOf(caseRow) === s ? "is-active" : ""}">${escapeHtml(RMO_STAGE_SHORT[s])}</span>`).join("");
+  const riskSignalChips = (caseRow.prioritySources || []).map((s) => `<span class="rmo-data-chip">${escapeHtml(s.label)}</span>`).join("") || `<span class="jbwc-row-note">연결된 위험 신호 없음</span>`;
+  const customerLine = [caseRow.customerAlias, caseRow.customerAge ? `${caseRow.customerAge}세` : "", caseRow.affiliate ? `· ${caseRow.affiliate}` : ""].filter(Boolean).join(" ");
   const header = `<section class="workspace-panel jbwc-panel rmo-sub-head">
     <header class="rmo-sub-head-row">
       <div>
         <p class="eyebrow">Case · ${escapeHtml(caseRow.createdAt)} · ${escapeHtml(RMO_RISK_LABELS[caseRow.riskLevel] || caseRow.riskLevel)} 위험</p>
         <h3>${escapeHtml(caseRow.caseNo)} · ${escapeHtml(caseRow.theme)}</h3>
-        <p class="jbwc-meta">${escapeHtml(caseRow.customerAlias)} · ${escapeHtml(caseRow.region)} · ${escapeHtml(caseRow.bank)} · 담당 ${escapeHtml(rmoUserName(caseRow.assignedRmId))}</p>
+        <p class="jbwc-meta">${escapeHtml(customerLine)} · ${escapeHtml(caseRow.region)} · ${escapeHtml(caseRow.bank)} · ${escapeHtml(rmoCaseTypeLabel(caseRow.caseType))} · 담당 ${escapeHtml(rmoUserName(caseRow.assignedRmId))}</p>
         <p class="rmo-situation">${escapeHtml(caseRow.situation)}</p>
+        <p class="rmo-goal-line"><strong>처리 목표</strong> ${escapeHtml(caseRow.goal || "-")}</p>
         <p class="rmo-case-reason"><span aria-hidden="true">▎</span>${escapeHtml(caseRow.priorityReason)}</p>
+        <div class="rmo-data-chips">${riskSignalChips}</div>
       </div>
       <div class="rmo-sub-head-side">
         ${rmoRiskPill(caseRow.riskLevel)} ${rmoPriorityPill(caseRow.priority)}
@@ -84,41 +91,79 @@ function rmoCaseSubSection(caseId) {
       </div>
     </header>
   </section>`;
-  return header + rmoAgentQueueSection(caseRow) + rmoDeliverableViewerSection(caseRow);
+  return header + rmoWorkMapSection(caseRow) + rmoDeliverableViewerSection(caseRow) + rmoApprovalGateSection(caseRow);
 }
 
-/* 에이전트 승인 큐 — 각 카드: 에이전트·소속·산출물.md·소요·이유·기대값·데이터칩 + Enter 승인 */
-function rmoAgentQueueSection(caseRow) {
-  const assignments = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY)
-    .filter((a) => a.caseId === caseRow.id)
-    .sort((a, b) => (a.order || 0) - (b.order || 0));
-  const pending = assignments.filter((a) => a.status === "pendingApproval");
-  rmoState.assignmentOrder = pending.map((a) => a.id);
-  if (rmoState.selectedAssignmentIndex >= pending.length) rmoState.selectedAssignmentIndex = Math.max(0, pending.length - 1);
-  const selectedPending = pending[rmoState.selectedAssignmentIndex] || null;
-  const cards = assignments.map((a) => {
-    const agent = rmOfficerAgents.find((x) => x.id === a.agentId) || {};
-    const isSelected = a.status === "pendingApproval" && selectedPending && a.id === selectedPending.id;
-    const running = a.status === "running";
-    const done = a.status === "completed";
-    const chips = (a.dataChips || []).map((chip) => `<span class="rmo-data-chip">${escapeHtml(chip)}</span>`).join("");
-    return `<article class="rmo-agent-queue-card ${isSelected ? "is-selected" : ""} ${done ? "is-done" : ""} ${running ? "is-running" : ""}" data-rmo-assignment="${escapeHtml(a.id)}">
-      <header class="rmo-aq-head">
-        <div><strong>${escapeHtml(agent.displayName || a.agentId)}</strong><span class="rmo-aq-org">${escapeHtml(agent.org || "-")}</span></div>
-        <div class="rmo-aq-meta">${escapeHtml(a.expectedOutput)} · 소요 ${escapeHtml(String(a.estimatedMinutes))}분 ${rmoStatusPill(a.status)}</div>
-      </header>
-      <p class="jbwc-meta">이 에이전트를 사용하는 이유: ${escapeHtml(a.reason)}</p>
-      <p class="jbwc-meta">예상 기대값: ${escapeHtml(a.expectedValue)}</p>
-      <div class="rmo-data-chips">${chips}</div>
-      ${running ? `<div class="rmo-run-overlay" role="status"><span class="rmo-run-spin" aria-hidden="true">⟳</span> 조금만 기다려주세요<span class="rmo-progress-indeterminate" aria-hidden="true"></span></div>` : ""}
-      ${done ? `<p class="rmo-aq-done">✔ 산출물 생성 완료 — 아래 통합 리포트에서 확인</p>` : ""}
-      ${isSelected ? `<footer class="rmo-aq-foot"><span class="rmo-enter-hint">Enter를 눌러 승인해주세요</span><button class="primary-button" type="button" data-rmo-approve="${escapeHtml(a.id)}">승인·실행</button></footer>` : (a.status === "pendingApproval" ? `<footer class="rmo-aq-foot"><button class="secondary-button" type="button" data-rmo-approve="${escapeHtml(a.id)}">승인·실행</button></footer>` : "")}
-    </article>`;
-  }).join("");
-  const hint = pending.length
-    ? `<p class="jbwc-meta">현재 선택: <strong>${escapeHtml(selectedPending ? rmoAgentDisplayName(selectedPending.agentId) : "-")}</strong> · 승인하지 않을 에이전트는 그대로 두어도 됩니다.</p>`
-    : `<p class="jbwc-meta">대기 중인 승인 큐가 없습니다. 실행 결과는 통합 리포트에서 확인하세요.</p>`;
-  return rmoPanel(`에이전트 승인 큐 (${assignments.length})`, `${hint}<div class="rmo-agent-queue">${cards}</div>`);
+/* 노드 상세 카드 — 11필드(agentId/agentName/role/reason/inputData/tools/expectedOutput/status/
+   riskLevel/requiresApproval/outputMdPath)를 모두 노출하고, Space로 펼치는 추가 상세를 포함한다. */
+function rmoWorkMapNodeCard(node, options) {
+  const colorClass = rmoNodeStatusColorClass(node.status);
+  const isFocused = options.focused;
+  const isExpanded = rmoState.workMapExpandedNodeId === node.id;
+  const canExecute = rmoNodeStatus(node.status) === "ready";
+  const canRerun = ["completed", "rejected"].includes(rmoNodeStatus(node.status)) && node.kind !== "orchestrator";
+  const nodeKeyAttr = node.kind === "orchestrator" ? "" : ` data-rmo-assignment="${escapeHtml(node.id)}"`;
+  const detail = isExpanded ? `<div class="rmo-node-detail">
+      <div><span>사용 데이터</span><div class="rmo-data-chips">${(node.inputData || []).map((d) => `<span class="rmo-data-chip">${escapeHtml(d)}</span>`).join("") || "-"}</div></div>
+      <div><span>도구/스킬</span><div class="rmo-data-chips">${(node.tools || []).map((t) => `<span class="rmo-agent-chip">${escapeHtml(t)}</span>`).join("") || "-"}</div></div>
+      <div><span>산출물 경로</span><strong>${escapeHtml(node.outputMdPath || node.expectedOutput || "-")}</strong></div>
+      <div><span>승인 필요 여부</span><strong>${node.requiresApproval ? "필요" : "불필요"}</strong></div>
+    </div>` : "";
+  return `<article class="rmo-node-card ${colorClass} ${isFocused ? "rmo-node-focused" : ""}" data-rmo-node="${escapeHtml(node.id)}" data-rmo-node-kind="${escapeHtml(node.kind)}"${nodeKeyAttr} role="button" tabindex="0">
+    <header class="rmo-aq-head">
+      <div><strong>${escapeHtml(node.agentName || rmoAgentDisplayName(node.agentId))}</strong><span class="rmo-aq-org">${escapeHtml(node.agentId)}</span></div>
+      <div class="rmo-aq-meta">${rmoRiskPill(node.riskLevel)}<span class="status-pill rmo-node-status-pill">${escapeHtml(rmoNodeStatusLabel(node.status))}</span></div>
+    </header>
+    <p class="jbwc-meta"><strong>역할</strong> ${escapeHtml(node.role || "-")}</p>
+    <p class="jbwc-meta"><strong>이 에이전트를 사용하는 이유</strong> ${escapeHtml(node.reason || "-")}</p>
+    <p class="jbwc-meta"><strong>예상 산출물</strong> ${escapeHtml(node.outputMdPath || node.expectedOutput || "-")}</p>
+    ${rmoNodeStatus(node.status) === "running" ? `<div class="rmo-run-overlay" role="status"><span class="rmo-run-spin" aria-hidden="true">⟳</span> 조금만 기다려주세요<span class="rmo-progress-indeterminate" aria-hidden="true"></span></div>` : ""}
+    ${rmoNodeStatus(node.status) === "completed" ? `<p class="rmo-aq-done">✔ 산출물 생성 완료</p>` : ""}
+    ${detail}
+    <footer class="rmo-aq-foot">
+      ${isFocused && canExecute ? `<span class="rmo-enter-hint">Enter를 눌러 승인해주세요</span>` : ""}
+      ${canExecute ? `<button class="${isFocused ? "primary-button" : "secondary-button"}" type="button" data-rmo-approve="${escapeHtml(node.id)}">승인·실행</button>` : ""}
+      ${canRerun ? `<button class="secondary-button" type="button" data-rmo-rerun="${escapeHtml(node.id)}">재실행(R)</button>` : ""}
+    </footer>
+  </article>`;
+}
+
+/* 케이스 SUB [중단] — 에이전트 업무 계층도(Agent Work Map): 총괄 → 분석 브랜치 → 최종 보고서.
+   패널 제목에 기존 "에이전트 승인 큐" 표현을 함께 담아 계약을 유지한다. */
+function rmoWorkMapSection(caseRow) {
+  const tree = rmoBuildWorkMapTree(caseRow);
+  rmoState.workMapNodeOrder = tree.flattened.map((n) => n.id);
+  if (rmoState.workMapFocusIndex < 0 || rmoState.workMapFocusIndex >= tree.flattened.length) rmoState.workMapFocusIndex = rmoDefaultWorkMapFocusIndex(tree.flattened);
+  const focusedId = tree.flattened[rmoState.workMapFocusIndex] ? tree.flattened[rmoState.workMapFocusIndex].id : null;
+  const branchCards = tree.branches.map((n) => rmoWorkMapNodeCard(n, { focused: n.id === focusedId })).join("");
+  const reportCard = tree.report ? rmoWorkMapNodeCard(tree.report, { focused: tree.report.id === focusedId }) : "";
+  const hint = `<p class="jbwc-meta">현재 선택 노드: <strong>${escapeHtml(tree.flattened[rmoState.workMapFocusIndex] ? (tree.flattened[rmoState.workMapFocusIndex].agentName || rmoAgentDisplayName(tree.flattened[rmoState.workMapFocusIndex].agentId)) : "-")}</strong> · ↑↓ 노드 이동 · Space 상세 보기 · 승인하지 않을 에이전트는 그대로 두어도 됩니다.</p>`;
+  return rmoPanel(`에이전트 업무 계층도 (에이전트 승인 큐 · ${tree.flattened.length})`, `${hint}
+    <div class="rmo-workmap">
+      ${rmoWorkMapNodeCard(tree.orchestrator, { focused: tree.orchestrator.id === focusedId })}
+      <div class="rmo-node-connector" aria-hidden="true"></div>
+      <div class="rmo-node-branches">${branchCards}</div>
+      <div class="rmo-node-connector" aria-hidden="true"></div>
+      ${reportCard}
+    </div>`);
+}
+
+/* 케이스 SUB [하단 · 직원 최종 승인] — report 노드가 완료/승인대기 상태일 때만 A(승인) 버튼 활성화 */
+function rmoApprovalGateSection(caseRow) {
+  const reportNode = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY).find((a) => a.caseId === caseRow.id && a.kind === "report");
+  const status = reportNode ? rmoNodeStatus(reportNode.status) : "notStarted";
+  const ready = status === "needsApproval" || (status === "completed" && caseRow.status !== "completed");
+  const alreadyApproved = caseRow.status === "completed";
+  const message = alreadyApproved
+    ? "이 케이스는 직원 최종 승인이 완료되었습니다."
+    : status === "needsApproval"
+      ? "통합 보고서가 준비되었습니다. A를 눌러 직원 최종 승인을 진행하세요."
+      : "통합 보고서가 아직 준비되지 않았습니다. 먼저 모든 분석 노드를 완료하세요.";
+  return `<section class="workspace-panel jbwc-panel rmo-approval-gate">
+    <p class="eyebrow">직원 최종 승인 (Human Approval)</p>
+    <p class="jbwc-meta">${escapeHtml(message)}</p>
+    <button class="primary-button" type="button" data-rmo-approve-case="${escapeHtml(caseRow.id)}" ${ready ? "" : "disabled"}>A 승인 · 케이스 완료 처리</button>
+  </section>`;
 }
 
 /* 통합 MD 뷰어(화면 B) — 탭[통합본 | 개별.md] + 본문 + 접이식[에이전트/스킬 표 · 출처] */

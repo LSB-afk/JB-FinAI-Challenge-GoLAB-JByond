@@ -40,7 +40,8 @@ function rmoActivateFromHash() {
     const nextDetail = { kind: "case", id: route.caseId };
     if (JSON.stringify(rmoState.detail) !== JSON.stringify(nextDetail)) {
       rmoState.detail = nextDetail;
-      rmoState.selectedAssignmentIndex = 0;
+      rmoState.workMapFocusIndex = -1;
+      rmoState.workMapExpandedNodeId = null;
       changed = true;
     }
   }
@@ -52,9 +53,29 @@ function rmoDoApprove(assignmentId) {
   if (result.error) { if (typeof notify === "function") notify(result.error); return; }
   if (result.alreadyDone) { if (typeof notify === "function") notify("이미 실행 완료된 에이전트입니다."); return; }
   rmoInvalidateCounts();
-  rmoState.selectedAssignmentIndex = 0;
-  if (result.integrated) { rmoState.mdTab = "통합본"; if (typeof notify === "function") notify(`${result.deliverable.fileName} 생성 · 통합 리포트 완성 — 담당자 검토`); }
+  rmoState.workMapExpandedNodeId = null;
+  if (result.integrated) { rmoState.mdTab = "통합본"; if (typeof notify === "function") notify(`${result.deliverable.fileName} 생성 · 통합 리포트 완성 — 직원 최종 승인(A) 대기`); }
   else if (typeof notify === "function") notify(`${result.deliverable.fileName} 생성 완료 — 다음 에이전트 승인(Enter)`);
+  render();
+}
+
+function rmoDoRerun(assignmentId) {
+  const result = rmoRerunWorkMapNode(assignmentId);
+  if (result.error) { if (typeof notify === "function") notify(result.error); return; }
+  rmoInvalidateCounts();
+  rmoState.workMapExpandedNodeId = null;
+  if (typeof notify === "function") notify(`${result.deliverable ? result.deliverable.fileName : ""} 재실행 완료`.trim());
+  render();
+}
+
+function rmoDoApproveCase() {
+  const caseId = rmoState.detail && rmoState.detail.kind === "case" ? rmoState.detail.id : null;
+  if (!caseId) return;
+  const result = rmoApproveCaseReport(caseId, "USR-RMO-APR-01");
+  if (result.error) { if (typeof notify === "function") notify(result.error); return; }
+  if (result.alreadyDone) { if (typeof notify === "function") notify("이미 직원 최종 승인이 완료된 케이스입니다."); return; }
+  rmoInvalidateCounts();
+  if (typeof notify === "function") notify("직원 최종 승인 완료 — 케이스가 종료 처리되었습니다.");
   render();
 }
 
@@ -72,18 +93,42 @@ function rmoHandleKeydown(event) {
     return;
   }
   const caseSelected = rmoState.detail && rmoState.detail.kind === "case";
+  /* ←→ 케이스 이동 — 케이스가 선택된 상태에서 업무보드 순서를 따라 이전/다음 케이스로 */
+  if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+    if (caseSelected && rmoState.view === "board" && rmoState.boardOrder.length) {
+      const idx = rmoState.boardOrder.indexOf(rmoState.detail.id);
+      const nextIdx = event.key === "ArrowRight" ? Math.min(idx + 1, rmoState.boardOrder.length - 1) : Math.max(idx - 1, 0);
+      const nextId = rmoState.boardOrder[nextIdx];
+      if (nextId && nextId !== rmoState.detail.id) rmoGo("board", { kind: "case", id: nextId });
+      event.preventDefault();
+    }
+    return;
+  }
   if (!caseSelected) return;
-  if (["ArrowDown", "ArrowRight", "j"].includes(event.key)) {
-    rmoState.selectedAssignmentIndex = Math.min(rmoState.selectedAssignmentIndex + 1, Math.max(0, rmoState.assignmentOrder.length - 1));
+  /* ↑↓ 업무 계층도 노드 이동 · Space 상세 보기 · Enter 실행 승인 · R 재실행 · A 통합 보고서 승인 */
+  if (event.key === "ArrowDown") {
+    rmoState.workMapFocusIndex = Math.min(rmoState.workMapFocusIndex + 1, Math.max(0, rmoState.workMapNodeOrder.length - 1));
+    rmoState.workMapExpandedNodeId = null;
     render(); event.preventDefault();
-  } else if (["ArrowUp", "ArrowLeft", "k"].includes(event.key)) {
-    rmoState.selectedAssignmentIndex = Math.max(rmoState.selectedAssignmentIndex - 1, 0);
+  } else if (event.key === "ArrowUp") {
+    rmoState.workMapFocusIndex = Math.max(rmoState.workMapFocusIndex - 1, 0);
+    rmoState.workMapExpandedNodeId = null;
+    render(); event.preventDefault();
+  } else if (event.key === " " || event.key === "Spacebar") {
+    const id = rmoState.workMapNodeOrder[rmoState.workMapFocusIndex];
+    if (id) rmoState.workMapExpandedNodeId = rmoState.workMapExpandedNodeId === id ? null : id;
     render(); event.preventDefault();
   } else if (event.key === "Enter") {
-    const id = rmoState.assignmentOrder[rmoState.selectedAssignmentIndex];
+    const id = rmoState.workMapNodeOrder[rmoState.workMapFocusIndex];
     if (id) { rmoDoApprove(id); event.preventDefault(); }
+  } else if (event.key === "r" || event.key === "R") {
+    const id = rmoState.workMapNodeOrder[rmoState.workMapFocusIndex];
+    if (id) { rmoDoRerun(id); event.preventDefault(); }
+  } else if (event.key === "a" || event.key === "A") {
+    rmoDoApproveCase(); event.preventDefault();
   } else if (event.key === "Escape") {
     rmoState.detail = null;
+    rmoState.workMapExpandedNodeId = null;
     if (window.location.hash !== rmoHashForView("board")) window.location.hash = rmoHashForView("board");
     else render();
     event.preventDefault();
@@ -137,6 +182,19 @@ function bindRmOfficerActions() {
   });
   document.querySelectorAll("[data-rmo-approve]").forEach((button) => {
     button.addEventListener("click", (event) => { event.stopPropagation(); rmoDoApprove(button.dataset.rmoApprove); });
+  });
+  document.querySelectorAll("[data-rmo-rerun]").forEach((button) => {
+    button.addEventListener("click", (event) => { event.stopPropagation(); rmoDoRerun(button.dataset.rmoRerun); });
+  });
+  document.querySelectorAll("[data-rmo-approve-case]").forEach((button) => {
+    button.addEventListener("click", (event) => { event.stopPropagation(); rmoDoApproveCase(); });
+  });
+  document.querySelectorAll("[data-rmo-node]").forEach((card) => {
+    card.addEventListener("click", (event) => {
+      if (event.target.closest("button")) return;
+      const idx = rmoState.workMapNodeOrder.indexOf(card.dataset.rmoNode);
+      if (idx >= 0) { rmoState.workMapFocusIndex = idx; rmoState.workMapExpandedNodeId = null; render(); }
+    });
   });
   document.querySelectorAll("[data-rmo-approve-item]").forEach((button) => {
     button.addEventListener("click", () => {

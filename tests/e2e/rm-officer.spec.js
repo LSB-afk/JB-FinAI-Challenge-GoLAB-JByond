@@ -91,3 +91,140 @@ test("보안 훅 차단(PII 접수/자동 종결) + 승인 결정", async ({ pag
   const pendingAfter = await page.evaluate(() => getRmOfficerSidebarCounts().approvals);
   expect(pendingAfter).toBe(pendingBefore - 1);
 });
+
+/* ---- 케이스 업무 계층도(Agent Work Map) 고도화 시나리오 ----
+   RMO-CASE-0007=오**(기업여신·기술신용, 반려 데모) / 0008=윤**(보이스피싱, 승인대기 데모) /
+   0009=송**(농수산 사후관리) / 0004=JBG-208(진행중, 실행중 데모) / 0001=JBG-204(재해위험). */
+test("업무 계층도 렌더 + 상태 색상 6종 + SUB 섹션 존재", async ({ page }) => {
+  await page.goto("/index.html#/roles/rm-officer/cases/RMO-CASE-0007");
+
+  // SUB 시각적 구분(요구3) — 좌측 레일 라벨 + 배경 밴드
+  await expect(page.locator(".rmo-sub-band")).toContainText("SUB");
+  await expect(page.locator(".rmo-sub-region")).toBeVisible();
+
+  // 케이스 요약 — 고객/도메인/계열사/처리 목표
+  await expect(page.locator(".rmo-sub-head")).toContainText("오**");
+  await expect(page.locator(".rmo-sub-head")).toContainText("JB우리캐피탈");
+  await expect(page.locator(".rmo-goal-line")).toContainText("처리 목표");
+
+  // 업무 계층도(트리) — 총괄 1 + 브랜치 5 + 리포트 1 = 7 노드, "에이전트 승인 큐" 표현 유지
+  await expect(page.locator("#page-content")).toContainText("에이전트 업무 계층도");
+  await expect(page.locator("#page-content")).toContainText("에이전트 승인 큐");
+  await expect(page.locator(".rmo-node-card")).toHaveCount(7);
+
+  // 노드 11필드 라벨 노출 — agentId/role/reason/expectedOutput 등
+  await expect(page.locator(".rmo-workmap")).toContainText("역할");
+  await expect(page.locator(".rmo-workmap")).toContainText("이 에이전트를 사용하는 이유");
+  await expect(page.locator(".rmo-workmap")).toContainText("예상 산출물");
+
+  // 상태 색상 — 이 케이스에서 회색(리포트 실행전)/파랑(실행가능)/빨강(반려)/초록(총괄 완료) 동시 노출
+  await expect(page.locator(".rmo-node-green")).toHaveCount(1); // 총괄 노드
+  await expect(page.locator(".rmo-node-blue").first()).toBeVisible();
+  await expect(page.locator(".rmo-node-red")).toContainText("반려");
+  await expect(page.locator(".rmo-node-gray")).toBeVisible();
+
+  // 노랑(실행 중) — JBG-208 진행중 데모
+  await page.goto("/index.html#/roles/rm-officer/cases/RMO-CASE-0004");
+  await expect(page.locator(".rmo-node-yellow")).toBeVisible();
+  await expect(page.locator(".rmo-node-yellow")).toContainText("조금만 기다려주세요");
+
+  // 보라(사람 승인 필요) — 윤** 케이스, 분석 4건 전원 완료 + 리포트 승인 대기
+  await page.goto("/index.html#/roles/rm-officer/cases/RMO-CASE-0008");
+  await expect(page.locator(".rmo-node-purple")).toContainText("사람 승인 필요");
+  await expect(page.locator(".rmo-approval-gate")).toContainText("A를 눌러 직원 최종 승인");
+});
+
+test("←→ 케이스 이동 · ↑↓/Space/Enter 노드 플로우 · Esc 복귀", async ({ page }) => {
+  await page.goto("/index.html#/roles/rm-officer/board");
+  await page.locator(".rmo-count-header").click(); // 포커스만 이동시키기 위한 클릭(입력 요소 아님)
+  await page.keyboard.press("1");
+  await expect(page.locator(".rmo-sub-head")).toBeVisible();
+  const firstCaseId = await page.evaluate(() => rmoState.detail.id);
+
+  // ←→ 케이스 이동(마우스 클릭으로 케이스를 고른 뒤 방향키 이동), 기존 숫자키 선택과 공존
+  await page.keyboard.press("ArrowRight");
+  await page.waitForTimeout(150);
+  const secondCaseId = await page.evaluate(() => rmoState.detail.id);
+  expect(secondCaseId).not.toBe(firstCaseId);
+  await page.keyboard.press("ArrowLeft");
+  await page.waitForTimeout(150);
+  const backToFirst = await page.evaluate(() => rmoState.detail.id);
+  expect(backToFirst).toBe(firstCaseId);
+
+  // ↑↓ 노드 이동 — 현재 선택 상태가 항상 시각적으로 명확해야 함(rmo-node-focused)
+  const focusBefore = await page.evaluate(() => rmoState.workMapFocusIndex);
+  await page.keyboard.press("ArrowDown");
+  const focusAfter = await page.evaluate(() => rmoState.workMapFocusIndex);
+  expect(focusAfter).toBe(focusBefore + 1);
+  await expect(page.locator(".rmo-node-focused")).toHaveCount(1);
+
+  // Space — 노드 상세 펼치기(세부 보기: 사용 데이터/도구/산출물 경로)
+  await page.keyboard.press(" ");
+  await expect(page.locator(".rmo-node-detail")).toBeVisible();
+  await expect(page.locator(".rmo-node-detail")).toContainText("사용 데이터");
+  await expect(page.locator(".rmo-node-detail")).toContainText("도구/스킬");
+
+  // Enter — 포커스된 노드 실행 승인(개별 md 생성)
+  const beforeDeliverables = await page.evaluate((id) => {
+    const db = JSON.parse(window.localStorage.getItem("rmo-ops-db-v1"));
+    return db.rm_officer_deliverables.filter((d) => d.caseId === id).length;
+  }, firstCaseId);
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(150);
+  const afterDeliverables = await page.evaluate((id) => {
+    const db = JSON.parse(window.localStorage.getItem("rmo-ops-db-v1"));
+    return db.rm_officer_deliverables.filter((d) => d.caseId === id).length;
+  }, firstCaseId);
+  expect(afterDeliverables).toBeGreaterThan(beforeDeliverables);
+
+  // Esc — 케이스 보드로 복귀
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(150);
+  await expect(page).toHaveURL(/\/roles\/rm-officer\/board/);
+  const detailAfterEsc = await page.evaluate(() => rmoState.detail);
+  expect(detailAfterEsc).toBeNull();
+});
+
+test("R 재실행 + A 케이스 최종 승인 · md 본문 실내용(근거 표·판단·다음 조치)", async ({ page }) => {
+  await page.goto("/index.html#/roles/rm-officer/cases/RMO-CASE-0008");
+
+  // A(케이스 통합보고서 승인) — 클릭으로도 동일 동작(마우스/키보드 모두 지원)
+  await expect(page.locator("[data-rmo-approve-case]")).toBeEnabled();
+  await page.locator("[data-rmo-approve-case]").click();
+  const caseAfterApprove = await page.evaluate(() => {
+    const db = JSON.parse(window.localStorage.getItem("rmo-ops-db-v1"));
+    return db.rm_officer_cases.find((c) => c.id === "RMO-CASE-0008");
+  });
+  expect(caseAfterApprove.status).toBe("completed");
+  await expect(page.locator("[data-rmo-approve-case]")).toBeDisabled();
+
+  // R(재실행) — 완료 노드를 다시 실행해 새 산출물을 만든다
+  const rerunBtn = page.locator("[data-rmo-rerun]").first();
+  const rerunAssignmentId = await rerunBtn.getAttribute("data-rmo-rerun");
+  const beforeCount = await page.evaluate((id) => {
+    const db = JSON.parse(window.localStorage.getItem("rmo-ops-db-v1"));
+    const asg = db.rm_officer_agent_assignments.find((a) => a.id === id);
+    return db.rm_officer_deliverables.filter((d) => d.caseId === asg.caseId && d.agentId === asg.agentId).length;
+  }, rerunAssignmentId);
+  await rerunBtn.click();
+  await page.waitForTimeout(150);
+  const afterCount = await page.evaluate((id) => {
+    const db = JSON.parse(window.localStorage.getItem("rmo-ops-db-v1"));
+    const asg = db.rm_officer_agent_assignments.find((a) => a.id === id);
+    return db.rm_officer_deliverables.filter((d) => d.caseId === asg.caseId && d.agentId === asg.agentId).length;
+  }, rerunAssignmentId);
+  expect(afterCount).toBe(beforeCount); // 이전 산출물을 정리하고 1건으로 재생성(중복 탭 방지)
+  expect(afterCount).toBeGreaterThan(0);
+
+  // md 본문 실내용 — Summary/상황 분석/근거 표(4~6행)/판단 및 권고/다음 조치 태스크/한계 및 주의
+  await page.goto("/index.html#/roles/rm-officer/deliverables");
+  await page.locator("[data-rmo-open-md]").first().click();
+  await expect(page.locator(".rmo-modal")).toBeVisible();
+  await expect(page.locator(".rmo-modal")).toContainText("Summary");
+  await expect(page.locator(".rmo-modal")).toContainText("상황 분석");
+  await expect(page.locator(".rmo-modal")).toContainText("판단 및 권고");
+  await expect(page.locator(".rmo-modal")).toContainText("다음 조치 태스크");
+  await expect(page.locator(".rmo-modal")).toContainText("한계 및 주의");
+  const evidenceRowCount = await page.locator(".rmo-modal .rmo-md-table tbody tr").count();
+  expect(evidenceRowCount).toBeGreaterThanOrEqual(3);
+});

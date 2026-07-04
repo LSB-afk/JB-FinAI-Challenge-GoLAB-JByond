@@ -31,44 +31,73 @@ function rmoSeedData() {
     "JBG-208": { customerAlias: "한도영", region: "전북 전주시", bank: "전북은행" },
     "JBG-198": { customerAlias: "오세라", region: "전북 군산시", bank: "전북은행" },
     "JBG-202": { customerAlias: "배주안", region: "전남 여수시", bank: "광주은행" },
+    /* 신규 3종 — 코디네이터 지시대로 마스킹 이름 그대로 유지(나이 별도 필드) */
+    "JBG-210": { customerAlias: "오**", customerAge: 39, region: "전북 전주시", bank: "전북은행", affiliate: "JB우리캐피탈" },
+    "JBG-211": { customerAlias: "윤**", customerAge: 76, region: "전북 전주시", bank: "전북은행" },
+    "JBG-212": { customerAlias: "송**", customerAge: 50, region: "전북 김제시", bank: "전북은행" },
   };
 
-  /* 핵심 케이스 정의 (Figma 3 + 히어로 + 완료 데모 + 진행중 데모) — 페르소나는 rmoPersonas에서 병합 */
+  /* 핵심 케이스 정의 (Figma 3 + 히어로 + 완료 데모 + 진행중 데모 + 업무 계층도 신규 3종)
+     — 페르소나는 rmoPersonas에서 병합. goal = 케이스 상세 상단 "처리 목표". */
   const caseDefs = [
     { caseNo: "JBG-204", caseType: "disasterRisk", theme: "양식장 재해위험 대응",
       situation: "고수온 예보와 태풍 접근으로 전복 폐사 위험이 커지며 사료비·운전자금 부담이 동시에 올라온 완도 양식장 케이스.",
+      goal: "재해 노출 정도를 파악하고 상환유예·정책 재해자금 안내 필요 여부를 확정한다.",
       stage: "todo", status: "intake", riskLevel: "high", requestedAmountBand: "1억~3억", dueAt: plus(1), assignedRmId: "USR-RMO-01" },
     { caseNo: "JBG-206", caseType: "repaymentCare", theme: "육아휴직 복귀기 상환부담 관리",
       situation: "육아휴직 복귀 직후 급여가 정상화되기 전 카드론과 직장인 대출 상환일이 겹친 광주 직장인 케이스.",
+      goal: "소득 정상화 시점을 확인하고 상환일 조정 후보를 준비한다.",
       stage: "todo", status: "intake", riskLevel: "medium", requestedAmountBand: "3천만원 이하", dueAt: plus(3), assignedRmId: "USR-RMO-02" },
     { caseNo: "JBG-207", caseType: "dailyFinance", theme: "생활비 공백 대응",
       situation: "국가장학금 입금 전 생활비 공백이 생긴 전북 대학생이 소액 대출과 아르바이트 급여 사이에서 흔들리는 케이스.",
+      goal: "생활비 공백 구간을 확인하고 고금리 대체대출 위험을 사전 안내한다.",
       stage: "todo", status: "intake", riskLevel: "medium", requestedAmountBand: "5백만원 이하", dueAt: plus(4), assignedRmId: "USR-RMO-03" },
     { caseNo: "JBG-208", caseType: "policyStartup", theme: "전주 중앙로 카페 여신 상담",
       situation: "전주 중앙로에서 카페를 운영하는 소상공인이 재료비 인상과 초기 시설투자 상환으로 정책자금·협약대출 안내를 요청한 히어로 케이스.",
+      goal: "정책자금·협약대출 자격 요건을 확인하고 안내 문안을 준비한다.",
       stage: "doing", status: "analyzing", riskLevel: "medium", requestedAmountBand: "5천만원~1억", dueAt: plus(2), assignedRmId: "USR-RMO-04", running: "rmo-policy-finance" },
     { caseNo: "JBG-198", caseType: "repaymentCare", theme: "자영업 상환일 집중 관리",
       situation: "성수기 매출 변동으로 상환일이 특정 월에 몰린 군산 자영업자의 상환일 분산 검토가 끝난 완료 데모 케이스.",
+      goal: "상환일 분산 검토를 완료하고 사후관리를 종결한다.",
       stage: "done", status: "completed", riskLevel: "medium", requestedAmountBand: "3천만원~5천만원", dueAt: plus(-1), assignedRmId: "USR-RMO-02", completed: true },
     { caseNo: "JBG-202", caseType: "disasterRisk", theme: "수산 가공장 재해 대응",
       situation: "풍랑 경보로 원재료 입고가 지연되며 운전자금 상환일이 임박한 여수 수산 가공장 케이스로 담당자 검토 대기 중.",
+      goal: "재해 노출 분석을 마무리하고 통합 보고서를 담당자가 최종 승인한다.",
       stage: "doing", status: "humanReview", riskLevel: "high", requestedAmountBand: "5천만원~1억", dueAt: plus(2), assignedRmId: "USR-RMO-01" },
+    { caseNo: "JBG-210", caseType: "bizCreditReferral", theme: "기업여신·기술신용 상담",
+      situation: "매출 입금 공백과 원자재 비용 인상이 겹치며 초기 시설투자 상환 부담이 커진 전주 소재 사업장의 기업여신·기술신용 상담 케이스.",
+      goal: "매출·비용·계약·기술신용 근거를 종합해 여신 담당자 검토 보고서를 완성한다.",
+      stage: "todo", status: "intake", riskLevel: "medium", requestedAmountBand: "5천만원~1억", dueAt: plus(3), assignedRmId: "USR-RMO-02",
+      rejectedAgentId: "rmo-biz-lease-review" },
+    { caseNo: "JBG-211", caseType: "fraudResponse", theme: "보이스피싱 대응",
+      situation: "평소와 다른 고액 이체 시도가 반복되고 고령자 사기 유형과 유사도가 높게 나타난 고령 고객 보이스피싱 의심 케이스.",
+      goal: "이상거래·위험 패턴 분석을 완료하고 송금 보류 여부를 담당자가 즉시 승인한다.",
+      stage: "doing", status: "humanReview", riskLevel: "high", requestedAmountBand: "-", dueAt: plus(0), assignedRmId: "USR-RMO-01",
+      allBranchesCompleted: true },
+    { caseNo: "JBG-212", caseType: "agriPostMonitoring", theme: "농수산 여신 사후관리",
+      situation: "출하 대금 입금 공백과 농자재 지출 증가가 계절적 저점 구간과 겹치는 김제 농가의 사후관리 케이스.",
+      goal: "지출·계절 요인을 종합해 상환유예 검토 필요 여부를 판단한다.",
+      stage: "todo", status: "intake", riskLevel: "medium", requestedAmountBand: "3천만원~5천만원", dueAt: plus(5), assignedRmId: "USR-RMO-03" },
   ];
 
   const rm_officer_cases = caseDefs.map((def, index) => {
     const persona = rmoPersonas[def.caseNo] || {};
     const priority = computeRmOfficerPriority(def);
+    const wm = rmoWorkMapAgentsForCaseType(def.caseType);
     return scope({
       id: `RMO-CASE-${String(index + 1).padStart(4, "0")}`,
       caseNo: def.caseNo,
       customerRefId: `RMO-CUST-${String(index + 1).padStart(4, "0")}`,
       customerAlias: persona.customerAlias,
+      customerAge: persona.customerAge,
+      affiliate: persona.affiliate || "",
       bank: persona.bank,
       region: persona.region,
       caseType: def.caseType,
       theme: def.theme,
       title: def.theme,
       situation: def.situation,
+      goal: def.goal || "",
       stage: def.stage,
       status: def.status,
       riskLevel: def.riskLevel,
@@ -82,7 +111,7 @@ function rmoSeedData() {
       dueAt: def.dueAt,
       requiresHumanReview: priority.requiresHumanReview,
       escalationRequired: priority.escalationRequired,
-      agentPlan: rmOfficerAgentPlans[def.caseType],
+      agentPlan: wm.branches.concat([wm.report]),
       createdAt: plus(-index),
       updatedAt: now,
       tags: [RMO_CASE_TYPES[def.caseType].label, persona.bank],
@@ -95,38 +124,57 @@ function rmoSeedData() {
   const caseRows = rm_officer_cases.filter((row) => row.roleKey === RMO_ROLE_KEY);
   const caseByNo = (no) => caseRows.find((c) => c.caseNo === no);
 
-  /* 에이전트 배정 큐(승인 큐) — 각 케이스의 agentPlan을 카드로 */
+  /* 에이전트 업무 계층도(Agent Work Map) 노드 — 각 케이스의 branch(분석) + report(최종 보고서)를
+     rm_officer_agent_assignments 행으로 저장한다. kind가 트리 위치를, 11필드(role/inputData/tools/
+     riskLevel/requiresApproval/outputMdPath 등)가 "왜 이 에이전트가 필요한지"를 설명한다. */
   const rm_officer_agent_assignments = [];
   let asgSeq = 1;
+  function pushWorkMapNode(c, agentId, order, kind, status) {
+    const agent = rmOfficerAgents.find((a) => a.id === agentId) || rmOfficerAgents[0];
+    const tpl = rmoDeliverableTemplate(agentId);
+    const fields = rmoNodeFieldsFor(agentId);
+    rm_officer_agent_assignments.push(scope({
+      id: `RMO-ASG-${String(asgSeq++).padStart(4, "0")}`,
+      caseId: c.id,
+      agentId,
+      order,
+      kind,
+      status,
+      expectedOutput: agent.deliverableFile,
+      outputMdPath: agent.deliverableFile,
+      estimatedMinutes: agent.estimatedMinutes,
+      reason: agent.description,
+      role: fields.role,
+      inputData: fields.inputData,
+      tools: fields.tools,
+      riskLevel: fields.riskLevel || c.riskLevel,
+      requiresApproval: true,
+      expectedValue: tpl.expectedValue,
+      dataChips: (tpl.sources || []).map((s) => s.label),
+      progress: status === "completed" ? 100 : 0,
+      createdAt: c.createdAt,
+    }));
+  }
   caseRows.forEach((c) => {
     const def = caseDefs.find((d) => d.caseNo === c.caseNo) || {};
-    const plan = c.agentPlan || [];
-    plan.forEach((agentId, order) => {
-      const agent = rmOfficerAgents.find((a) => a.id === agentId) || rmOfficerAgents[0];
-      const tpl = rmoDeliverableTemplate(agentId);
-      let status = "pendingApproval";
-      let progress = 0;
-      if (c.status === "completed") status = "completed";
-      else if (def.running === agentId) { status = "running"; progress = 0; }
-      else if (c.status === "humanReview" && order === 0) status = "completed";
-      rm_officer_agent_assignments.push(scope({
-        id: `RMO-ASG-${String(asgSeq++).padStart(4, "0")}`,
-        caseId: c.id,
-        agentId,
-        order,
-        status,
-        expectedOutput: agent.deliverableFile,
-        estimatedMinutes: agent.estimatedMinutes,
-        reason: agent.description,
-        expectedValue: tpl.expectedValue,
-        dataChips: (tpl.sources || []).map((s) => s.label),
-        progress,
-        createdAt: c.createdAt,
-      }));
+    const wm = rmoWorkMapAgentsForCaseType(c.caseType);
+    const allDone = c.status === "completed";
+    wm.branches.forEach((agentId, order) => {
+      let status = "pendingApproval"; // 실행 가능(ready/파랑)
+      if (allDone || def.allBranchesCompleted) status = "completed";
+      else if (def.running === agentId) status = "running";
+      else if (def.rejectedAgentId === agentId) status = "rejected";
+      else if (c.status === "humanReview" && order === 0) status = "completed"; // 담당자 검토 대기 케이스는 첫 분석만 완료 데모
+      pushWorkMapNode(c, agentId, order, "branch", status);
     });
+    let reportStatus = "notStarted"; // 분석 미완료 시 회색 — report는 모든 branch 완료 후에만 실행 가능
+    if (allDone) reportStatus = "completed";
+    else if (def.allBranchesCompleted) reportStatus = "needsApproval"; // 분석 전원 완료·사람 승인 대기(보라)
+    pushWorkMapNode(c, wm.report, wm.branches.length, "report", reportStatus);
   });
 
-  /* 완료 데모 케이스 + 진행중 케이스의 산출물(개별 md + 통합본) */
+  /* 산출물(개별 md + 통합본) — 총괄(orchestrator) priority-brief.md는 모든 케이스에 생성하고,
+     완료/진행 데모 케이스는 브랜치·리포트 md도 미리 만들어 둔다. */
   const rm_officer_deliverables = [];
   let delSeq = 1;
   function pushDeliverables(caseRow, agentIds, withIntegrated) {
@@ -141,11 +189,16 @@ function rmoSeedData() {
       integrated.id = `RMO-DLV-${String(delSeq++).padStart(4, "0")}`;
       rm_officer_deliverables.push(scope(integrated));
     }
+    return built;
   }
+  caseRows.forEach((c) => pushDeliverables(c, ["rmo-triage"], false));
   const completedCase = caseByNo("JBG-198");
   if (completedCase) pushDeliverables(completedCase, completedCase.agentPlan, true);
   const humanReviewCase = caseByNo("JBG-202");
   if (humanReviewCase) pushDeliverables(humanReviewCase, [humanReviewCase.agentPlan[0]], false);
+  /* 윤** — 분석 4건 전원 완료 + 리포트 작성 완료 + 통합본까지 만들어 두고, 사람 최종 승인만 남긴다(보라) */
+  const fraudCase = caseByNo("JBG-211");
+  if (fraudCase) pushDeliverables(fraudCase, fraudCase.agentPlan, true);
 
   const rm_officer_tasks = caseRows.slice(0, 5).map((c, index) => scope({
     id: `RMO-TASK-${String(index + 1).padStart(4, "0")}`,
@@ -203,6 +256,7 @@ function rmoSeedData() {
     scope({ id: "RMO-APR-0001", caseId: caseByNo("JBG-202").id, approvalType: "상환유예 검토 승인 요청", status: "pending", requestedById: "USR-RMO-01", approverId: "USR-RMO-APR-01", requestedAt: now }),
     scope({ id: "RMO-APR-0002", caseId: caseByNo("JBG-208").id, approvalType: "고객 안내문 발송 승인", status: "pending", requestedById: "USR-RMO-04", approverId: "USR-RMO-APR-01", requestedAt: now }),
     scope({ id: "RMO-APR-0003", caseId: caseByNo("JBG-198").id, approvalType: "상환일 조정 안내 승인", status: "approved", requestedById: "USR-RMO-02", approverId: "USR-RMO-APR-01", requestedAt: plus(-2), decidedAt: plus(-1), decidedBy: "USR-RMO-APR-01" }),
+    scope({ id: "RMO-APR-0004", caseId: caseByNo("JBG-211").id, approvalType: "고위험 통합 리포트 검토 승인", status: "pending", requestedById: "USR-RMO-01", approverId: "USR-RMO-APR-01", requestedAt: now }),
   ];
 
   const rm_officer_evidence_items = caseRows.slice(0, 5).map((c, index) => scope({

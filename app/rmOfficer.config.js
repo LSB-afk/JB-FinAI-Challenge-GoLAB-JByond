@@ -33,6 +33,21 @@ const RMO_CASE_TYPES = {
     team: "정책금융팀",
     examples: ["소상공인 정책자금", "창업·자영업 여신 상담", "지역 협약대출 안내"],
   },
+  bizCreditReferral: {
+    label: "기업여신·기술신용",
+    team: "여신관리팀",
+    examples: ["매출 입금 공백", "기술신용 근거 검토", "장비 리스 상환 부담"],
+  },
+  fraudResponse: {
+    label: "보이스피싱 대응",
+    team: "여신관리팀",
+    examples: ["고령 고객 이상거래", "송금 보류 필요성 검토", "상담 메모 재확인"],
+  },
+  agriPostMonitoring: {
+    label: "농수산 여신 사후관리",
+    team: "지역RM팀",
+    examples: ["출하대금 입금 공백", "농자재 지출 증가", "계절성 매출 변동"],
+  },
 };
 
 /* 케이스 진행 3단계(진행 전/중/후) — 보드 카운트 헤더·필터의 기준 축 */
@@ -184,6 +199,15 @@ const RMO_FIELD_LABELS = {
   errorSummary: "오류 요약",
   createdAt: "생성일",
   updatedAt: "수정일",
+  agentName: "에이전트명",
+  role: "역할(이 케이스에서 하는 일)",
+  inputData: "사용 데이터",
+  tools: "도구/스킬",
+  requiresApproval: "승인 필요 여부",
+  outputMdPath: "산출물 경로",
+  customerAge: "나이",
+  affiliate: "계열사",
+  goal: "처리 목표",
 };
 
 const RMO_FORBIDDEN_OUTPUTS = [

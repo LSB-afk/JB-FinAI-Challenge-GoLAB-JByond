@@ -47,6 +47,22 @@ function computeRmOfficerPriority(input) {
     signals.push({ signalType: "POLICY_ELIGIBILITY_CHECK", title: "정책금융 자격 확인 필요", severity: "medium", evidence: "소상공인/창업 정책자금 요건 확인 항목이 있음" });
     prioritySources.push({ label: "정책자금 요건(공개 안내)", ref: "sample:policy-guide" });
   }
+  if (type === "bizCreditReferral") {
+    score += 16;
+    signals.push({ signalType: "BIZ_CASHFLOW_PRESSURE", title: "매출·비용 압박 신호", severity: "medium", evidence: "매출 입금 공백과 비용 증가가 겹쳐 종합 검토가 필요(샘플)" });
+    prioritySources.push({ label: "매출 입금내역·원자재 지수(샘플)", ref: "sample:biz-cashflow" });
+  }
+  if (type === "fraudResponse") {
+    score += 30;
+    riskLevel = rmoMaxRisk(riskLevel, "high");
+    signals.push({ signalType: "FRAUD_PATTERN_MATCH", title: "보이스피싱 위험 패턴 — 즉시 확인 필요", severity: "high", evidence: "이상거래·고령자 사기 유형 유사도가 높게 나타남(샘플)" });
+    prioritySources.push({ label: "고령자 사기 유형 DB(샘플)", ref: "sample:elderly-fraud-db" });
+  }
+  if (type === "agriPostMonitoring") {
+    score += 14;
+    signals.push({ signalType: "AGRI_SEASONAL_COST_PRESSURE", title: "계절성·지출 압박 신호", severity: "medium", evidence: "출하대금 공백과 농자재 지출 증가가 계절 저점과 겹침(샘플)" });
+    prioritySources.push({ label: "계절성 지수(샘플)", ref: "sample:agri-seasonal" });
+  }
 
   if (days <= 2) {
     score += 20;
@@ -71,6 +87,9 @@ function computeRmOfficerPriority(input) {
   if (type === "repaymentCare") reasonParts.push("상환일 집중·소득 공백으로 상환 여력 점검이 시급");
   if (type === "dailyFinance") reasonParts.push("생활비 공백 구간으로 고금리 대체대출 위험 노출");
   if (type === "policyStartup") reasonParts.push("정책자금 자격 확인으로 조달비용을 낮출 여지");
+  if (type === "bizCreditReferral") reasonParts.push("매출·비용 압박이 겹쳐 여신 담당자 종합 검토가 필요");
+  if (type === "fraudResponse") reasonParts.push("보이스피싱 위험 패턴과 유사도가 높아 즉시 확인이 필요");
+  if (type === "agriPostMonitoring") reasonParts.push("계절 저점과 지출 증가가 겹쳐 사후관리 검토가 필요");
   if (["high", "critical"].includes(riskLevel)) reasonParts.push("위험도가 높아 담당자 검토가 필요");
   const priorityReason = (reasonParts.join(", ") || "표준 상담 큐 기준") + " (근거 데이터 연결됨)";
 
@@ -81,7 +100,8 @@ function computeRmOfficerPriority(input) {
 function previewRmOfficerPriority(form) {
   const type = RMO_CASE_TYPES[form.caseType] ? form.caseType : "repaymentCare";
   const priority = computeRmOfficerPriority(form);
-  const agentPlan = rmOfficerAgentPlans[type] || rmOfficerAgentPlans.repaymentCare;
+  const wm = rmoWorkMapAgentsForCaseType(type);
+  const agentPlan = wm.branches.concat([wm.report]);
   const initialStatus = priority.escalationRequired ? "escalated" : "intake";
   const recommendedTeam = RMO_CASE_TYPES[type].team;
   return {
