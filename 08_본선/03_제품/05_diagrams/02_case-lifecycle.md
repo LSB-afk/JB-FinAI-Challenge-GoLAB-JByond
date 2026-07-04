@@ -1,62 +1,69 @@
 ---
 tags:
   - area/product
-  - type/stub
-  - status/draft
-date: 2026-06-26
+  - type/diagram
+  - status/active
+date: 2026-07-04
 up: "[[INDEX|제품 인덱스]]"
 ---
 
-# 케이스 생명주기 (FSM)
+# 케이스 생명주기 (FSM) — 기업여신 콘솔(CCL)
 
-> 역엔지니어링/브레인스토밍으로 채울 예정
+> **정합 기준**: [[08_본선/03_제품/05_domain-model|05_domain-model]] §3(루트 정본). 코드 SSOT: `_vendor/JB_project2/app/cclConsole.core.js` `CCL_BOARD_COLUMNS`(e57b826). 히어로 = **CCL-0001**(전주 카페 운영자 운전자금) — 현재 상태 `aiReview`, `riskLevel: high`, `requiresHumanReview: true`.
 
 ---
 
 ## 목적
 
-Case 엔티티의 FSM(유한 상태 머신) 5단 상태 전환을 시각화.
+Case 엔티티의 실제 보드 컬럼 = 상태 전환을 시각화한다. (구 스텁의 `New/InProgress/Review/Done/Blocked` 5단은 실제 코드 상태명과 불일치했음 — 아래로 대체.)
 
 ---
 
-## 씨앗 포인트
-
-- **씨앗**: FSM 5단 상태 — New → 진행중 → 검토 → 완료 (승인 후 행동) / 차단 (거부 또는 에러)
-- **씨앗**: 5컬럼 칸반이 이 상태 모델과 1:1 대응
-- **씨앗**: 각 상태 전환은 AuditEvent로 기록
-
----
-
-## 상태 전환 다이어그램
-
-> 작성 예정
+## 상태 전환 다이어그램 (실제 `CCL_BOARD_COLUMNS`)
 
 ```mermaid
 stateDiagram-v2
-    [*] --> New : 위험 신호 탐지
-    New --> InProgress : 에이전트 실행 시작
-    InProgress --> Review : 에이전트 완료 (초안 생성)
-    Review --> Done : 담당자 승인 + 행동 실행
-    Review --> Blocked : 담당자 거부 또는 에러
-    Done --> [*]
-    Blocked --> New : 재검토 요청
+    [*] --> received: 신규 접수
+    received --> collecting: 자료 수집
+    collecting --> aiReview: AI 검토(ccl-financial/ccl-repayment/ccl-doc)
+    aiReview --> humanReview: 담당자 검토 필요(high/critical·서류누락·정책금융)
+    aiReview --> memoDraft: 저위험 → 품의 진행
+    humanReview --> memoDraft: 검토 통과
+    memoDraft --> doneHold: 완료·보류
+    doneHold --> [*]
 ```
+
+- **활성 상태**(`CCL_ACTIVE_STATUSES`): `received·collecting·aiReview·humanReview·memoDraft` — `doneHold`만 비활성 [E4].
+- 은행 실무 `상담→심사→승인→약정·실행→사후관리` 흐름 중 **심사~품의 구간**에 해당. 약정·기표·회수·EOD는 이 콘솔 범위 밖 [E2].
 
 ---
 
 ## 상태별 허용 행동
 
 | 상태 | 허용 행동 | 금지 행동 |
-|-----|---------|---------|
-| New | 에이전트 실행 시작 | 고객 발송 |
-| InProgress | 실행 모니터링 | 고객 발송 |
-| Review | 승인/거부/수정 | 고객 발송 |
-| Done | 감사 로그 확인 | 재수정 |
-| Blocked | 재검토 요청 | 고객 발송 |
+|---|---|---|
+| `received` | intake 분류, 서류 체크리스트 생성 | 고객 발송, 승인 확정 |
+| `collecting` | 재무·상환 자료 수집, AI 요약 요청 | 고객 발송 |
+| `aiReview` | AI 요약/체크/초안 생성(ccl-financial·ccl-repayment·ccl-doc) | 확정 판단(승인/거절·금리·신용등급) |
+| `humanReview` | 담당자 검토, 감독 핸드오프(고위험 시 escalated) | 사람 검토 없이 자동 진행 |
+| `memoDraft` | 품의 초안 확정, 승인 등록(Approval pending) | 자체 결재 |
+| `doneHold` | 감사 로그 확인 | 재수정(재검토는 신규 케이스 또는 handoff로 재상정) |
+
+---
+
+## 다른 엔티티 상태 (동일 케이스 라이프사이클에 연동)
+
+| 엔티티 | 상태 집합 | 종결 규칙 |
+|---|---|---|
+| AgentRun | `queued → running → needsReview / pendingApproval → completed` | high/critical은 `completed` 자동전이 차단(`needsReview` 강제) |
+| Approval | `pending → approved / rejected` | 결정 주체는 사람(`USR-*`)만 |
+| DocCheck | `missing → ready`(→ verified) | `missing`은 보완요청 초안 트리거 |
+| Handoff | `open`·`escalated` | high/critical 핸드오프는 `escalated` 자동 |
 
 ---
 
 ## 참조
 
-- [[08_본선/03_제품/04_tech/data-model|데이터 모델]]
+- [[08_본선/03_제품/05_domain-model|05_domain-model — 도메인 모델(정합 대상)]]
+- [[08_본선/03_제품/04_tech/data-model|04_tech/data-model — 필드 SSOT]]
 - [[08_본선/03_제품/05_diagrams/03_approval-gate|승인 게이트]]
