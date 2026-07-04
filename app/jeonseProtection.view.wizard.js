@@ -7,6 +7,13 @@ function jpoWizardOptions(options, selected) {
 
 function jpoCollectCaseWizard(form) {
   const fd = new FormData(form);
+  const fileInput = form.querySelector('input[name="evidenceFiles"]');
+  const uploadedFiles = Array.from(fileInput?.files || []).map((file) => ({
+    fileName: file.name,
+    fileType: file.type || "application/octet-stream",
+    fileSize: file.size,
+    analysisSummary: `${file.name} 메타데이터 수집 — 원문 저장 없이 접수 유형/권리/보증/피해지원 확인 후보로 사용`,
+  }));
   return {
     intakeType: String(fd.get("intakeType") || "preContract"),
     housingType: String(fd.get("housingType") || "rowHouse"),
@@ -33,6 +40,7 @@ function jpoCollectCaseWizard(form) {
     dueAt: String(fd.get("dueAt") || ""),
     sourceChannel: String(fd.get("sourceChannel") || "opsPortal"),
     tags: String(fd.get("tags") || ""),
+    uploadedFiles,
     enrichedMarket: jpoCaseWizard.enrichedMarket,
     enrichStatus: jpoCaseWizard.enrichStatus,
   };
@@ -118,7 +126,12 @@ function jpoCaseCreationView() {
         </div>
       </section>
       <section class="jbwc-step jbwc-preview">
-        <h3>4단계. API 데이터 보강 미리보기</h3>
+        <h3>4단계. 파일 업로드 + API 데이터 보강</h3>
+        <label class="jbwc-wide jpo-upload-drop">증적 파일 업로드
+          <input name="evidenceFiles" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.txt,.md,.csv" data-jpo-wizard-field />
+          <span>파일명/형식/크기 메타데이터만 저장하고, 원문·PII는 mock DB에 남기지 않습니다.</span>
+        </label>
+        ${jpoCaseWizard.uploadedFiles?.length ? `<div class="jpo-upload-list">${jpoCaseWizard.uploadedFiles.map((file) => `<span>${escapeHtml(file.fileName || file.name)} · ${escapeHtml(file.fileType || file.type || "-")}</span>`).join("")}</div>` : ""}
         <footer>
           <button class="secondary-button" type="button" data-jpo-enrich-preview>${jpoCaseWizard.enrichStatus === "loading" ? "실거래 조회 중..." : "API 데이터 보강 실행"}</button>
           <button class="secondary-button" type="button" data-jpo-preview-refresh>미리보기 갱신</button>
@@ -127,7 +140,7 @@ function jpoCaseCreationView() {
       </section>
       <section class="jbwc-step">
         <h3>5단계. 저장</h3>
-        <p class="jbwc-guard">jeonse_cases · jeonse_price_snapshots · jeonse_risk_signals · 권리/보증 체크 · jeonse_audit_logs(CASE_CREATED) · jeonse_agent_runs에 모의 기록을 저장합니다.</p>
+        <p class="jbwc-guard">jeonse_cases · jeonse_price_snapshots · jeonse_risk_signals · 권리/보증 체크 · jeonse_evidence_files · jeonse_audit_logs(CASE_CREATED) · jeonse_agent_runs에 모의 기록을 저장합니다.</p>
         <footer><button class="primary-button" type="submit">전세 위험/피해 의심 건 접수</button></footer>
       </section>
     </form>`) + jpoMockNote();

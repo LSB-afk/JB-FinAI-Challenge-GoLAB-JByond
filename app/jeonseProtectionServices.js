@@ -135,6 +135,116 @@ function jpoActorForTeam(team, fallback) {
   return found ? found.id : fallback || "USR-JPO-RISK-01";
 }
 
+function jpoCaseDeliverables(caseId) {
+  return jpoTable("jeonse_deliverables", JPO_ROLE_KEY)
+    .filter((item) => item.caseId === caseId)
+    .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+}
+
+function jpoParseQueueNodeId(nodeId) {
+  const parts = String(nodeId || "").split("__");
+  if (parts.length < 4 || parts[0] !== "JPO_NODE") return null;
+  return { caseId: parts[1], kind: parts[2], agentId: parts.slice(3).join("__") };
+}
+
+function jpoDeliverableFileName(row, agentId, kind = "agentMd") {
+  const suffix = {
+    "jpo-intake": "routing",
+    "jpo-price": "price-risk",
+    "jpo-registry": "registry-checklist",
+    "jpo-guarantee": "guarantee-check",
+    "jpo-auction": "auction-action",
+    "jpo-victim": "victim-docs",
+    "jpo-legal": "legal-referral",
+    "jpo-comms": "consult-summary",
+    "jpo-dataquality": "source-quality",
+    "jpo-supervisor": "review-gate",
+    "jpo-report": "case-brief",
+  }[agentId] || "agent-note";
+  return `${row.caseNo || row.id}-${kind === "caseReport" ? "case-brief" : suffix}.md`;
+}
+
+function jpoBuildAgentDeliverableBody(row, agentId, run) {
+  const info = typeof jpoAgentNodeInfo === "function" ? jpoAgentNodeInfo(agentId, row) : { role: agentId, data: "케이스 데이터", output: "내부 참고 산출물" };
+  const signals = typeof jpoCaseSignals === "function" ? jpoCaseSignals(row.id, 4) : [];
+  const chips = typeof jpoCaseDataChips === "function" ? jpoCaseDataChips(row).slice(0, 6) : [];
+  return [
+    `# ${row.caseNo} ${jpoAgentDisplayName(agentId)} 산출물`,
+    "",
+    "## Summary",
+    `- 역할: ${info.role}`,
+    `- 케이스: ${jpoCaseSituationLine(row)}`,
+    `- 실행 결과: ${run.outputSummary}`,
+    "",
+    "## Evidence",
+    ...(signals.length ? signals.map((signal) => `- ${signal.title}: ${signal.evidence || "근거 확인 필요"}`) : ["- 등록된 위험 신호 없음"]),
+    ...(chips.length ? chips.map((chip) => `- 근거 데이터: ${chip}`) : []),
+    "",
+    "## Next Action",
+    `- ${jpoCaseNextAction(row)}`,
+    "- 고객 공유, 피해자 결정, 법률 판단, 보증 가능성 확정은 담당자 승인 전 금지",
+    "",
+    "## Human Approval",
+    `- 검토 필요: ${run.requiresHumanReview ? "예" : "담당자 확인 후 진행"}`,
+  ].join("\n");
+}
+
+function jpoBuildCaseReportBody(row) {
+  const deliverables = jpoCaseDeliverables(row.id).filter((item) => item.kind === "agentMd");
+  const audits = jpoTable("jeonse_audit_logs", JPO_ROLE_KEY).filter((audit) => audit.caseId === row.id).slice(0, 6);
+  return [
+    `# ${row.caseNo} 전세보호 통합 브리프`,
+    "",
+    "## Case Summary",
+    `- ${jpoCaseSituationLine(row)}`,
+    `- 위험도: ${JPO_RISK_LABELS[row.riskLevel] || row.riskLevel}`,
+    `- 현재 상태: ${jpoStatusLabel(row.status)}`,
+    "",
+    "## Agent Deliverables",
+    ...(deliverables.length ? deliverables.map((item) => `- ${item.fileName}: ${item.title} (${jpoStatusLabel(item.status)})`) : ["- 생성된 에이전트 산출물 없음"]),
+    "",
+    "## Audit Trail",
+    ...(audits.length ? audits.map((audit) => `- ${audit.createdAt || "-"} ${audit.action} by ${audit.actorId}`) : ["- 감사 기록 없음"]),
+    "",
+    "## Guardrail",
+    "- 이 브리프는 내부 운영 참고용이며 전세사기 여부, 법률 자문, 보증 가입, 피해자 결정, 고객 발송을 확정하지 않습니다.",
+  ].join("\n");
+}
+
+function jpoInsertDeliverable(row) {
+  const deliverable = jpoScopedRow(row);
+  jpoInsert("jeonse_deliverables", deliverable);
+  jpoWriteAudit({
+    id: jpoNextId("AUD-JPO", "jeonse_audit_logs"),
+    caseId: deliverable.caseId,
+    actorId: deliverable.agentId || "jpo-report",
+    action: "JPO_DELIVERABLE_CREATED",
+    targetType: "jeonse_deliverable",
+    targetId: deliverable.id,
+    riskLevel: deliverable.riskLevel || "medium",
+    reviewRequired: Boolean(deliverable.requiresHumanReview),
+    note: deliverable.fileName,
+    createdAt: deliverable.createdAt,
+  });
+  return deliverable;
+}
+
+function jpoEnsureApprovalForCase(row, approvalType, requestedById) {
+  const existing = jpoTable("approvals", JPO_ROLE_KEY).find((item) => (
+    item.caseId === row.id && item.approvalType === approvalType && item.status === "pending"
+  ));
+  if (existing) return existing;
+  return jpoInsert("approvals", jpoScopedRow({
+    id: jpoNextId("APR-JPO", "approvals"),
+    caseId: row.id,
+    approvalType,
+    status: "pending",
+    requestedById,
+    approverId: jpoActorForTeam("내부통제팀", "USR-JPO-AUD-01"),
+    requestedAt: new Date().toISOString().slice(0, 10),
+  }));
+}
+
 /* ---------- triage 미리보기 (동기: 스냅샷 기준) ---------- */
 function previewJeonseProtectionTriage(form) {
   const market = form.enrichedMarket || jpoMarketSnapshotSync(form.housingType, form.lawdCode);
@@ -291,6 +401,7 @@ function createJeonseProtectionCase(form) {
     auctionDeadline: form.auctionDeadline || "",
     docsReady: Boolean(form.docsReady),
     docChecklist: form.docsReady ? [["임대차계약서", "보유"]] : [["임대차계약서", "확인 필요"]],
+    uploadedFiles: (form.uploadedFiles || []).map((file) => file.fileName || file.name).filter(Boolean),
     sourceMode: market.sourceMode,
     sourceChannel: form.sourceChannel || "opsPortal",
     tags: Array.isArray(form.tags) ? form.tags : String(form.tags || "").split(",").map((tag) => tag.trim()).filter(Boolean),
@@ -303,6 +414,34 @@ function createJeonseProtectionCase(form) {
 
   jpoInsert("jeonse_cases", jeonseCase);
   jpoRunHook("afterCaseCreate", { caseRow: jeonseCase });
+
+  (form.uploadedFiles || []).forEach((file) => {
+    jpoInsert("jeonse_evidence_files", jpoScopedRow({
+      id: jpoNextId("JPO-FILE", "jeonse_evidence_files"),
+      caseId: id,
+      fileName: file.fileName || file.name || "evidence-file",
+      fileType: file.fileType || file.type || "application/octet-stream",
+      fileSize: Number(file.fileSize || file.size || 0),
+      status: "metadataOnly",
+      analysisSummary: file.analysisSummary || "업로드 파일 메타데이터 수집 — 원문 저장 없이 에이전트 확인 후보로 사용",
+      usedByAgents: triage.handoffs.map((handoff) => handoff.toAgentId).filter(Boolean),
+      uploadedAt: now,
+    }));
+  });
+  if ((form.uploadedFiles || []).length) {
+    jpoWriteAudit({
+      id: jpoNextId("AUD-JPO", "jeonse_audit_logs"),
+      caseId: id,
+      actorId: assignedToId,
+      action: "JPO_FILE_METADATA_CAPTURED",
+      targetType: "jeonse_evidence_file",
+      targetId: id,
+      riskLevel: "medium",
+      reviewRequired: true,
+      note: `${form.uploadedFiles.length}개 파일 메타데이터`,
+      createdAt: now,
+    });
+  }
 
   jpoInsert("jeonse_price_snapshots", jpoScopedRow({
     id: jpoNextId("JEONSE-SNAP", "jeonse_price_snapshots"),
@@ -481,6 +620,7 @@ function recordJeonseProtectionAgentRun(run) {
   });
   jpoWriteAudit({
     id: jpoNextId("AUD-JPO", "jeonse_audit_logs"),
+    caseId: run.caseId || null,
     actorId: run.agentId,
     action: "JPO_AGENT_RUN",
     targetType: "agent_run",
@@ -490,6 +630,73 @@ function recordJeonseProtectionAgentRun(run) {
     createdAt: today,
   });
   return row;
+}
+
+function runJeonseProtectionQueueNode(caseId, nodeId) {
+  const parsed = jpoParseQueueNodeId(nodeId);
+  const targetCaseId = parsed?.caseId || caseId;
+  const row = jpoTable("jeonse_cases", JPO_ROLE_KEY).find((item) => item.id === targetCaseId || item.caseNo === targetCaseId);
+  if (!row) return null;
+  const today = new Date().toISOString().slice(0, 10);
+  const agentId = parsed?.agentId || "jpo-intake";
+
+  if (parsed?.kind === "approval" || agentId === "jpo-report") {
+    const deliverable = jpoInsertDeliverable({
+      id: jpoNextId("JPO-MD", "jeonse_deliverables"),
+      caseId: row.id,
+      agentId: "jpo-report",
+      kind: "caseReport",
+      title: "통합 케이스 브리프·액션 플랜·증적 로그",
+      fileName: jpoDeliverableFileName(row, "jpo-report", "caseReport"),
+      status: row.requiresHumanReview || ["high", "critical"].includes(row.riskLevel) ? "pendingApproval" : "needsReview",
+      riskLevel: row.riskLevel,
+      requiresHumanReview: true,
+      body: jpoBuildCaseReportBody(row),
+      createdAt: today,
+    });
+    const approval = jpoEnsureApprovalForCase(row, "통합 브리프/고객 안내 전 담당자 승인", "jpo-report");
+    return { case: row, deliverable, approval };
+  }
+
+  const info = typeof jpoAgentNodeInfo === "function" ? jpoAgentNodeInfo(agentId, row) : { role: agentId, output: "내부 참고 산출물" };
+  const requiresHumanReview = row.requiresHumanReview || ["high", "critical"].includes(row.riskLevel)
+    || ["jpo-comms", "jpo-supervisor", "jpo-victim", "jpo-legal", "jpo-auction"].includes(agentId);
+  const status = agentId === "jpo-comms" ? "pendingApproval" : requiresHumanReview ? "needsReview" : "completed";
+  const handoffs = [];
+  if (agentId === "jpo-auction" || ["high", "critical"].includes(row.riskLevel)) {
+    handoffs.push({ toAgentId: "jpo-supervisor", reason: "고위험/긴급 케이스 — 사람 승인 게이트" });
+  }
+  if (agentId === "jpo-comms") {
+    handoffs.push({ toAgentId: "jpo-supervisor", reason: "고객 안내문 발송 승인 필요" });
+  }
+  const run = recordJeonseProtectionAgentRun({
+    agentId,
+    caseId: row.id,
+    inputSummary: `${row.caseNo} · ${info.data || info.role}`,
+    outputSummary: `${info.output || "내부 참고 산출물"} 생성 · ${requiresHumanReview ? "담당자 검토 필요" : "검토 후보 정리"}`,
+    status,
+    riskLevel: row.riskLevel,
+    requiresHumanReview,
+    requiresHumanEscalation: ["high", "critical"].includes(row.riskLevel) || agentId === "jpo-auction",
+    handoffs,
+  });
+  const deliverable = jpoInsertDeliverable({
+    id: jpoNextId("JPO-MD", "jeonse_deliverables"),
+    caseId: row.id,
+    agentId,
+    kind: "agentMd",
+    title: `${jpoAgentDisplayName(agentId)} · ${info.output || "내부 참고 산출물"}`,
+    fileName: jpoDeliverableFileName(row, agentId),
+    status,
+    riskLevel: row.riskLevel,
+    requiresHumanReview,
+    body: jpoBuildAgentDeliverableBody(row, agentId, run),
+    createdAt: today,
+  });
+  if (status === "pendingApproval" || requiresHumanReview) {
+    jpoEnsureApprovalForCase(row, agentId === "jpo-comms" ? "고객 안내문 발송 승인" : jpoApprovalTypeForIntake(row.intakeType), agentId);
+  }
+  return { case: row, run, deliverable };
 }
 
 /* ---------- 승인 결정 (사람) ---------- */
@@ -556,6 +763,22 @@ function runJeonseProtectionSampleRequest(key) {
     requiresHumanEscalation: ["high", "critical"].includes(riskLevel),
     handoffs: triage.handoffs,
   });
+  const row = jpoTable("jeonse_cases", JPO_ROLE_KEY).find((item) => item.id === sample.caseId);
+  if (row) {
+    jpoInsertDeliverable({
+      id: jpoNextId("JPO-MD", "jeonse_deliverables"),
+      caseId: row.id,
+      agentId,
+      kind: "agentMd",
+      title: `${agent ? agent.displayName : agentId} 샘플 실행 산출물`,
+      fileName: jpoDeliverableFileName(row, agentId),
+      status: run.status,
+      riskLevel,
+      requiresHumanReview: run.requiresHumanReview,
+      body: jpoBuildAgentDeliverableBody(row, agentId, run),
+      createdAt: run.createdAt,
+    });
+  }
   if (sample.commsDraft) {
     jpoInsert("approvals", jpoScopedRow({
       id: jpoNextId("APR-JPO", "approvals"),

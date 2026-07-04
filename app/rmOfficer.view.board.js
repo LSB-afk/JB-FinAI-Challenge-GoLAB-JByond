@@ -79,11 +79,11 @@ function rmoBoardView() {
       <h2>RM님 업무 급한 순으로 모아왔어요</h2>
       <p>우선순위는 단순 점수가 아니라 근거 문장과 데이터 출처로 설명됩니다. 급한 순서로 정렬했어요.</p>
     </div>
-    <p class="rmo-keyboard-hint" aria-hidden="false">키보드 숫자를 눌러 Case를 확인하세요 · 방향키로 에이전트 이동 · Enter로 승인·실행</p>
+    <p class="rmo-keyboard-hint" aria-hidden="false">숫자키 Case 선택 · ←→ 케이스 이동 · ↑↓ 에이전트 이동 · Space 다음 스텝 · Enter 실행</p>
   </section>`;
-  const subBody = rmoState.detail && rmoState.detail.kind === "case" ? rmoCaseSubSection(rmoState.detail.id) : `<section class="workspace-panel jbwc-panel rmo-sub-empty"><p class="eyebrow">케이스 상세(SUB)</p><div class="jbwc-empty">위 목록에서 케이스를 선택(숫자키/클릭)하면 업무 계층도와 통합 리포트가 열립니다.</div></section>`;
+  const subBody = rmoState.detail && rmoState.detail.kind === "case" ? rmoCaseSubSection(rmoState.detail.id) : `<section class="workspace-panel jbwc-panel rmo-sub-empty"><p class="eyebrow">케이스 상세(SUB)</p><div class="jbwc-empty">위 목록에서 케이스를 선택(숫자키/클릭)하면 에이전트 승인 큐와 통합 리포트가 열립니다.</div></section>`;
   /* 요구3 — 업무보드(위)와 SUB(케이스 상세, 아래) 사이 시각적 구분: 좌측 레일 라벨 + 배경 밴드 */
-  const sub = `<div class="rmo-sub-band" aria-hidden="true"><span class="rmo-sub-rail-label">SUB</span><span class="rmo-sub-rail-text">케이스 상세 · 업무 계층도</span></div><div class="rmo-sub-region">${subBody}</div>`;
+  const sub = `<div class="rmo-sub-band" aria-hidden="true"><span class="rmo-sub-rail-label">SUB</span><span class="rmo-sub-rail-text">케이스 상세 · 에이전트 승인 큐</span></div><div class="rmo-sub-region">${subBody}</div>`;
   return `${banner}
     ${rmoCountHeader(allCases)}
     ${rmoBoardFilters()}
@@ -100,51 +100,81 @@ function rmoCaseSubSection(caseId) {
   const stageChips = RMO_STAGES.map((s) => `<span class="rmo-stage-chip ${rmoStageOf(caseRow) === s ? "is-active" : ""}">${escapeHtml(RMO_STAGE_SHORT[s])}</span>`).join("");
   const riskSignalChips = (caseRow.prioritySources || []).map((s) => `<span class="rmo-data-chip">${escapeHtml(s.label)}</span>`).join("") || `<span class="jbwc-row-note">연결된 위험 신호 없음</span>`;
   const customerLine = [caseRow.customerAlias, caseRow.customerAge ? `${caseRow.customerAge}세` : "", caseRow.affiliate ? `· ${caseRow.affiliate}` : ""].filter(Boolean).join(" ");
+  const caseIndex = Math.max(0, rmoState.boardOrder.indexOf(caseRow.id)) + 1;
   const header = `<section class="workspace-panel jbwc-panel rmo-sub-head">
-    <header class="rmo-sub-head-row">
-      <div>
-        <p class="eyebrow">Case · ${escapeHtml(caseRow.createdAt)} · ${escapeHtml(RMO_RISK_LABELS[caseRow.riskLevel] || caseRow.riskLevel)} 위험</p>
-        <h3>${escapeHtml(caseRow.caseNo)} · ${escapeHtml(caseRow.theme)}</h3>
-        <p class="jbwc-meta">${escapeHtml(customerLine)} · ${escapeHtml(caseRow.region)} · ${escapeHtml(caseRow.bank)} · ${escapeHtml(rmoCaseTypeLabel(caseRow.caseType))} · 담당 ${escapeHtml(rmoUserName(caseRow.assignedRmId))}</p>
-        <p class="rmo-situation">${escapeHtml(caseRow.situation)}</p>
-        <p class="rmo-goal-line"><strong>처리 목표</strong> ${escapeHtml(caseRow.goal || "-")}</p>
-        <p class="rmo-case-reason"><span aria-hidden="true">▎</span>${escapeHtml(caseRow.priorityReason)}</p>
-        <div class="rmo-data-chips">${riskSignalChips}</div>
+    <header class="rmo-sub-detail-head">
+      <div class="rmo-sub-meta-line">
+        <span>Case ${escapeHtml(String(caseIndex || 1))}</span>
+        <span>${escapeHtml(caseRow.createdAt)}</span>
+        ${rmoRiskPill(caseRow.riskLevel)}
+        ${rmoPriorityPill(caseRow.priority)}
       </div>
-      <div class="rmo-sub-head-side">
-        ${rmoRiskPill(caseRow.riskLevel)} ${rmoPriorityPill(caseRow.priority)}
+      <div class="rmo-sub-title-row">
+        <div>
+          <h3>${escapeHtml(caseRow.theme)}</h3>
+          <p class="jbwc-meta">${escapeHtml(customerLine)} · ${escapeHtml(caseRow.region)} · ${escapeHtml(caseRow.bank)} · ${escapeHtml(rmoCaseTypeLabel(caseRow.caseType))} · 담당 ${escapeHtml(rmoUserName(caseRow.assignedRmId))}</p>
+        </div>
         <button class="secondary-button" type="button" data-rmo-open-detail="case:${escapeHtml(caseRow.id)}">고객 정보</button>
-        <div class="rmo-stage-chips">${stageChips}</div>
+      </div>
+      <p class="rmo-situation">${escapeHtml(caseRow.situation)}</p>
+      <div class="rmo-sub-insight-grid">
+        <section><span>처리 목표</span><p class="rmo-goal-line"><strong>처리 목표</strong> ${escapeHtml(caseRow.goal || "담당 RM이 검토 가능한 업무 산출물과 승인 경로를 준비한다.")}</p></section>
+        <section><span>위험 신호</span><p class="rmo-case-reason"><span aria-hidden="true">▎</span>${escapeHtml(caseRow.priorityReason)}</p></section>
+      </div>
+      <div class="rmo-sub-actions-row">
+        <div class="rmo-data-chips">${riskSignalChips}</div>
+        <div class="rmo-stage-chips" role="group" aria-label="작업 상태">${stageChips}</div>
       </div>
     </header>
   </section>`;
-  return header + rmoWorkMapSection(caseRow) + rmoDeliverableViewerSection(caseRow) + rmoApprovalGateSection(caseRow);
+  return `<section class="rmo-sub-workspace">
+    <aside class="rmo-sub-left-rail" aria-hidden="true">
+      <span class="rmo-sub-marker">SUB</span>
+      <span class="rmo-sub-marker rmo-sub-marker-md">md</span>
+    </aside>
+    <div class="rmo-sub-main">
+      ${header}
+      ${rmoWorkMapSection(caseRow)}
+      ${rmoDeliverableViewerSection(caseRow)}
+      ${rmoApprovalGateSection(caseRow)}
+    </div>
+  </section>`;
 }
 
 /* 노드 상세 카드 — 11필드(agentId/agentName/role/reason/inputData/tools/expectedOutput/status/
-   riskLevel/requiresApproval/outputMdPath)를 모두 노출하고, Space로 펼치는 추가 상세를 포함한다. */
+   riskLevel/requiresApproval/outputMdPath)를 모두 노출하고, D로 펼치는 추가 상세를 포함한다. */
 function rmoWorkMapNodeCard(node, options) {
+  const agent = rmOfficerAgents.find((item) => item.id === node.agentId) || {};
   const colorClass = rmoNodeStatusColorClass(node.status);
   const isFocused = options.focused;
   const isExpanded = rmoState.workMapExpandedNodeId === node.id;
   const canExecute = rmoNodeStatus(node.status) === "ready";
   const canRerun = ["completed", "rejected"].includes(rmoNodeStatus(node.status)) && node.kind !== "orchestrator";
   const nodeKeyAttr = node.kind === "orchestrator" ? "" : ` data-rmo-assignment="${escapeHtml(node.id)}"`;
+  const output = node.outputMdPath || node.expectedOutput || agent.deliverableFile || "-";
+  const minutes = node.estimatedMinutes || agent.estimatedMinutes || 3;
+  const dataChips = (node.dataChips && node.dataChips.length ? node.dataChips : node.inputData || []).slice(0, 5);
+  const progress = Number.isFinite(Number(node.progress)) && Number(node.progress) > 0 ? Number(node.progress) : 40;
   const detail = isExpanded ? `<div class="rmo-node-detail">
       <div><span>사용 데이터</span><div class="rmo-data-chips">${(node.inputData || []).map((d) => `<span class="rmo-data-chip">${escapeHtml(d)}</span>`).join("") || "-"}</div></div>
       <div><span>도구/스킬</span><div class="rmo-data-chips">${(node.tools || []).map((t) => `<span class="rmo-agent-chip">${escapeHtml(t)}</span>`).join("") || "-"}</div></div>
       <div><span>산출물 경로</span><strong>${escapeHtml(node.outputMdPath || node.expectedOutput || "-")}</strong></div>
       <div><span>승인 필요 여부</span><strong>${node.requiresApproval ? "필요" : "불필요"}</strong></div>
     </div>` : "";
-  return `<article class="rmo-node-card ${colorClass} ${isFocused ? "rmo-node-focused" : ""}" data-rmo-node="${escapeHtml(node.id)}" data-rmo-node-kind="${escapeHtml(node.kind)}"${nodeKeyAttr} role="button" tabindex="0">
+  return `<article class="rmo-node-card rmo-agent-queue-card ${colorClass} ${isFocused ? "rmo-node-focused" : ""}" data-rmo-node="${escapeHtml(node.id)}" data-rmo-node-kind="${escapeHtml(node.kind)}"${nodeKeyAttr} role="button" tabindex="0">
     <header class="rmo-aq-head">
-      <div><strong>${escapeHtml(node.agentName || rmoAgentDisplayName(node.agentId))}</strong><span class="rmo-aq-org">${escapeHtml(node.agentId)}</span></div>
-      <div class="rmo-aq-meta">${rmoRiskPill(node.riskLevel)}<span class="status-pill rmo-node-status-pill">${escapeHtml(rmoNodeStatusLabel(node.status))}</span></div>
+      <div class="rmo-aq-agent-title"><strong>${escapeHtml(node.agentName || rmoAgentDisplayName(node.agentId))}</strong><span class="rmo-aq-org">${escapeHtml(agent.org || node.agentId)}</span></div>
+      <div class="rmo-aq-output"><span>예상 산출물</span><strong>${escapeHtml(output)}</strong></div>
+      <div class="rmo-aq-duration">소요 시간 : ${escapeHtml(String(minutes))}분</div>
     </header>
-    <p class="jbwc-meta"><strong>담당 역할</strong> ${escapeHtml(node.role || "-")}</p>
-    <p class="jbwc-meta"><strong>이 에이전트를 사용하는 이유</strong> ${escapeHtml(node.reason || "-")}</p>
-    <p class="jbwc-meta"><strong>예상 산출물</strong> ${escapeHtml(node.outputMdPath || node.expectedOutput || "-")}</p>
-    ${rmoNodeStatus(node.status) === "running" ? `<div class="rmo-run-overlay" role="status"><span class="rmo-run-spin" aria-hidden="true">⟳</span> 조금만 기다려주세요<span class="rmo-progress-indeterminate" aria-hidden="true"></span></div>` : ""}
+    <div class="rmo-aq-status-row">${rmoRiskPill(node.riskLevel)}<span class="status-pill rmo-node-status-pill">${escapeHtml(rmoNodeStatusLabel(node.status))}</span></div>
+    <div class="rmo-aq-body">
+      <p><strong>담당 역할</strong> ${escapeHtml(node.role || "-")}</p>
+      <p><strong>이 에이전트를 사용하는 이유</strong> ${escapeHtml(node.reason || "-")}</p>
+      <p><strong>예상 기대값</strong> ${escapeHtml(node.expectedValue || agent.description || "-")}</p>
+      <div class="rmo-data-chips">${dataChips.map((label) => `<span class="rmo-data-chip">${escapeHtml(label)}</span>`).join("") || '<span class="jbwc-row-note">연결 데이터 없음</span>'}</div>
+    </div>
+    ${rmoNodeStatus(node.status) === "running" ? `<div class="rmo-run-overlay" role="status"><span>조금만 기다려주세요 ${escapeHtml(String(progress))}%</span><span class="rmo-run-spin" aria-hidden="true">⟳</span></div>` : ""}
     ${rmoNodeStatus(node.status) === "completed" ? `<p class="rmo-aq-done">✔ 산출물 생성 완료</p>` : ""}
     ${detail}
     <footer class="rmo-aq-foot">
@@ -159,19 +189,16 @@ function rmoWorkMapNodeCard(node, options) {
    패널 제목에 기존 "에이전트 승인 큐" 표현을 함께 담아 계약을 유지한다. */
 function rmoWorkMapSection(caseRow) {
   const tree = rmoBuildWorkMapTree(caseRow);
-  rmoState.workMapNodeOrder = tree.flattened.map((n) => n.id);
-  if (rmoState.workMapFocusIndex < 0 || rmoState.workMapFocusIndex >= tree.flattened.length) rmoState.workMapFocusIndex = rmoDefaultWorkMapFocusIndex(tree.flattened);
-  const focusedId = tree.flattened[rmoState.workMapFocusIndex] ? tree.flattened[rmoState.workMapFocusIndex].id : null;
-  const branchCards = tree.branches.map((n) => rmoWorkMapNodeCard(n, { focused: n.id === focusedId })).join("");
-  const reportCard = tree.report ? rmoWorkMapNodeCard(tree.report, { focused: tree.report.id === focusedId }) : "";
-  const hint = `<p class="jbwc-meta">현재 선택 노드: <strong>${escapeHtml(tree.flattened[rmoState.workMapFocusIndex] ? (tree.flattened[rmoState.workMapFocusIndex].agentName || rmoAgentDisplayName(tree.flattened[rmoState.workMapFocusIndex].agentId)) : "-")}</strong> · ↑↓ 노드 이동 · Space 상세 보기 · 승인하지 않을 에이전트는 그대로 두어도 됩니다.</p>`;
-  return rmoPanel(`에이전트 업무 계층도 (에이전트 승인 큐 · ${tree.flattened.length})`, `${hint}
+  const queueNodes = [...tree.branches, ...(tree.report ? [tree.report] : [])];
+  rmoState.workMapNodeOrder = queueNodes.map((n) => n.id);
+  if (rmoState.workMapFocusIndex < 0 || rmoState.workMapFocusIndex >= queueNodes.length) rmoState.workMapFocusIndex = rmoDefaultWorkMapFocusIndex(queueNodes);
+  const focusedId = queueNodes[rmoState.workMapFocusIndex] ? queueNodes[rmoState.workMapFocusIndex].id : null;
+  const queueCards = queueNodes.map((n) => rmoWorkMapNodeCard(n, { focused: n.id === focusedId })).join("");
+  const focusedName = queueNodes[rmoState.workMapFocusIndex] ? (queueNodes[rmoState.workMapFocusIndex].agentName || rmoAgentDisplayName(queueNodes[rmoState.workMapFocusIndex].agentId)) : "-";
+  const hint = `<p class="jbwc-meta rmo-workmap-contract-note">에이전트 업무 계층도 데이터를 승인 큐 카드로 표시합니다. 현재 선택: <strong>${escapeHtml(focusedName)}</strong> · ↑↓ 에이전트 이동 · Space 다음 스텝 · D 상세 · Enter 승인·실행.</p>`;
+  return rmoPanel(`에이전트 승인 큐 (${queueNodes.length})`, `${hint}
     <div class="rmo-workmap">
-      ${rmoWorkMapNodeCard(tree.orchestrator, { focused: tree.orchestrator.id === focusedId })}
-      <div class="rmo-node-connector" aria-hidden="true"></div>
-      <div class="rmo-node-branches">${branchCards}</div>
-      <div class="rmo-node-connector" aria-hidden="true"></div>
-      ${reportCard}
+      ${queueCards}
     </div>`);
 }
 

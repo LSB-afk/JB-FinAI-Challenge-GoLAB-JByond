@@ -214,6 +214,15 @@ function jpoSeedData() {
       scope({ id: "JEONSE-RUN-0003", agentId: "jpo-comms", caseId: "JEONSE-0006", inputSummary: "상담 요약·안내 초안", outputSummary: "발송 승인 대기 등록", status: "pendingApproval", riskLevel: "medium", requiresHumanReview: true, createdAt: plus(0) }),
       scope({ id: "JEONSE-RUN-0004", agentId: "jpo-dataquality", caseId: "JEONSE-0004", inputSummary: "sourceMode 점검", outputSummary: "fallback — 데이터 부족으로 담당자 확인 필요", status: "completed", riskLevel: "medium", requiresHumanReview: true, createdAt: plus(-3) }),
     ],
+    jeonse_deliverables: [
+      scope({ id: "JPO-MD-0001", caseId: "JEONSE-0001", agentId: "jpo-price", kind: "agentMd", title: "전세가율/시세 위험 확인 메모", fileName: "JEONSE-0001-price-risk.md", status: "needsReview", requiresHumanReview: true, body: "## 내부 운영 참고\n- 전세가율 91% 신호를 담당자 검토 항목으로 분리\n- 확정 판단 금지", createdAt: plus(-1) }),
+      scope({ id: "JPO-MD-0002", caseId: "JEONSE-0004", agentId: "jpo-auction", kind: "agentMd", title: "경·공매 기한 대응 후보", fileName: "JEONSE-0004-auction-action.md", status: "needsReview", requiresHumanReview: true, body: "## 내부 운영 참고\n- 경매 기일 D-9\n- 감독자 승인 및 피해지원 안내 후보 확인", createdAt: plus(-3) }),
+      scope({ id: "JPO-MD-0003", caseId: "JEONSE-0006", agentId: "jpo-comms", kind: "agentMd", title: "계약 전 상담 요약 초안", fileName: "JEONSE-0006-consult-summary.md", status: "pendingApproval", requiresHumanReview: true, body: "## 고객 안내 초안\n- 담당자 승인 전 공유 금지\n- 계약 전 확인 항목만 안내", createdAt: plus(0) }),
+    ],
+    jeonse_evidence_files: [
+      scope({ id: "JPO-FILE-0001", caseId: "JEONSE-0004", fileName: "auction-notice-summary.pdf", fileType: "application/pdf", fileSize: 248000, status: "metadataOnly", analysisSummary: "경·공매 통지서 요약 메타데이터 — 기일 D-9, 원문 저장 없음", usedByAgents: ["jpo-auction", "jpo-victim"], uploadedAt: plus(-3) }),
+      scope({ id: "JPO-FILE-0002", caseId: "JEONSE-0005", fileName: "deposit-delay-checklist.txt", fileType: "text/plain", fileSize: 4200, status: "metadataOnly", analysisSummary: "보증금 반환 지연 상담 메모 요약 — 지원 연계 후보 확인", usedByAgents: ["jpo-victim", "jpo-legal"], uploadedAt: plus(-2) }),
+    ],
     agent_handoffs: [
       scope({ id: "HND-JPO-0001", fromAgentId: "jpo-intake", toAgentId: "jpo-price", caseId: "JEONSE-0001", reason: "시세 데이터 보강", status: "open", createdAt: plus(-1) }),
       scope({ id: "HND-JPO-0002", fromAgentId: "jpo-auction", toAgentId: "jpo-supervisor", caseId: "JEONSE-0004", reason: "경·공매 임박 — 사람 검토 필수", status: "escalated", createdAt: plus(-3) }),
@@ -252,7 +261,7 @@ function jpoLoadDb() {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && parsed.version === 2) {
-        jpoDbCache = parsed;
+        jpoDbCache = jpoEnsureDbTables(parsed);
         jpoSyncHarnessAgents(jpoDbCache);
         jpoSaveDb();
         return jpoDbCache;
@@ -267,6 +276,13 @@ function jpoLoadDb() {
 
 function jpoSaveDb() {
   try { window.localStorage.setItem(JPO_DB_KEY, JSON.stringify(jpoDbCache)); } catch (error) { /* 메모리 유지 */ }
+}
+
+function jpoEnsureDbTables(db) {
+  ["jeonse_deliverables", "jeonse_evidence_files"].forEach((table) => {
+    if (!Array.isArray(db[table])) db[table] = [];
+  });
+  return db;
 }
 
 function jpoResetDb() {

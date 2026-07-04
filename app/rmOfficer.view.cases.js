@@ -11,9 +11,22 @@ function rmoCaseListMarkup(rows) {
     </li>`);
 }
 
+function rmoDomainSupportPanels(typeKey, rows) {
+  const agents = Array.from(new Set(rows.flatMap((c) => c.agentPlan || []))).slice(0, 5);
+  const audits = rmoTable("rm_officer_audit_logs", RMO_ROLE_KEY).filter((a) => rows.some((c) => c.id === a.caseId)).slice(0, 4);
+  const nextRows = rows.slice(0, 4).map((c) => `<li><strong>${escapeHtml(c.caseNo)} · ${escapeHtml(c.theme)}</strong><span>${escapeHtml(rmoNextActionText(c))}</span></li>`).join("");
+  const agentRows = agents.map((id) => `<li><strong>${escapeHtml(rmoAgentDisplayName(id))}</strong><span>${escapeHtml((rmOfficerAgents.find((a) => a.id === id) || {}).description || "선택 케이스 분석에 연결")}</span></li>`).join("");
+  const auditRows = audits.map((a) => `<li><strong>${escapeHtml(a.action)}</strong><span>${escapeHtml(a.createdAt)} · ${escapeHtml(a.targetId || a.caseId || "-")}</span></li>`).join("");
+  return `<section class="rmo-domain-support-grid" aria-label="업무 보조 요약">
+    <article class="rmo-domain-support-card"><header><strong>추천 다음 액션</strong><span class="nav-count">${rows.length}</span></header><ul>${nextRows || "<li><span>대기 중인 항목 없음</span></li>"}</ul></article>
+    <article class="rmo-domain-support-card"><header><strong>관련 에이전트</strong><span class="nav-count">${agents.length}</span></header><ul>${agentRows || "<li><span>연결 에이전트 없음</span></li>"}</ul></article>
+    <article class="rmo-domain-support-card"><header><strong>최근 감사 기록</strong><span class="nav-count">${audits.length}</span></header><ul>${auditRows || "<li><span>아직 감사 기록 없음</span></li>"}</ul></article>
+  </section>`;
+}
+
 function rmoDomainCases(typeKey, title) {
   const rows = rmoTable("rm_officer_cases", RMO_ROLE_KEY).filter((c) => c.caseType === typeKey);
-  return rmoPanel(`${title} (${rows.length})`, rmoCaseListMarkup(rows)) + rmoMockNote();
+  return rmoPanel(`${title} (${rows.length})`, rmoCaseListMarkup(rows) + rmoDomainSupportPanels(typeKey, rows)) + rmoMockNote();
 }
 
 /* 고객 정보 상세 패널(SUB 헤더의 '고객 정보' 버튼) — 익명 Ref 기준, 민감 원문 없음 */
@@ -28,24 +41,38 @@ function rmoCaseDetailMarkup(row) {
   const sources = (row.prioritySources || []).map((s) => `<span class="rmo-data-chip">${escapeHtml(s.label)}</span>`).join("");
   const evidence = rmoTable("rm_officer_evidence_items", RMO_ROLE_KEY).filter((x) => x.caseId === row.id).slice(0, 4);
   const audits = rmoTable("rm_officer_audit_logs", RMO_ROLE_KEY).filter((x) => x.caseId === row.id).slice(0, 4);
-  return `<section class="workspace-panel jbwc-detail-panel" aria-label="RM 고객 정보 패널">
+  const assignments = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY).filter((x) => x.caseId === row.id).sort((a, b) => (a.order || 0) - (b.order || 0));
+  const deliverables = rmoTable("rm_officer_deliverables", RMO_ROLE_KEY).filter((x) => x.caseId === row.id).slice(0, 5);
+  const agentPlan = assignments.map((a) => `<li><strong>${escapeHtml(rmoAgentDisplayName(a.agentId))}</strong><span>${escapeHtml(rmoNodeStatusLabel(a.status))} · ${escapeHtml(a.outputMdPath || a.expectedOutput || "-")}</span></li>`).join("");
+  const docs = deliverables.map((d) => `<li><strong>${escapeHtml(d.fileName)}</strong><span>${escapeHtml(rmoDeliverableDocType(d))} · ${escapeHtml(d.summary || "-")}</span></li>`).join("");
+  return `<section class="workspace-panel jbwc-detail-panel rmo-case-detail-panel" aria-label="RM 고객 정보 패널">
     <header>
-      <div><p class="eyebrow">고객 정보(익명 Ref)</p><h3>${escapeHtml(row.caseNo)} · ${escapeHtml(row.customerAlias)}</h3></div>
+      <div><p class="eyebrow">상세 정보 · 고객 정보(익명 Ref)</p><h3>${escapeHtml(row.caseNo)} · ${escapeHtml(row.theme)}</h3></div>
       <div>${rmoStagePill(rmoStageOf(row))} ${rmoRiskPill(row.riskLevel)} <button class="secondary-button" type="button" data-rmo-clear-detail>닫기</button></div>
     </header>
     <div class="jbwc-detail-grid">
       <div><span>익명 고객 ID</span><strong>${escapeHtml(row.customerRefId)}</strong></div>
+      <div><span>고객 요약</span><strong>${escapeHtml([row.customerAlias, row.customerAge ? `${row.customerAge}세` : "", row.affiliate].filter(Boolean).join(" · "))}</strong></div>
       <div><span>관리 은행/지역</span><strong>${escapeHtml(row.bank)} · ${escapeHtml(row.region)}</strong></div>
       <div><span>상담 유형</span><strong>${escapeHtml(rmoCaseTypeLabel(row.caseType))}</strong></div>
       <div><span>담당/팀</span><strong>${escapeHtml(rmoUserName(row.assignedRmId))} · ${escapeHtml(row.assignedTeam)}</strong></div>
       <div><span>요청 금액대</span><strong>${escapeHtml(row.requestedAmountBand || "-")}</strong></div>
+      <div><span>접수일</span><strong>${escapeHtml(row.receivedAt || row.createdAt || "-")}</strong></div>
+      <div><span>첨부 파일</span><strong>${escapeHtml(row.uploadedFileName || "없음")}</strong></div>
       <div><span>우선순위</span><strong>${escapeHtml(RMO_PRIORITY_LABELS[row.priority] || row.priority)} (${escapeHtml(String(row.priorityScore))})</strong></div>
     </div>
-    <p class="rmo-case-reason"><span aria-hidden="true">▎</span>우선순위 근거: ${escapeHtml(row.priorityReason)}</p>
+    <div class="rmo-detail-story">
+      <section><span>현재 상황</span><p>${escapeHtml(row.situation)}</p></section>
+      <section><span>위험 신호</span><p><span aria-hidden="true">▎</span>${escapeHtml(row.priorityReason)}</p></section>
+      <section><span>처리 목표</span><p>${escapeHtml(row.goal || "-")}</p></section>
+      <section><span>다음 액션</span><p>${escapeHtml(rmoNextActionText(row))}</p></section>
+    </div>
     <div class="rmo-data-chips">${sources || '<span class="jbwc-row-note">연결된 출처 없음</span>'}</div>
-    <div class="jbwc-grid">
-      <article class="jbwc-card"><header><strong>근거 피드</strong><span class="nav-count">${evidence.length}</span></header>${evidence.map((e) => `<p class="jbwc-meta">${escapeHtml(e.title)} · ${escapeHtml(e.summary)}</p>`).join("") || '<p class="jbwc-meta">근거 없음</p>'}</article>
-      <article class="jbwc-card"><header><strong>감사 로그</strong><span class="nav-count">${audits.length}</span></header>${audits.map((a) => `<p class="jbwc-meta">${escapeHtml(a.action)} · ${escapeHtml(a.createdAt)}</p>`).join("") || '<p class="jbwc-meta">감사 기록 없음</p>'}</article>
+    <div class="rmo-detail-lists">
+      <article><header><strong>필요 에이전트</strong><span class="nav-count">${assignments.length}</span></header><ul>${agentPlan || "<li><span>배정 없음</span></li>"}</ul></article>
+      <article><header><strong>생성 산출물</strong><span class="nav-count">${deliverables.length}</span></header><ul>${docs || "<li><span>아직 생성된 문서 없음</span></li>"}</ul></article>
+      <article><header><strong>근거 피드</strong><span class="nav-count">${evidence.length}</span></header><ul>${evidence.map((e) => `<li><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(e.summary)}</span></li>`).join("") || "<li><span>근거 없음</span></li>"}</ul></article>
+      <article><header><strong>감사 로그</strong><span class="nav-count">${audits.length}</span></header><ul>${audits.map((a) => `<li><strong>${escapeHtml(a.action)}</strong><span>${escapeHtml(a.createdAt)}</span></li>`).join("") || "<li><span>감사 기록 없음</span></li>"}</ul></article>
     </div>
     <p class="jbwc-guard">주민/전화/계좌 등 실제 개인정보는 저장·표시하지 않습니다. 모든 판단은 담당 RM 검토가 필요합니다.</p>
   </section>`;

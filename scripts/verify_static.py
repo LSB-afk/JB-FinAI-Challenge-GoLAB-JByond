@@ -89,6 +89,7 @@ required = [
     ROOT / "app/index.html",
     ROOT / "app/styles.css",
     ROOT / "app/wooricap.css",
+    ROOT / "app/jeonseProtection.exec.css",
     ROOT / "docs/01-시스템-아키텍처.md",
     ROOT / "docs/02-은행-DB-연동-설계.md",
     ROOT / "docs/03-JB우리캐피탈-하네스.md",
@@ -123,6 +124,7 @@ for name, command in required_scripts.items():
 
 html = (ROOT / "app/index.html").read_text(encoding="utf-8")
 css = (ROOT / "app/styles.css").read_text(encoding="utf-8")
+jpo_exec_css = (ROOT / "app/jeonseProtection.exec.css").read_text(encoding="utf-8")
 js = (ROOT / "app/app.js").read_text(encoding="utf-8")
 
 html_needles = [
@@ -131,6 +133,7 @@ html_needles = [
     "page-content",
     "context-panel",
     "./wooricap-db.js",
+    "./jeonseProtection.exec.css",
     "./jbWooriCapitalSidebar.config.js",
     "./jbWooriCapitalAgents.registry.js",
     "./jbWooriCapitalServices.js",
@@ -312,10 +315,30 @@ jpo_needles = [
     "beforeCaseCreate",
     "beforeCustomerMessage",
     "jpoDecideApproval",
+    "jpoQueueNodesForCase",
+    "runJeonseProtectionQueueNode",
+    "jeonse_deliverables",
+    "jeonse_evidence_files",
+    "JPO_FILE_METADATA_CAPTURED",
+    "JPO_DELIVERABLE_CREATED",
+    "선택된 케이스의 실행 큐",
+    "조금만 기다려주세요",
+    "Space 다음",
 ]
 for needle in jpo_needles:
     if needle not in joined_jpo:
         raise SystemExit(f"전세보호 role harness missing {needle!r}")
+
+for needle in [
+    ".jpo-key-overlay",
+    ".jpo-run-overlay",
+    ".jpo-sub-workspace",
+    ".jpo-command-strip",
+    ".properties-resizer",
+    "jpo-risk-high",
+]:
+    if needle not in jpo_exec_css:
+        raise SystemExit(f"전세보호 실행 콘솔 CSS missing {needle!r}")
 
 for forbidden in [
     "jbwcTable(",

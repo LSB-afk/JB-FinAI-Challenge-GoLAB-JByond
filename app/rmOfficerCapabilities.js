@@ -51,22 +51,46 @@ function rmoCapabilityStatusClass(status) {
   return `rmo-cap-status-${status}`;
 }
 
+function rmoCapabilityRisk(cap) {
+  const key = `${cap.id} ${cap.category} ${cap.summary}`.toLowerCase();
+  if (key.includes("guardrail") || key.includes("approval") || key.includes("승인") || key.includes("가드레일") || key.includes("감사")) {
+    return { label: "높음 · 필수 통제", tone: "danger", review: "사람 검토 필수" };
+  }
+  if (key.includes("정책") || key.includes("상환") || key.includes("금리") || key.includes("리마인드") || key.includes("report")) {
+    return { label: "중간 · RM 검토", tone: "warn", review: "담당자 확인 필요" };
+  }
+  return { label: "낮음 · 내부 전용", tone: "safe", review: "내부 적용" };
+}
+
+function rmoCapToneChip(label, tone) {
+  return `<span class="rmo-tone-chip rmo-tone-${escapeHtml(tone || "info")}">${escapeHtml(label || "-")}</span>`;
+}
+
 let rmoCapabilityFilter = "all";
 
 /* 카드: 기능명/한 줄 설명/사용 도메인(카테고리)/연결 에이전트/사용 데이터/생성 산출물/상태 */
 function rmoCapabilityCard(cap) {
   const agentNames = rmoCapabilityAgentNames(cap);
   const agentsText = agentNames.length ? agentNames.join(", ") : "서비스 레이어(에이전트 비경유)";
+  const risk = rmoCapabilityRisk(cap);
   return `<article class="rmo-cap-card" data-rmo-cap-id="${escapeHtml(cap.id)}">
     <header class="rmo-cap-card-head">
       <p class="rmo-cap-category">${escapeHtml(cap.category)}</p>
-      <span class="status-pill rmo-cap-status ${rmoCapabilityStatusClass(cap.status)}">${escapeHtml(RMO_CAPABILITY_STATUS_LABELS[cap.status] || cap.status)}</span>
+      <span class="rmo-cap-head-pills">
+        <span class="status-pill rmo-cap-status ${rmoCapabilityStatusClass(cap.status)}">${escapeHtml(RMO_CAPABILITY_STATUS_LABELS[cap.status] || cap.status)}</span>
+        ${rmoCapToneChip(risk.label, risk.tone)}
+      </span>
     </header>
     <h4 class="rmo-cap-name">${escapeHtml(cap.name)}</h4>
     <p class="rmo-cap-summary">${escapeHtml(cap.summary)}</p>
+    <div class="rmo-cap-quick-row">
+      ${rmoCapToneChip(cap.category, "domain")}
+      ${rmoCapToneChip(risk.review, "review")}
+    </div>
     <div class="rmo-cap-field"><span>연결 에이전트</span><p>${escapeHtml(agentsText)}</p></div>
     <div class="rmo-cap-field"><span>사용하는 데이터</span><div class="rmo-data-chips">${cap.data.map((d) => `<span class="rmo-data-chip">${escapeHtml(d)}</span>`).join("")}</div></div>
     <div class="rmo-cap-field"><span>생성 산출물</span><p>${escapeHtml(cap.output)}</p></div>
+    <div class="rmo-cap-field rmo-cap-risk"><span>담당자 확인</span><p>${escapeHtml(risk.review)}</p></div>
   </article>`;
 }
 
@@ -81,7 +105,7 @@ function rmoCapabilityTable(rows) {
       <span class="jbwc-row-id">${escapeHtml(cap.name)}<br><span class="jbwc-row-note">${escapeHtml(cap.output)}</span></span>
       <span>${escapeHtml(cap.category)}</span>
       <span>${escapeHtml(rmoCapabilityAgentNames(cap).join(", ") || "서비스 레이어")}</span>
-      <span class="status-pill rmo-cap-status ${rmoCapabilityStatusClass(cap.status)}">${escapeHtml(RMO_CAPABILITY_STATUS_LABELS[cap.status] || cap.status)}</span>
+      <span>${rmoCapToneChip(rmoCapabilityRisk(cap).label, rmoCapabilityRisk(cap).tone)} <span class="status-pill rmo-cap-status ${rmoCapabilityStatusClass(cap.status)}">${escapeHtml(RMO_CAPABILITY_STATUS_LABELS[cap.status] || cap.status)}</span></span>
     </li>`).join("");
   return `<ul class="jbwc-list"><li class="jbwc-row jbwc-row-head"><span>기능명</span><span>카테고리</span><span>연결 에이전트</span><span>상태</span></li>${body || '<li class="jbwc-row"><span>표시할 기능이 없습니다.</span></li>'}</ul>`;
 }

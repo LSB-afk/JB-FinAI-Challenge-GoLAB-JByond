@@ -6,6 +6,8 @@ function rmoOptions(options, selected) {
 
 function rmoCollectWizard(form) {
   const fd = new FormData(form);
+  const supportingFile = fd.get("supportingFile");
+  const uploadedFileName = supportingFile && supportingFile.name ? supportingFile.name : String(fd.get("uploadedFileName") || "");
   return {
     caseType: String(fd.get("caseType") || "policyStartup"),
     caseNo: String(fd.get("caseNo") || ""),
@@ -17,7 +19,10 @@ function rmoCollectWizard(form) {
     riskLevel: String(fd.get("riskLevel") || "medium"),
     requestedAmountBand: String(fd.get("requestedAmountBand") || "3천만원 이하"),
     assignedRmId: String(fd.get("assignedRmId") || "USR-RMO-04"),
+    receivedAt: String(fd.get("receivedAt") || ""),
     dueAt: String(fd.get("dueAt") || ""),
+    uploadedFileName,
+    uploadedFileSummary: uploadedFileName ? `${uploadedFileName} 첨부 · 에이전트 분석 입력 후보` : String(fd.get("uploadedFileSummary") || ""),
     requiresHumanReview: Boolean(fd.get("requiresHumanReview")),
   };
 }
@@ -31,6 +36,8 @@ function rmoWizardPreviewMarkup(preview) {
     <div><span>위험도</span><strong>${escapeHtml(RMO_RISK_LABELS[preview.riskLevel] || preview.riskLevel)}</strong></div>
     <div><span>담당자 검토</span><strong>${preview.requiresHumanReview ? "필요" : "일반 큐"}</strong></div>
     <div><span>에스컬레이션</span><strong>${preview.escalationRequired ? "필요" : "없음"}</strong></div>
+    <div><span>접수일</span><strong>${escapeHtml(rmoCaseWizard.receivedAt || "접수 시점 기준")}</strong></div>
+    <div><span>첨부 파일</span><strong>${escapeHtml(rmoCaseWizard.uploadedFileName || "없음")}</strong></div>
   </div>
   <p class="rmo-case-reason"><span aria-hidden="true">▎</span>우선순위 근거: ${escapeHtml(preview.priorityReason)}</p>
   <p class="jbwc-meta">에이전트 배정 플랜: ${plan || "-"}</p>
@@ -57,7 +64,11 @@ function rmoCaseCreationView() {
           <label>요청 금액대<select name="requestedAmountBand">${rmoOptions([["5백만원 이하", "5백만원 이하"], ["3천만원 이하", "3천만원 이하"], ["3천만원~5천만원", "3천만원~5천만원"], ["5천만원~1억", "5천만원~1억"], ["1억~3억", "1억~3억"]], rmoCaseWizard.requestedAmountBand)}</select></label>
           <label>담당자<select name="assignedRmId">${rmoOptions(users, rmoCaseWizard.assignedRmId)}</select></label>
           <label>위험도<select name="riskLevel" data-rmo-wizard-field>${rmoOptions(Object.entries(RMO_RISK_LABELS), rmoCaseWizard.riskLevel)}</select></label>
+          <label>접수일<input type="date" name="receivedAt" value="${escapeHtml(rmoCaseWizard.receivedAt)}" data-rmo-wizard-field /></label>
           <label>SLA due date<input type="date" name="dueAt" value="${escapeHtml(rmoCaseWizard.dueAt)}" data-rmo-wizard-field /></label>
+          <label class="jbwc-wide">첨부 파일 업로드<input type="file" name="supportingFile" accept=".pdf,.png,.jpg,.jpeg,.txt,.md,.csv,.xlsx,.docx" /></label>
+          <input type="hidden" name="uploadedFileName" value="${escapeHtml(rmoCaseWizard.uploadedFileName)}" />
+          <input type="hidden" name="uploadedFileSummary" value="${escapeHtml(rmoCaseWizard.uploadedFileSummary)}" />
           <label class="jbwc-check"><input type="checkbox" name="requiresHumanReview" ${rmoCaseWizard.requiresHumanReview ? "checked" : ""} data-rmo-wizard-field /> 담당자 검토 필요</label>
           <label class="jbwc-wide">상황 요약<textarea name="situation">${escapeHtml(rmoCaseWizard.situation)}</textarea></label>
         </div>

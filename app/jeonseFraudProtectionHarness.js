@@ -16,6 +16,8 @@ const jpoViewRenderers = Object.assign(
   jpoCaseViewRenderers,
 );
 
+let jpoKeyboardBound = false;
+
 function jpoOpsPage() {
   let body = "";
   try {
@@ -27,8 +29,70 @@ function jpoOpsPage() {
   return `<div class="jbwc-shell jpo-shell">${jpoHeaderBar()}${jpoDetailPanel()}${body}</div>`;
 }
 
+function jpoContextCaseMarkup(row) {
+  const runs = jpoTable("jeonse_agent_runs", JPO_ROLE_KEY).filter((run) => run.caseId === row.id).slice(0, 3);
+  const deliverables = typeof jpoCaseDeliverables === "function" ? jpoCaseDeliverables(row.id).slice(0, 3) : [];
+  const audits = jpoTable("jeonse_audit_logs", JPO_ROLE_KEY).filter((audit) => audit.caseId === row.id).slice(0, 3);
+  return `<div class="case-properties jpo-context-panel" data-jpo-context-kind="case">
+    <div class="property-row"><span>선택 케이스</span><strong>${escapeHtml(row.caseNo)} · ${escapeHtml(row.addressMasked)}</strong></div>
+    <div class="property-row"><span>상태/위험</span><strong>${escapeHtml(jpoStatusLabel(row.status))} · ${escapeHtml(JPO_RISK_LABELS[row.riskLevel] || row.riskLevel)} · ${row.auctionNoticed ? "경·공매 긴급" : "일반 처리"}</strong></div>
+    <div class="property-row"><span>고객/담당</span><strong>${escapeHtml(row.customerRefId)} · ${escapeHtml(jpoUserName(row.assignedToId))}</strong></div>
+    <div class="property-row"><span>상황</span><strong>${escapeHtml(jpoCaseSituationLine(row))}</strong></div>
+    <div class="property-row"><span>다음 액션</span><strong>${escapeHtml(jpoCaseNextAction(row))}</strong></div>
+    <div class="property-row"><span>실행 큐</span><strong>${escapeHtml(jpoCaseAgentIds(row, false).map(jpoAgentDisplayName).join(" → "))}</strong></div>
+    <div class="property-row"><span>생성 산출물</span><strong>${deliverables.length ? deliverables.map((item) => escapeHtml(item.fileName)).join(" · ") : "아직 없음"}</strong></div>
+    <div class="property-row"><span>최근 실행</span><strong>${runs.length ? runs.map((run) => `${escapeHtml(jpoAgentDisplayName(run.agentId))} ${escapeHtml(jpoStatusLabel(run.status))}`).join(" · ") : "아직 없음"}</strong></div>
+    <div class="property-row"><span>감사 기록</span><strong>${audits.length ? audits.map((audit) => escapeHtml(audit.action)).join(" · ") : "없음"}</strong></div>
+    <p class="jbwc-guard">선택 항목 요약입니다. 전세사기 여부·법률·보증·피해자 결정은 확정하지 않습니다.</p>
+  </div>`;
+}
+
+function jpoContextCapabilityMarkup(capability) {
+  if (!capability) return "";
+  return `<div class="case-properties jpo-context-panel" data-jpo-context-kind="capability">
+    <div class="property-row"><span>기능명</span><strong>${escapeHtml(capability.name)}</strong></div>
+    <div class="property-row"><span>사용 도메인</span><strong>${escapeHtml(capability.domain)}</strong></div>
+    <div class="property-row"><span>상태/위험도</span><strong>${escapeHtml(capability.stateLabel || capability.status || "-")} · ${escapeHtml(capability.risk || "중간")}</strong></div>
+    <div class="property-row"><span>입력값</span><strong>${escapeHtml(capability.data || capability.inputs || "-")}</strong></div>
+    <div class="property-row"><span>출력값</span><strong>${escapeHtml(capability.output || capability.outputs || "-")}</strong></div>
+    <div class="property-row"><span>연결 에이전트</span><strong>${escapeHtml((capability.agents || []).map(jpoAgentDisplayName).join(", "))}</strong></div>
+    <div class="property-row"><span>사람 검토</span><strong>${capability.humanReview === false ? "선택 검토" : "필요"}</strong></div>
+    <p class="jbwc-guard">기능 카드는 전세보호 업무 단위의 입력/출력과 검토 게이트를 설명합니다.</p>
+  </div>`;
+}
+
+function jpoContextAgentRunMarkup(run) {
+  if (!run) return "";
+  return `<div class="case-properties jpo-context-panel" data-jpo-context-kind="agentRun">
+    <div class="property-row"><span>실행 ID</span><strong>${escapeHtml(run.id)}</strong></div>
+    <div class="property-row"><span>에이전트</span><strong>${escapeHtml(jpoAgentDisplayName(run.agentId))}</strong></div>
+    <div class="property-row"><span>관련 케이스</span><strong>${escapeHtml(run.caseId || "-")}</strong></div>
+    <div class="property-row"><span>입력</span><strong>${escapeHtml(run.inputSummary || "-")}</strong></div>
+    <div class="property-row"><span>결과</span><strong>${escapeHtml(run.outputSummary || "-")}</strong></div>
+    <div class="property-row"><span>상태</span><strong>${escapeHtml(jpoStatusLabel(run.status))} · ${run.requiresHumanReview ? "담당자 검토 필요" : "검토 후보"}</strong></div>
+    <p class="jbwc-guard">실행 결과는 내부 운영 참고용이며 자동 완료/발송하지 않습니다.</p>
+  </div>`;
+}
+
 function jpoContextMarkup() {
   const counts = jpoState.counts || getJeonseProtectionSidebarCounts();
+  if (jpoState.detail?.kind === "case") {
+    const row = jpoTable("jeonse_cases", JPO_ROLE_KEY).find((item) => item.id === jpoState.detail.id || item.caseNo === jpoState.detail.id);
+    if (row) return jpoContextCaseMarkup(row);
+  }
+  if (jpoState.detail?.kind === "agentRun") {
+    const run = jpoTable("jeonse_agent_runs", JPO_ROLE_KEY).find((item) => item.id === jpoState.detail.id);
+    if (run) return jpoContextAgentRunMarkup(run);
+  }
+  if (jpoState.contextSubject?.kind === "capability" && typeof JPO_CAPABILITY_CATALOG !== "undefined") {
+    const capability = JPO_CAPABILITY_CATALOG.find((item) => item.name === jpoState.contextSubject.id);
+    if (capability) return jpoContextCapabilityMarkup(capability);
+  }
+  if (jpoState.view === "capability-repository" && typeof JPO_CAPABILITY_CATALOG !== "undefined") {
+    return jpoContextCapabilityMarkup(JPO_CAPABILITY_CATALOG[0]);
+  }
+  const selected = jpoSelectedBoardCase();
+  if (selected) return jpoContextCaseMarkup(selected);
   return `<div class="case-properties">
     <div class="property-row"><span>전용 하네스</span><strong>${escapeHtml(jeonseFraudProtectionHarness.id)}</strong></div>
     <div class="property-row"><span>데이터 범위(roleKey)</span><strong>${escapeHtml(JPO_ROLE_KEY)}</strong></div>
@@ -43,9 +107,110 @@ function jpoContextMarkup() {
 function jpoGo(view, detail) {
   jpoState.view = view;
   jpoState.detail = detail || null;
+  if (view !== "capability-repository") jpoState.contextSubject = null;
   const next = detail && detail.kind === "case" ? jpoHashForView("cases", detail.id) : jpoHashForView(view);
   if (window.location.hash !== next) window.location.hash = next;
   else if (typeof render === "function") render();
+}
+
+function jpoSelectBoardCase(caseId, sourceLabel = "케이스 선택") {
+  const found = jpoTable("jeonse_cases", JPO_ROLE_KEY).find((item) => item.id === caseId || item.caseNo === caseId);
+  if (!found) return;
+  const changed = jpoState.selectedCaseId !== found.id;
+  jpoState.selectedCaseId = found.id;
+  if (changed) jpoState.workMapFocusIndex = 0;
+  jpoState.view = "board";
+  jpoState.detail = null;
+  jpoState.contextSubject = { kind: "case", id: found.id };
+  jpoShowKeyOverlay(sourceLabel, `${found.caseNo} 선택`);
+  jpoSetPendingScroll(`[data-jpo-sub-case="${found.id}"]`);
+  const next = jpoHashForView("board");
+  if (window.location.hash !== next) window.location.hash = next;
+  else if (typeof render === "function") render();
+}
+
+function jpoMoveBoardSelection(delta) {
+  const order = jpoState.boardOrder || [];
+  if (!order.length) return;
+  const current = Math.max(0, order.indexOf(jpoState.selectedCaseId));
+  const nextIndex = Math.min(Math.max(current + delta, 0), order.length - 1);
+  jpoSelectBoardCase(order[nextIndex], delta > 0 ? "→ 케이스 이동" : "← 케이스 이동");
+}
+
+function jpoMoveQueueFocus(delta, label = "큐 이동") {
+  const row = jpoSelectedBoardCase();
+  if (!row) return;
+  const nodes = jpoQueueNodesForCase(row);
+  if (!nodes.length) return;
+  jpoState.workMapFocusIndex = Math.min(Math.max(Number(jpoState.workMapFocusIndex || 0) + delta, 0), nodes.length - 1);
+  const node = nodes[jpoState.workMapFocusIndex];
+  jpoShowKeyOverlay(label, `${jpoAgentDisplayName(node.agentId)} 선택`);
+  jpoSetPendingScroll(`[data-jpo-node="${node.id}"]`);
+  if (typeof render === "function") render();
+}
+
+function jpoExecuteQueueNode(nodeId) {
+  const parsed = jpoParseQueueNodeId(nodeId);
+  if (!parsed || jpoIsNodeRunning(nodeId)) return;
+  jpoState.selectedCaseId = parsed.caseId;
+  const row = jpoSelectedBoardCase();
+  const index = row ? jpoQueueNodesForCase(row).findIndex((node) => node.id === nodeId) : -1;
+  if (index >= 0) jpoState.workMapFocusIndex = index;
+  jpoState.nodeRuntime = { nodeId, status: "running" };
+  jpoShowKeyOverlay("Enter 실행", `${jpoAgentDisplayName(parsed.agentId)} 실행`);
+  jpoSetPendingScroll(`[data-jpo-node="${nodeId}"]`);
+  if (jpoNodeRuntimeTimer) window.clearTimeout(jpoNodeRuntimeTimer);
+  if (typeof render === "function") render();
+  jpoNodeRuntimeTimer = window.setTimeout(() => {
+    const result = runJeonseProtectionQueueNode(parsed.caseId, nodeId);
+    jpoState.nodeRuntime = null;
+    jpoState.contextSubject = { kind: "case", id: parsed.caseId };
+    jpoInvalidateCounts();
+    if (result && typeof notify === "function") {
+      const file = result.deliverable?.fileName || "실행 기록";
+      notify(`${file} 생성 · 감사 기록 저장`);
+    }
+    if (typeof render === "function") render();
+  }, 680);
+}
+
+function jpoExecuteFocusedQueueNode() {
+  const row = jpoSelectedBoardCase();
+  const node = row ? jpoFocusedNode(row) : null;
+  if (node) jpoExecuteQueueNode(node.id);
+}
+
+function jpoHandleKeyboard(event) {
+  if (!jpoModeActive() || jpoState.view !== "board" || event.metaKey || event.ctrlKey || event.altKey) return;
+  const target = event.target;
+  if (target && (target.closest("input, textarea, select, button") || target.isContentEditable)) return;
+  if (/^[1-9]$/.test(event.key)) {
+    const id = (jpoState.boardOrder || [])[Number(event.key) - 1];
+    if (id) {
+      event.preventDefault();
+      jpoSelectBoardCase(id, `${event.key} 선택`);
+    }
+    return;
+  }
+  if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    jpoMoveBoardSelection(-1);
+  } else if (event.key === "ArrowRight") {
+    event.preventDefault();
+    jpoMoveBoardSelection(1);
+  } else if (event.key === "ArrowUp") {
+    event.preventDefault();
+    jpoMoveQueueFocus(-1, "↑ 큐 이동");
+  } else if (event.key === "ArrowDown") {
+    event.preventDefault();
+    jpoMoveQueueFocus(1, "↓ 큐 이동");
+  } else if (event.key === " ") {
+    event.preventDefault();
+    jpoMoveQueueFocus(1, "Space 다음");
+  } else if (event.key === "Enter") {
+    event.preventDefault();
+    jpoExecuteFocusedQueueNode();
+  }
 }
 
 function jpoActivateFromHash() {
@@ -82,6 +247,10 @@ function bindJpoActions() {
   }
 
   if (jpoModeActive()) {
+    if (!jpoKeyboardBound) {
+      jpoKeyboardBound = true;
+      window.addEventListener("keydown", jpoHandleKeyboard);
+    }
     document.querySelectorAll("[data-role-filter]").forEach((entry) => {
       entry.classList.toggle("is-active", entry.dataset.roleFilter === "전세보호 담당자");
     });
@@ -104,6 +273,21 @@ function bindJpoActions() {
 
   document.querySelectorAll("[data-jpo-view]").forEach((button) => {
     button.addEventListener("click", () => jpoGo(button.dataset.jpoView));
+  });
+  document.querySelectorAll("[data-jpo-board-case]").forEach((card) => {
+    card.addEventListener("click", () => jpoSelectBoardCase(card.dataset.jpoBoardCase, "카드 선택"));
+  });
+  document.querySelectorAll("[data-jpo-run-node]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      jpoExecuteQueueNode(button.dataset.jpoRunNode);
+    });
+  });
+  document.querySelectorAll("[data-jpo-capability]").forEach((card) => {
+    card.addEventListener("click", () => {
+      jpoState.contextSubject = { kind: "capability", id: card.dataset.jpoCapability };
+      render();
+    });
   });
   jpoBindHarnessSamples();
   document.querySelectorAll("[data-jpo-command]").forEach((button) => {
@@ -140,7 +324,8 @@ function bindJpoActions() {
     row.addEventListener("click", () => {
       const found = jpoTable("jeonse_cases", JPO_ROLE_KEY).find((item) => item.id === row.dataset.jpoOpenCase);
       if (found) {
-        if (typeof notify === "function") notify(`${found.caseNo} · ${found.title} — ${jpoStatusLabel(found.status)} · 담당 ${jpoUserName(found.assignedToId)} (모의)`);
+        const title = found.title || `${jpoIntakeTypeLabel(found.intakeType)} · ${found.addressMasked}`;
+        if (typeof notify === "function") notify(`${found.caseNo} · ${title} — ${jpoStatusLabel(found.status)} · 담당 ${jpoUserName(found.assignedToId)} (모의)`);
         jpoGo("cases", { kind: "case", id: found.id });
       }
     });
@@ -219,6 +404,7 @@ function bindJpoActions() {
       render();
     });
   }
+  if (jpoModeActive()) jpoFlushPendingScroll();
 }
 
 (function () {

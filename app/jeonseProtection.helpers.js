@@ -15,9 +15,18 @@ let jpoState = {
   roleEntered: false,
   enrich: { status: "idle", caseId: null, message: "" },
   search: { q: "", loading: false, error: false, blocked: null, results: null },
+  selectedCaseId: null,
+  boardOrder: [],
+  workMapFocusIndex: 0,
+  nodeRuntime: null,
+  keyOverlay: null,
+  pendingScrollTarget: null,
+  contextSubject: null,
 };
 
 let jpoCaseWizard = jpoDefaultCaseWizard();
+let jpoKeyOverlayTimer = null;
+let jpoNodeRuntimeTimer = null;
 
 function jpoDefaultCaseWizard() {
   return {
@@ -46,6 +55,7 @@ function jpoDefaultCaseWizard() {
     dueAt: "",
     sourceChannel: "opsPortal",
     tags: "",
+    uploadedFiles: [],
     enrichedMarket: null,
     enrichStatus: "idle",
   };
@@ -228,6 +238,107 @@ function jpoCaseDataChips(row) {
   return chips;
 }
 
+function jpoRiskWeight(risk) {
+  return { critical: 0, high: 1, medium: 2, low: 3 }[risk] ?? 4;
+}
+
+function jpoStatusWeight(status) {
+  return { humanReview: 0, received: 1, enriching: 2, riskReview: 3, externalLinked: 4, onHold: 5, guidanceDone: 6 }[status] ?? 7;
+}
+
+function jpoBoardPriorityCases(cases) {
+  const today = new Date().toISOString().slice(0, 10);
+  return cases.slice().sort((a, b) => {
+    const auctionDelta = Number(Boolean(b.auctionNoticed)) - Number(Boolean(a.auctionNoticed));
+    if (auctionDelta) return auctionDelta;
+    const riskDelta = jpoRiskWeight(a.riskLevel) - jpoRiskWeight(b.riskLevel);
+    if (riskDelta) return riskDelta;
+    const dueDelta = String(a.dueAt || today).localeCompare(String(b.dueAt || today));
+    if (dueDelta) return dueDelta;
+    const statusDelta = jpoStatusWeight(a.status) - jpoStatusWeight(b.status);
+    if (statusDelta) return statusDelta;
+    return String(a.caseNo || a.id).localeCompare(String(b.caseNo || b.id));
+  });
+}
+
+function jpoSelectedBoardCase() {
+  const id = jpoState.selectedCaseId || jpoState.boardOrder[0];
+  if (!id) return null;
+  return jpoTable("jeonse_cases", JPO_ROLE_KEY).find((row) => row.id === id || row.caseNo === id) || null;
+}
+
+function jpoNodeIdFor(row, kind, agentId) {
+  return `JPO_NODE__${row.id}__${kind}__${agentId || "none"}`;
+}
+
+function jpoQueueNodesForCase(row) {
+  if (!row) return [];
+  const branchAgents = jpoCaseAgentIds(row, false).filter((agentId) => agentId !== "jpo-intake");
+  const nodes = [{ id: jpoNodeIdFor(row, "orchestrator", "jpo-intake"), kind: "orchestrator", agentId: "jpo-intake" }];
+  branchAgents.forEach((agentId) => nodes.push({ id: jpoNodeIdFor(row, "agent", agentId), kind: "agent", agentId }));
+  nodes.push({ id: jpoNodeIdFor(row, "approval", "jpo-report"), kind: "approval", agentId: "jpo-report" });
+  return nodes;
+}
+
+function jpoFocusedNode(row) {
+  const nodes = jpoQueueNodesForCase(row);
+  if (!nodes.length) return null;
+  const index = Math.min(Math.max(Number(jpoState.workMapFocusIndex || 0), 0), nodes.length - 1);
+  return nodes[index] || nodes[0];
+}
+
+function jpoIsNodeFocused(row, nodeId) {
+  return row && row.id === jpoState.selectedCaseId && jpoFocusedNode(row)?.id === nodeId;
+}
+
+function jpoIsNodeRunning(nodeId) {
+  return jpoState.nodeRuntime && jpoState.nodeRuntime.nodeId === nodeId && jpoState.nodeRuntime.status === "running";
+}
+
+function jpoReportNodeStatus(row) {
+  const nodeId = jpoNodeIdFor(row, "approval", "jpo-report");
+  if (jpoIsNodeRunning(nodeId)) return "running";
+  const deliverables = typeof jpoCaseDeliverables === "function" ? jpoCaseDeliverables(row.id) : [];
+  const integrated = deliverables.find((item) => item.kind === "caseReport");
+  if (integrated && integrated.status === "approved") return "done";
+  if (integrated) return "approval";
+  const branchCount = jpoCaseAgentIds(row, false).filter((agentId) => agentId !== "jpo-intake").length;
+  const agentDeliverables = deliverables.filter((item) => item.kind === "agentMd").length;
+  if (agentDeliverables >= Math.max(1, Math.min(branchCount, 2))) return "ready";
+  return "waiting";
+}
+
+function jpoKeyOverlayMarkup() {
+  if (!jpoState.keyOverlay) return "";
+  return `<div class="jpo-key-overlay" aria-live="polite">
+    <strong>${escapeHtml(jpoState.keyOverlay.key)}</strong>
+    <span>${escapeHtml(jpoState.keyOverlay.label)}</span>
+  </div>`;
+}
+
+function jpoShowKeyOverlay(key, label) {
+  jpoState.keyOverlay = { key, label };
+  if (jpoKeyOverlayTimer) window.clearTimeout(jpoKeyOverlayTimer);
+  jpoKeyOverlayTimer = window.setTimeout(() => {
+    jpoState.keyOverlay = null;
+    if (jpoModeActive() && typeof render === "function") render();
+  }, 950);
+}
+
+function jpoSetPendingScroll(selector) {
+  jpoState.pendingScrollTarget = selector;
+}
+
+function jpoFlushPendingScroll() {
+  if (!jpoState.pendingScrollTarget) return;
+  const selector = jpoState.pendingScrollTarget;
+  jpoState.pendingScrollTarget = null;
+  window.requestAnimationFrame(() => {
+    const target = document.querySelector(selector);
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+  });
+}
+
 function jpoWorkNodeStatus(status) {
   const map = {
     waiting: ["대기", "jpo-node-gray"],
@@ -242,6 +353,8 @@ function jpoWorkNodeStatus(status) {
 }
 
 function jpoCaseAgentStatus(agentId, row) {
+  const kind = agentId === "jpo-intake" ? "orchestrator" : "agent";
+  if (jpoIsNodeRunning(jpoNodeIdFor(row, kind, agentId))) return "running";
   const runs = jpoTable("jeonse_agent_runs", JPO_ROLE_KEY)
     .filter((run) => run.caseId === row.id && run.agentId === agentId);
   const latestRun = runs[0] || null;
@@ -342,9 +455,12 @@ function jpoAgentNodeInfo(agentId, row) {
 }
 
 function jpoCaseWorkNode(agentId, row, kind = "agent") {
+  const nodeId = jpoNodeIdFor(row, kind, agentId);
   const status = jpoWorkNodeStatus(jpoCaseAgentStatus(agentId, row));
   const info = jpoAgentNodeInfo(agentId, row);
-  return `<article class="jpo-node-card ${status.className}" data-jpo-node-kind="${escapeHtml(kind)}">
+  const focused = jpoIsNodeFocused(row, nodeId);
+  const running = jpoIsNodeRunning(nodeId);
+  return `<article class="jpo-node-card ${status.className} ${focused ? "is-focused" : ""} ${running ? "is-running" : ""}" data-jpo-node="${escapeHtml(nodeId)}" data-jpo-node-kind="${escapeHtml(kind)}">
     <header class="jpo-node-head">
       <div><strong>${escapeHtml(jpoAgentDisplayName(agentId))}</strong><span>${escapeHtml(info.role)}</span></div>
       <span class="status-pill jpo-node-status-pill">${escapeHtml(status.label)}</span>
@@ -354,13 +470,20 @@ function jpoCaseWorkNode(agentId, row, kind = "agent") {
       <div><span>사용 데이터</span><strong>${escapeHtml(info.data)}</strong></div>
       <div><span>예상 산출물</span><strong>${escapeHtml(info.output)}</strong></div>
     </div>
-    <footer><span>${escapeHtml(info.action)}</span><span>담당자 검토 필요</span></footer>
+    <footer>
+      <span>${escapeHtml(info.action)}</span><span>담당자 검토 필요</span>
+      <button class="secondary-button jpo-node-action" type="button" data-jpo-run-node="${escapeHtml(nodeId)}">${running ? "실행 중" : "실행"}</button>
+    </footer>
+    ${running ? `<div class="jpo-run-overlay"><strong>조금만 기다려주세요</strong><span>40%</span></div>` : ""}
   </article>`;
 }
 
 function jpoCaseWorkMap(row) {
   const branchAgents = jpoCaseAgentIds(row, false).filter((agentId) => agentId !== "jpo-intake");
-  const approvalStatus = jpoWorkNodeStatus(row.status === "guidanceDone" ? "done" : "approval");
+  const reportNodeId = jpoNodeIdFor(row, "approval", "jpo-report");
+  const approvalStatus = jpoWorkNodeStatus(jpoReportNodeStatus(row));
+  const reportFocused = jpoIsNodeFocused(row, reportNodeId);
+  const reportRunning = jpoIsNodeRunning(reportNodeId);
   return `<section class="jpo-workmap" aria-label="전세보호 케이스 에이전트 업무 계층도">
     <div class="jpo-workmap-case">
       <p class="eyebrow">Case</p>
@@ -372,7 +495,7 @@ function jpoCaseWorkMap(row) {
     <div class="jpo-node-connector" aria-hidden="true"></div>
     <div class="jpo-node-branches">${branchAgents.map((agentId) => jpoCaseWorkNode(agentId, row)).join("")}</div>
     <div class="jpo-node-connector" aria-hidden="true"></div>
-    <article class="jpo-node-card ${approvalStatus.className}" data-jpo-node-kind="approval">
+    <article class="jpo-node-card ${approvalStatus.className} ${reportFocused ? "is-focused" : ""} ${reportRunning ? "is-running" : ""}" data-jpo-node="${escapeHtml(reportNodeId)}" data-jpo-node-kind="approval">
       <header class="jpo-node-head">
         <div><strong>산출물 MD · 담당자 승인</strong><span>사람 검토 게이트</span></div>
         <span class="status-pill jpo-node-status-pill">${escapeHtml(approvalStatus.label)}</span>
@@ -382,7 +505,11 @@ function jpoCaseWorkMap(row) {
         <div><span>통합 산출물</span><strong>case-brief.md · action-plan.md · evidence-log.md</strong></div>
         <div><span>승인 액션</span><strong>열람 · 승인 · 반려 · 재실행</strong></div>
       </div>
-      <footer><span>자동 종결 금지</span><span>감사 기록 유지</span></footer>
+      <footer>
+        <span>자동 종결 금지</span><span>감사 기록 유지</span>
+        <button class="secondary-button jpo-node-action" type="button" data-jpo-run-node="${escapeHtml(reportNodeId)}">${reportRunning ? "생성 중" : "통합 산출물 생성"}</button>
+      </footer>
+      ${reportRunning ? `<div class="jpo-run-overlay"><strong>조금만 기다려주세요</strong><span>40%</span></div>` : ""}
     </article>
   </section>`;
 }
@@ -405,25 +532,35 @@ function jpoCaseDetailPanel(row) {
   const approvals = jpoTable("approvals", JPO_ROLE_KEY).filter((item) => item.caseId === row.id);
   const runs = jpoTable("jeonse_agent_runs", JPO_ROLE_KEY).filter((run) => run.caseId === row.id).slice(0, 4);
   const audits = jpoTable("jeonse_audit_logs", JPO_ROLE_KEY).filter((audit) => audit.caseId === row.id).slice(0, 4);
+  const deliverables = typeof jpoCaseDeliverables === "function" ? jpoCaseDeliverables(row.id).slice(0, 4) : [];
+  const files = jpoTable("jeonse_evidence_files", JPO_ROLE_KEY).filter((file) => file.caseId === row.id).slice(0, 4);
+  const metaLine = `${row.caseNo} · ${row.createdAt || "-"} · ${JPO_RISK_LABELS[row.riskLevel] || row.riskLevel} 위험 · ${row.auctionNoticed || row.priority === "urgent" ? "긴급" : JPO_PRIORITY_LABELS[row.priority] || row.priority}`;
   return `<section class="workspace-panel jbwc-detail-panel jpo-case-detail" aria-label="전세보호 케이스 업무 상세">
     <header>
-      <div><p class="eyebrow">케이스 상세 · 에이전트 업무 계층도</p><h3>${escapeHtml(row.caseNo)} · ${escapeHtml(row.title || row.addressMasked)}</h3></div>
+      <div><p class="eyebrow">${escapeHtml(metaLine)}</p><h3>${escapeHtml(row.title || `${jpoIntakeTypeLabel(row.intakeType)} · ${row.addressMasked}`)}</h3></div>
       <button class="secondary-button" type="button" data-jpo-clear-detail>닫기</button>
     </header>
+    <div class="jpo-case-summary-head">
+      <div><span>고객/지역/은행/도메인/담당</span><strong>${escapeHtml(row.customerRefId)} · ${escapeHtml(row.addressMasked)} · 전북은행 · 전세보호 · ${escapeHtml(jpoUserName(row.assignedToId))}</strong></div>
+      <div><span>상황 요약</span><strong>${escapeHtml(jpoCaseSituationLine(row))}</strong><p>${escapeHtml(jpoCasePriorityReason(row, signals))}</p></div>
+      <div class="jpo-status-segments" aria-label="작업 상태">
+        ${["received", "enriching", "riskReview", "humanReview", "externalLinked", "guidanceDone"].map((status) => `<span class="${row.status === status ? "is-active" : ""}">${escapeHtml(jpoStatusLabel(status))}</span>`).join("")}
+      </div>
+    </div>
     <div class="jpo-detail-summary">
       <div>
-        <span>상황</span>
-        <strong>${escapeHtml(jpoCaseSituationLine(row))}</strong>
-        <p>${escapeHtml(row.addressMasked)} · ${escapeHtml(row.customerRefId)} · 담당 ${escapeHtml(jpoUserName(row.assignedToId))}</p>
+        <span>처리 목표</span>
+        <strong>시세·권리·보증·피해지원 확인 후보를 분리하고 담당자 승인 전에는 확정 표현을 막습니다.</strong>
+        <p><button class="secondary-button" type="button" data-jpo-open-detail="case:${escapeHtml(row.id)}">고객 정보</button></p>
       </div>
       <div>
-        <span>우선순위 근거</span>
-        <strong>${escapeHtml(jpoCasePriorityReason(row, signals))}</strong>
+        <span>위험 신호</span>
+        <strong>${escapeHtml(signals.map((signal) => signal.title).slice(0, 2).join(" · ") || "등록된 위험 신호 없음")}</strong>
         <p>${jpoRiskPill(row.riskLevel)} ${jpoStatusPill(row.status)} ${jpoSourceModePill(row.sourceMode)}</p>
       </div>
       <div>
-        <span>필요 에이전트</span>
-        <div class="jpo-agent-chips">${jpoCaseAgentIds(row, false).map(jpoAgentChip).join("")}</div>
+        <span>근거 데이터</span>
+        <div class="jpo-data-chips">${jpoCaseDataChips(row).map(jpoDataChip).join("")}</div>
       </div>
       <div>
         <span>다음 액션</span>
@@ -436,6 +573,8 @@ function jpoCaseDetailPanel(row) {
       ${jpoEvidenceBox("위험 신호", signals.length ? `<ul>${signals.map((signal) => `<li><strong>${escapeHtml(signal.title)}</strong><span>${escapeHtml(signal.evidence || "근거 확인 필요")}</span></li>`).join("")}</ul>` : `<p>등록된 위험 신호 없음</p>`)}
       ${jpoEvidenceBox("근거 데이터", `<div class="jpo-data-chips">${jpoCaseDataChips(row).map(jpoDataChip).join("")}</div>${latest ? `<p>최근 시세 기준 ${escapeHtml(latest.dealYm || "-")} · 전세가율 ${escapeHtml(String(latest.jeonseRatio ?? "-"))}% · 신뢰도 ${escapeHtml(String(latest.confidence ?? "-"))}</p>` : "<p>시세 데이터 보강 전입니다.</p>"}`)}
       ${jpoEvidenceBox("실행/승인", `<p>에이전트 실행 ${runs.length}건 · 승인 기록 ${approvals.length}건</p>${approvals.length ? `<ul>${approvals.slice(0, 3).map((approval) => `<li><strong>${escapeHtml(approval.approvalType)}</strong><span>${escapeHtml(jpoStatusLabel(approval.status))}</span></li>`).join("")}</ul>` : "<p>승인 대기 기록 없음</p>"}`)}
+      ${jpoEvidenceBox("산출물", deliverables.length ? `<ul>${deliverables.map((item) => `<li><strong>${escapeHtml(item.fileName)}</strong><span>${escapeHtml(jpoStatusLabel(item.status))} · ${escapeHtml(item.title)}</span></li>`).join("")}</ul>` : "<p>생성된 산출물 없음</p>")}
+      ${jpoEvidenceBox("업로드 파일", files.length ? `<ul>${files.map((file) => `<li><strong>${escapeHtml(file.fileName)}</strong><span>${escapeHtml(file.analysisSummary || "메타데이터만 저장")}</span></li>`).join("")}</ul>` : "<p>업로드된 파일 없음</p>")}
       ${jpoEvidenceBox("감사 기록", audits.length ? `<ul>${audits.map((audit) => `<li><strong>${escapeHtml(audit.action)}</strong><span>${escapeHtml(audit.createdAt || "-")} · ${escapeHtml(jpoUserName(audit.actorId))}</span></li>`).join("")}</ul>` : "<p>감사 기록 없음</p>")}
     </div>
     <p class="jbwc-guard">실명·주민번호·전화·계좌·주소 원문 없이 익명 Ref(CUST-JS-*)와 마스킹 주소만 표시합니다. 모든 산출물은 내부 운영 참고용이며 담당자 검토가 필요합니다.</p>
@@ -452,6 +591,8 @@ function jpoDetailSource(kind) {
     referral: "jeonse_support_referrals",
     approval: "approvals",
     agentRun: "jeonse_agent_runs",
+    deliverable: "jeonse_deliverables",
+    evidenceFile: "jeonse_evidence_files",
     handoff: "agent_handoffs",
     recommendation: "ai_recommendations",
     connector: "external_connectors",
@@ -468,6 +609,8 @@ function jpoDetailTitle(kind, row) {
   if (kind === "referral") return `${row.id} · ${row.targetAgency}`;
   if (kind === "approval") return `${row.id} · ${row.approvalType}`;
   if (kind === "agentRun") return `${row.id} · ${row.agentId}`;
+  if (kind === "deliverable") return `${row.id} · ${row.fileName}`;
+  if (kind === "evidenceFile") return `${row.id} · ${row.fileName}`;
   if (kind === "handoff") return `${row.id} · ${row.fromAgentId} → ${row.toAgentId}`;
   if (kind === "connector") return `${row.id} · ${row.name}`;
   if (kind === "recommendation") return row.title;

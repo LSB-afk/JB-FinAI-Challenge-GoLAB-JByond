@@ -797,6 +797,7 @@ let selectedRailRole = "";
 let caseSequence = 201;
 let runSequence = 1;
 let propertiesOpen = true;
+let propertiesPanelWidth = Number(window.localStorage.getItem("jb-properties-width") || 392);
 let collapsedPanelKeys = new Set(["case-agents", "case-approval", "case-evidence", "case-audit"]);
 let modalState = null;
 let modalError = "";
@@ -827,6 +828,16 @@ let agentRuns = [
     ],
   },
 ];
+
+function clampPropertiesPanelWidth(value) {
+  const max = Math.min(720, Math.max(360, window.innerWidth - 520));
+  return Math.min(Math.max(Number(value) || 392, 320), max);
+}
+
+function applyPropertiesPanelWidth() {
+  propertiesPanelWidth = clampPropertiesPanelWidth(propertiesPanelWidth);
+  document.documentElement.style.setProperty("--properties-width", `${propertiesPanelWidth}px`);
+}
 let activity = [
   ["14:08", "Jeonse Shield Lead", "created approval", "JBG-201"],
   ["14:04", "Registry Rights Agent", "requested source document", "JBG-201"],
@@ -1536,6 +1547,7 @@ function renderNavigation() {
 }
 
 function renderShellState() {
+  applyPropertiesPanelWidth();
   const shell = document.querySelector(".app-shell");
   const toggle = document.getElementById("properties-toggle");
   if (shell) {
@@ -3792,6 +3804,7 @@ function propertyPanelTitle() {
   if (activeDetailType === "skill" && currentSkill()) return skillLabel(currentSkill().slug);
   if (activeDetailType === "feature" && currentFeature()) return currentFeature().title;
   if (activeDetailType === "view" && activeView === "rm-dashboard") return "RM 역할 대시보드";
+  if (activeDetailType === "view" && activeView === "rm-officer-harness" && typeof rmoPropertyPanelTitle === "function") return rmoPropertyPanelTitle();
   if (activeDetailType === "view" && activeView === "rm-officer-harness") return "RM 업무지원 포털";
   if (activeDetailType === "view" && activeView === "corporate-credit-dashboard") return "기업여신 담당자 대시보드";
   if (activeDetailType === "view" && activeView === "jeonse-protection-harness") return "전세사기 보호 담당자 하네스";
@@ -5455,6 +5468,30 @@ function bindActions() {
     propertiesToggle.addEventListener("click", () => {
       propertiesOpen = !propertiesOpen;
       renderShellState();
+    });
+  }
+  const propertiesResizer = document.getElementById("properties-resizer");
+  if (propertiesResizer && !propertiesResizer.dataset.bound) {
+    propertiesResizer.dataset.bound = "true";
+    propertiesResizer.addEventListener("pointerdown", (event) => {
+      if (!propertiesOpen) return;
+      event.preventDefault();
+      propertiesResizer.setPointerCapture(event.pointerId);
+      document.body.classList.add("is-resizing-properties");
+      const move = (moveEvent) => {
+        propertiesPanelWidth = clampPropertiesPanelWidth(window.innerWidth - moveEvent.clientX);
+        applyPropertiesPanelWidth();
+      };
+      const up = () => {
+        document.body.classList.remove("is-resizing-properties");
+        window.localStorage.setItem("jb-properties-width", String(propertiesPanelWidth));
+        window.removeEventListener("pointermove", move);
+        window.removeEventListener("pointerup", up);
+        window.removeEventListener("pointercancel", up);
+      };
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerup", up);
+      window.addEventListener("pointercancel", up);
     });
   }
   document.getElementById("sidebar-search").addEventListener("input", (event) => {

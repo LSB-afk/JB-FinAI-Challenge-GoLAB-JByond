@@ -25,17 +25,36 @@ function jpoCapabilityStatusPill(status) {
   return `<span class="status-pill jpo-cap-status ${cls}">${escapeHtml(label)}</span>`;
 }
 
+function jpoCapabilityRisk(capability) {
+  if (/경·공매|피해|법률|승인|감사|보증/.test(`${capability.name} ${capability.category} ${capability.domain}`)) return "높음";
+  if (/시세|권리|데이터/.test(`${capability.name} ${capability.category} ${capability.domain}`)) return "중간";
+  return "낮음";
+}
+
+function jpoCapabilityHumanLabel(capability) {
+  return /상담|안내|피해|법률|보증|경·공매|승인/.test(`${capability.name} ${capability.category} ${capability.domain}`)
+    ? "사람 검토 필요"
+    : "담당자 검토 후보";
+}
+
+function jpoRiskBadgeLabel(label) {
+  const cls = label === "높음" ? "jpo-risk-high" : label === "중간" ? "jpo-risk-mid" : "jpo-risk-low";
+  return `<span class="jpo-domain-badge ${cls}">위험도 ${escapeHtml(label)}</span>`;
+}
+
 function jpoCapabilityCard(capability) {
-  return `<article class="jpo-cap-card">
+  const risk = capability.risk || jpoCapabilityRisk(capability);
+  const humanLabel = capability.humanLabel || jpoCapabilityHumanLabel(capability);
+  return `<article class="jpo-cap-card" data-jpo-capability="${escapeHtml(capability.name)}" role="button" tabindex="0">
     <header class="jpo-cap-card-head">
       <div><p class="jpo-cap-category">${escapeHtml(capability.category)}</p><h4>${escapeHtml(capability.name)}</h4></div>
-      ${jpoCapabilityStatusPill(capability.status)}
+      <div class="jpo-card-badges">${jpoCapabilityStatusPill(capability.status)}${jpoRiskBadgeLabel(risk)}</div>
     </header>
     <p class="jpo-cap-summary">${escapeHtml(capability.summary)}</p>
-    <div class="jpo-cap-field"><span>사용 도메인</span><p>${escapeHtml(capability.domain)}</p></div>
+    <div class="jpo-card-badges"><span class="jpo-domain-badge jpo-domain-blue">도메인 ${escapeHtml(capability.domain)}</span><span class="jpo-domain-badge jpo-domain-purple">${escapeHtml(humanLabel)}</span></div>
+    <div class="jpo-cap-field"><span>입력 → 출력</span><p>${escapeHtml(capability.data)} → ${escapeHtml(capability.output)}</p></div>
     <div class="jpo-cap-field"><span>연결 에이전트</span><div class="jpo-agent-chips">${capability.agents.map(jpoAgentChip).join("")}</div></div>
-    <div class="jpo-cap-field"><span>사용 데이터</span><p>${escapeHtml(capability.data)}</p></div>
-    <div class="jpo-cap-field"><span>생성 산출물</span><p>${escapeHtml(capability.output)}</p></div>
+    <footer class="jpo-cap-footer"><span>사람 검토: ${escapeHtml(humanLabel.includes("필요") ? "필요" : "후보")}</span><span>${escapeHtml(capability.status)}</span></footer>
   </article>`;
 }
 
@@ -65,7 +84,7 @@ function jpoCapabilityRepositoryView() {
 
 function jpoHarnessView() {
   const agents = jpoTable("harness_agents", JPO_ROLE_KEY);
-  const runs = jpoTable("agent_runs", JPO_ROLE_KEY).slice(0, 10);
+  const runs = jpoTable("jeonse_agent_runs", JPO_ROLE_KEY).slice(0, 10);
   const handoffs = jpoTable("agent_handoffs", JPO_ROLE_KEY).slice(0, 8);
   const registry = Object.fromEntries(jeonseFraudProtectionHarness.agents.map((agent) => [agent.id, agent]));
   const skills = jeonseFraudProtectionHarness.skills || [];
@@ -86,17 +105,29 @@ function jpoHarnessView() {
         <p><strong>하네스 자체 검증</strong> ${jpoState.selfTest.pass ? '<span class="status-pill status-approved">통과</span>' : '<span class="status-pill status-escalated">실패</span>'} <span class="jbwc-row-note">${escapeHtml(jpoState.selfTest.at || "")}</span></p>
         ${jpoState.selfTest.results.map((r) => `<p>${r.ok ? "✅" : "❌"} ${escapeHtml(r.name)}${r.issues && r.issues.length ? ` — ${escapeHtml(r.issues.join(" / "))}` : ""}</p>`).join("")}
       </div>` : ""}`)
-    + jpoPanel(`에이전트 (${agents.length})`, `<div class="jbwc-grid">${agents.map((agent) => {
+    + jpoPanel(`에이전트 저장소 (${agents.length})`, `<div class="jpo-cap-grid">${agents.map((agent) => {
       const reg = registry[agent.id] || {};
-      return `<article class="jbwc-card jbwc-agent-card"><header><strong>${escapeHtml(agent.name)}</strong>${jpoStatusPill(agent.status)}</header>
-        <p class="jbwc-meta">${escapeHtml(agent.description)}</p>
-        <p class="jbwc-meta">도메인 ${escapeHtml(agent.domain)} · 금지 ${escapeHtml((reg.blockedActions || [])[0] || "확정 판단 금지")}</p></article>`;
+      const risk = ["jpo-auction", "jpo-supervisor", "jpo-comms", "jpo-victim", "jpo-legal"].includes(agent.id) ? "높음" : agent.id === "jpo-price" ? "중간" : "낮음";
+      return `<article class="jpo-cap-card jpo-agent-repo-card">
+        <header class="jpo-cap-card-head"><div><p class="jpo-cap-category">전세보호 에이전트</p><h4>${escapeHtml(agent.name)}</h4></div><div class="jpo-card-badges">${jpoStatusPill(agent.status)}${jpoRiskBadgeLabel(risk)}</div></header>
+        <p class="jpo-cap-summary">${escapeHtml(agent.description)}</p>
+        <div class="jpo-card-badges"><span class="jpo-domain-badge jpo-domain-blue">도메인 ${escapeHtml(agent.domain)}</span><span class="jpo-domain-badge jpo-domain-purple">사람 검토 ${["높음", "중간"].includes(risk) ? "필요" : "후보"}</span></div>
+        <div class="jpo-cap-field"><span>입력 → 출력</span><p>${escapeHtml((reg.dbReads || ["case"]).slice(0, 3).join(" · "))} → ${escapeHtml((reg.dbWrites || ["audit"]).slice(0, 3).join(" · "))}</p></div>
+        <div class="jpo-cap-field"><span>금지 액션</span><p>${escapeHtml((reg.blockedActions || ["확정 판단 금지"]).join(" · "))}</p></div>
+      </article>`;
     }).join("")}</div>`)
-    + jpoPanel(`업무 기능 단위 (Skills · ${skills.length})`, `<div class="jbwc-grid">${skills.map((skill) => `
-      <article class="jbwc-card"><header><strong>${escapeHtml(skill.label)}</strong><span class="status-pill status-new">${escapeHtml(skill.key)}</span></header>
-      <p class="jbwc-meta">담당 에이전트: ${escapeHtml(skill.agentIds.map((id) => (registry[id] || {}).displayName || id).join(", "))}</p>
-      <p class="jbwc-meta">입력 ${escapeHtml(skill.inputs.join("·"))} → 출력 ${escapeHtml(skill.outputs.join("·"))}</p></article>`).join("")}</div>`)
-    + jpoPanel(`최근 실행 (agent_runs · ${runs.length})`, jpoTableView(["실행", "에이전트", "입력→결과", "상태"], runs, (run) => `
+    + jpoPanel(`업무 기능 단위 (Skills · ${skills.length})`, `<div class="jpo-cap-grid">${skills.map((skill) => {
+      const linkedAgents = skill.agentIds.map((id) => (registry[id] || {}).displayName || id).join(", ");
+      const risk = skill.agentIds.some((id) => ["jpo-auction", "jpo-supervisor", "jpo-comms", "jpo-victim", "jpo-legal"].includes(id)) ? "높음" : "중간";
+      return `<article class="jpo-cap-card jpo-skill-repo-card">
+        <header class="jpo-cap-card-head"><div><p class="jpo-cap-category">전세보호 스킬</p><h4>${escapeHtml(skill.label)}</h4></div><div class="jpo-card-badges"><span class="status-pill status-new">${escapeHtml(skill.key)}</span>${jpoRiskBadgeLabel(risk)}</div></header>
+        <p class="jpo-cap-summary">케이스 처리에 쓰이는 입력/출력 단위입니다. 고객 공유 전에는 담당자 검토가 필요합니다.</p>
+        <div class="jpo-cap-field"><span>입력 → 출력</span><p>${escapeHtml(skill.inputs.join(" · "))} → ${escapeHtml(skill.outputs.join(" · "))}</p></div>
+        <div class="jpo-cap-field"><span>연결 대상</span><p>${escapeHtml(linkedAgents)}</p></div>
+        <div class="jpo-card-badges"><span class="jpo-domain-badge jpo-domain-blue">도메인 전세보호</span><span class="jpo-domain-badge jpo-domain-purple">사람 검토 필요</span></div>
+      </article>`;
+    }).join("")}</div>`)
+    + jpoPanel(`최근 실행 (jeonse_agent_runs · ${runs.length})`, jpoTableView(["실행", "에이전트", "입력→결과", "상태"], runs, (run) => `
       <li class="jbwc-row"><span class="jbwc-row-id">${escapeHtml(run.createdAt)}<br>${escapeHtml(run.id)}</span>
         <span>${escapeHtml((registry[run.agentId] || {}).displayName || run.agentId)}</span>
         <span>${escapeHtml(run.inputSummary)}<br><span class="jbwc-row-note">${escapeHtml(run.outputSummary)}</span></span>

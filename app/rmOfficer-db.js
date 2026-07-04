@@ -35,6 +35,11 @@ function rmoSeedData() {
     "JBG-210": { customerAlias: "오**", customerAge: 39, region: "전북 전주시", bank: "전북은행", affiliate: "JB우리캐피탈" },
     "JBG-211": { customerAlias: "윤**", customerAge: 76, region: "전북 전주시", bank: "전북은행" },
     "JBG-212": { customerAlias: "송**", customerAge: 50, region: "전북 김제시", bank: "전북은행" },
+    "JBG-213": { customerAlias: "차**", customerAge: 22, region: "전북 익산시", bank: "전북은행" },
+    "JBG-214": { customerAlias: "박**", customerAge: 29, region: "전북 군산시", bank: "전북은행" },
+    "JBG-215": { customerAlias: "김**", customerAge: 34, region: "광주 서구", bank: "광주은행" },
+    "JBG-216": { customerAlias: "정**", customerAge: 41, region: "전남 목포시", bank: "광주은행" },
+    "JBG-217": { customerAlias: "서**", customerAge: 45, region: "전북 남원시", bank: "전북은행" },
   };
 
   /* 핵심 케이스 정의 (Figma 3 + 히어로 + 완료 데모 + 진행중 데모 + 업무 계층도 신규 3종)
@@ -78,6 +83,26 @@ function rmoSeedData() {
       situation: "출하 대금 입금 공백과 농자재 지출 증가가 계절적 저점 구간과 겹치는 김제 농가의 사후관리 케이스.",
       goal: "지출·계절 요인을 종합해 상환유예 검토 필요 여부를 판단한다.",
       stage: "todo", status: "intake", riskLevel: "medium", requestedAmountBand: "3천만원~5천만원", dueAt: plus(5), assignedRmId: "USR-RMO-03" },
+    { caseNo: "JBG-213", caseType: "dailyFinance", theme: "학자금 납부 일정 점검",
+      situation: "학사 일정과 장학금 입금 예정일 사이에 등록금·생활비 공백이 생겨 단기 소액자금 상담을 요청한 대학생 케이스.",
+      goal: "학자금·장학금 입금 구간을 확인하고 고금리 대체 이용 전 상담 안내를 준비한다.",
+      stage: "todo", status: "intake", riskLevel: "medium", requestedAmountBand: "5백만원 이하", dueAt: plus(6), assignedRmId: "USR-RMO-03" },
+    { caseNo: "JBG-214", caseType: "dailyFinance", theme: "생활비 소액대출 상환 리마인드",
+      situation: "소액대출 상환일과 월세 납부일이 같은 주에 몰려 생활비 공백과 연체 우려가 동시에 나타난 청년 고객 케이스.",
+      goal: "상환일과 필수 지출 일정을 비교해 리마인드 후보와 상담 콜백 태스크를 정리한다.",
+      stage: "doing", status: "analyzing", riskLevel: "medium", requestedAmountBand: "5백만원 이하", dueAt: plus(2), assignedRmId: "USR-RMO-03", running: "rmo-youth-finance" },
+    { caseNo: "JBG-215", caseType: "dailyFinance", theme: "급여 입금 지연 생활비 공백",
+      situation: "급여 입금일이 예상보다 늦어지며 카드 결제일과 통신비 자동이체가 겹친 직장인 생활금융 상담 케이스.",
+      goal: "급여 입금 주기와 고정 지출을 비교해 생활비 공백 구간과 리마인드 문안을 만든다.",
+      stage: "todo", status: "intake", riskLevel: "low", requestedAmountBand: "5백만원 이하", dueAt: plus(7), assignedRmId: "USR-RMO-03" },
+    { caseNo: "JBG-216", caseType: "policyStartup", theme: "지역 협약대출 서류 체크",
+      situation: "신규 창업자가 사업자등록 직후 지역 협약대출 가능 여부와 준비 서류를 문의한 정책금융 상담 케이스.",
+      goal: "정책자금 자격 체크리스트와 상담 전 필요 서류를 분리해 안내한다.",
+      stage: "todo", status: "intake", riskLevel: "medium", requestedAmountBand: "3천만원 이하", dueAt: plus(4), assignedRmId: "USR-RMO-04" },
+    { caseNo: "JBG-217", caseType: "repaymentCare", theme: "상환일 집중 구간 재조정 상담",
+      situation: "운전자금과 소액대출 상환일이 같은 주에 몰려 월말 현금흐름 부담이 커진 소상공인 상환부담 관리 케이스.",
+      goal: "상환일 집중도를 확인하고 담당자 검토용 조정 후보와 콜백 태스크를 생성한다.",
+      stage: "todo", status: "intake", riskLevel: "medium", requestedAmountBand: "3천만원 이하", dueAt: plus(3), assignedRmId: "USR-RMO-02" },
   ];
 
   const rm_officer_cases = caseDefs.map((def, index) => {

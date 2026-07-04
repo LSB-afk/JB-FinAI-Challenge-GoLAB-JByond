@@ -12,10 +12,14 @@ let rmoState = {
   search: { q: "", loading: false, error: false, blocked: null, results: null },
   boardFilter: "todo",
   boardOrder: [],
-  /* 업무 계층도(Agent Work Map) 키보드 상태 — ↑↓로 노드 이동, Space로 상세 펼치기 */
+  /* 업무 계층도(Agent Work Map) 키보드 상태 — ↑↓로 노드 이동, Space로 다음 스텝, D로 상세 펼치기 */
   workMapFocusIndex: 0,
   workMapNodeOrder: [],
   workMapExpandedNodeId: null,
+  pendingScrollTarget: null,
+  infoCaseId: null,
+  keyOverlay: null,
+  contextItem: null,
   mdTab: "통합본",
   modal: null,
   lastRun: null,
@@ -38,7 +42,10 @@ function rmoDefaultCaseWizard() {
     riskLevel: "medium",
     requestedAmountBand: "3천만원 이하",
     assignedRmId: "USR-RMO-04",
+    receivedAt: "",
     dueAt: "",
+    uploadedFileName: "",
+    uploadedFileSummary: "",
     requiresHumanReview: false,
   };
 }

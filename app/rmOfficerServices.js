@@ -152,7 +152,10 @@ function createRmOfficerCase(form) {
     requestedAmountBand: form.requestedAmountBand || "3천만원 이하",
     assignedRmId: form.assignedRmId || "USR-RMO-01",
     assignedTeam: preview.recommendedTeam,
+    receivedAt: form.receivedAt || now,
     dueAt: form.dueAt || now,
+    uploadedFileName: form.uploadedFileName || "",
+    uploadedFileSummary: form.uploadedFileSummary || "",
     requiresHumanReview: preview.requiresHumanReview,
     escalationRequired: preview.escalationRequired,
     agentPlan: preview.agentPlan,
@@ -199,10 +202,10 @@ function createRmOfficerCase(form) {
   rmoInsert("rm_officer_evidence_items", rmoScopedRow({
     id: rmoNextId("RMO-EVD", "rm_officer_evidence_items"),
     caseId: row.id,
-    evidenceType: "intake",
-    title: "신규 여신 상담 접수 근거",
-    summary: "익명 Ref 기준 접수 — 원문 민감정보 없음",
-    sourceMode: "sample",
+    evidenceType: form.uploadedFileName ? "uploadedFile" : "intake",
+    title: form.uploadedFileName ? "신규 접수 첨부 파일" : "신규 여신 상담 접수 근거",
+    summary: form.uploadedFileName ? `${form.uploadedFileName} · ${form.uploadedFileSummary || "에이전트 분석 입력 후보로 등록"}` : "익명 Ref 기준 접수 — 원문 민감정보 없음",
+    sourceMode: form.uploadedFileName ? "uploaded" : "sample",
     createdAt: now,
     reviewRequired: true,
   }));
@@ -274,7 +277,8 @@ function approveRmOfficerAssignment(assignmentId) {
     const incompleteBranches = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY)
       .filter((a) => a.caseId === caseRow.id && a.kind !== "report" && a.status !== "completed");
     if (incompleteBranches.length) return { error: "선행 분석 노드를 먼저 완료해야 합니다." };
-  } else if (asg.status !== "pendingApproval") {
+    if (!["pendingApproval", "running"].includes(asg.status)) return { error: "아직 실행할 수 없는 노드입니다." };
+  } else if (!["pendingApproval", "running"].includes(asg.status)) {
     return { error: "아직 실행할 수 없는 노드입니다." };
   }
 
