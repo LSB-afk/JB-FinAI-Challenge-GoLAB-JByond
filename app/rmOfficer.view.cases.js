@@ -84,6 +84,45 @@ function rmoSimpleList(items) {
   return `<ul class="rmo-compact-list">${items.map(([head, sub]) => `<li><strong>${escapeHtml(head || "-")}</strong><span>${escapeHtml(sub || "-")}</span></li>`).join("") || "<li><span>표시할 항목 없음</span></li>"}</ul>`;
 }
 
+function rmoAuditDocumentBody(audit, caseRow) {
+  if (!audit) return "# 감사 문서\n\n- 선택된 감사 기록이 없습니다.";
+  const relatedDocs = caseRow ? rmoDeliverableRowsForCase(caseRow).slice(0, 4) : [];
+  return `# 감사 기록 문서 · ${audit.id}
+
+## 생성 시각
+- ${audit.createdAt || "-"}
+
+## 사용 데이터
+- 대상: ${audit.targetType || "-"} ${audit.targetId || ""}
+- 관련 케이스: ${caseRow ? `${caseRow.caseNo} · ${caseRow.theme}` : (audit.caseId || "-")}
+- 위험도: ${RMO_RISK_LABELS[audit.riskLevel] || audit.riskLevel || "-"}
+
+## 실행 에이전트
+- 행위자: ${rmoUserName(audit.actorId)}
+- 행위: ${audit.action}
+
+## 판단 근거
+- ${caseRow ? caseRow.priorityReason : "감사 대상 이벤트의 처리 이력을 기준으로 기록합니다."}
+
+## 결과 요약
+- ${audit.reviewRequired ? "담당자 검토가 필요한 감사 이벤트입니다." : "기록 완료 상태로 보존되는 감사 이벤트입니다."}
+
+## 담당자 확인 내역
+- 다음 액션: ${audit.reviewRequired ? "담당자 검토 후 승인/반려 또는 재실행 여부 확인" : "기록 유지"}
+
+## 변경 이력
+${relatedDocs.map(([file, summary]) => `- ${file}: ${summary}`).join("\n") || "- 연결 산출물 없음"}
+`;
+}
+
+function rmoAuditDocumentPanel(audit, caseRow) {
+  if (!audit) return "";
+  return `<section class="rmo-audit-document">
+    <div class="rmo-audit-document-label">문서 미리보기</div>
+    <div class="rmo-md-body">${rmoRenderMarkdownSections(rmoAuditDocumentBody(audit, caseRow))}</div>
+  </section>`;
+}
+
 function rmoAssignmentsForCase(caseId) {
   return rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY)
     .filter((a) => a.caseId === caseId)
@@ -488,8 +527,14 @@ const rmoCaseViewRenderers = {
   "policy-startup"() { return rmoDomainCases("policyStartup", "정책·창업 금융"); },
   "agent-queue"() {
     const rows = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY);
+    const selectedId = rmoState.contextItem && rmoState.contextItem.kind === "assignment" ? rmoState.contextItem.id : "";
     return rmoPanel(`AI 실행 큐 (${rows.filter((x) => ["pendingApproval", "running"].includes(x.status)).length} 대기)`, rmoTableView(["배정", "에이전트", "관련 건", "상태"], rows, (a) => `
-      <li class="jbwc-row" data-rmo-open-case="${escapeHtml(a.caseId)}"><span class="jbwc-row-id">${escapeHtml(a.id)}</span><span>${escapeHtml(rmoAgentDisplayName(a.agentId))}<br><span class="jbwc-row-note">${escapeHtml(a.expectedOutput)} · ${escapeHtml(String(a.estimatedMinutes))}분</span></span><span>${escapeHtml(a.caseId)}</span><span>${rmoStatusPill(a.status)}</span></li>`) + rmoAgentQueueSupportPanels(rows)) + rmoMockNote();
+      <li ${rmoSelectableRowAttrs("assignment", a.id, selectedId)}>
+        <span class="jbwc-row-id">${escapeHtml(a.id)}</span>
+        <span>${escapeHtml(rmoAgentDisplayName(a.agentId))}<br><span class="jbwc-row-note">${escapeHtml(a.expectedOutput)} · ${escapeHtml(String(a.estimatedMinutes))}분</span></span>
+        <span>${escapeHtml(a.caseId)}<br><button class="secondary-button rmo-inline-action" type="button" data-rmo-open-case="${escapeHtml(a.caseId)}">케이스 열기</button></span>
+        <span>${rmoStatusPill(a.status)}</span>
+      </li>`) + rmoAgentQueueSupportPanels(rows)) + rmoMockNote();
   },
   "data-connectors"() {
     const rows = rmoTable("rm_officer_external_connectors", RMO_ROLE_KEY);
@@ -589,6 +634,7 @@ const rmoCaseViewRenderers = {
     ], selected ? [selected.action, selected.riskLevel, selected.reviewRequired ? "검토 필요" : "기록됨"] : [], [
       selectedCase ? rmoInfoList("케이스 맥락", [[selectedCase.theme, selectedCase.priorityReason], ["다음 액션", rmoNextActionText(selectedCase)]]) : "",
       selectedCase ? rmoInfoList("관련 산출물", rmoDeliverableRowsForCase(selectedCase)) : "",
+      rmoAuditDocumentPanel(selected, selectedCase),
     ]);
     const bottom = rmoSupportCards([
       { title: "감사 상태", count: rows.length, tone: "info", body: rmoMetricCards([

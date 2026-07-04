@@ -75,6 +75,7 @@ function rmoSetPendingScroll(target) {
 function rmoCaptureBoardRailScroll() {
   const rail = document.querySelector("[data-rmo-case-rail]");
   if (rail) rmoState.boardRailScrollLeft = rail.scrollLeft;
+  rmoState.boardViewportY = window.scrollY;
 }
 
 function rmoScrollBoardRailToCase(caseId) {
@@ -224,6 +225,9 @@ function rmoFlushPendingScroll() {
       const cardId = target.cardId || (rmoState.detail && rmoState.detail.kind === "case" ? rmoState.detail.id : null);
       if (target.slideOnly) {
         rmoScrollBoardRailToCase(cardId);
+        if (Number.isFinite(Number(rmoState.boardViewportY))) {
+          window.scrollTo({ top: Number(rmoState.boardViewportY), behavior: "auto" });
+        }
         return;
       }
       if (target.cardId && !target.sub && !target.nodeFocus && !target.nodeId && !target.md && !target.approval) {
@@ -464,6 +468,9 @@ function bindRmOfficerActions() {
   });
   document.querySelectorAll("[data-rmo-md-tab]").forEach((button) => {
     button.addEventListener("click", () => { rmoState.mdTab = button.dataset.rmoMdTab; render(); });
+  });
+  document.querySelectorAll("[data-rmo-md-mode]").forEach((button) => {
+    button.addEventListener("click", () => { rmoState.mdViewMode = button.dataset.rmoMdMode || "summary"; render(); });
   });
   document.querySelectorAll("[data-rmo-open-md]").forEach((button) => {
     button.addEventListener("click", (event) => {

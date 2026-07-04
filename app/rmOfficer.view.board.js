@@ -128,10 +128,6 @@ function rmoCaseSubSection(caseId) {
     </header>
   </section>`;
   return `<section class="rmo-sub-workspace">
-    <aside class="rmo-sub-left-rail" aria-hidden="true">
-      <span class="rmo-sub-marker">SUB</span>
-      <span class="rmo-sub-marker rmo-sub-marker-md">md</span>
-    </aside>
     <div class="rmo-sub-main">
       ${header}
       ${rmoWorkMapSection(caseRow)}
@@ -258,6 +254,12 @@ function rmoDeliverableViewerSection(caseRow) {
   if (!tabs.some((t) => t.key === activeKey)) activeKey = tabs[0].key;
   const active = tabs.find((t) => t.key === activeKey).doc;
   const tabBar = tabs.map((t) => `<button type="button" class="jbwc-tab ${t.key === activeKey ? "is-active" : ""}" data-rmo-md-tab="${escapeHtml(t.key)}">${escapeHtml(t.key)}</button>`).join("");
+  const mdMode = rmoState.mdViewMode === "raw" ? "raw" : "summary";
+  const modeBar = `<div class="rmo-md-modebar" role="tablist" aria-label="MD 보기 방식">
+    <button type="button" class="rmo-md-mode ${mdMode === "summary" ? "is-active" : ""}" data-rmo-md-mode="summary">요약본 MD</button>
+    <button type="button" class="rmo-md-mode ${mdMode === "raw" ? "is-active" : ""}" data-rmo-md-mode="raw">원본 MD</button>
+  </div>`;
+  const body = mdMode === "raw" ? active.body : rmoMdSummaryBody(active, caseRow);
   let extra = "";
   if (integrated && active.kind === "integrated") {
     const rows = (integrated.contributionRows || []).map((r) => `<li class="jbwc-row"><span>${escapeHtml(r.agent)}</span><span>${escapeHtml(r.fileName)}</span><span>${escapeHtml(r.data)}</span><span>${escapeHtml(r.date)}</span><span>${escapeHtml(String(r.contribution))}%</span></li>`).join("");
@@ -266,10 +268,47 @@ function rmoDeliverableViewerSection(caseRow) {
     <details class="rmo-md-fold"><summary>사용 출처 (${(integrated.sources || []).length})</summary><ul class="jbwc-list">${sources}</ul></details>`;
   }
   return `<div class="rmo-md-viewer-section" data-rmo-md-viewer>${rmoPanel("통합 리포트 뷰어",
-    `<div class="jbwc-tabs rmo-md-tabs" role="tablist">${tabBar}</div>
-    <div class="rmo-md-body jbwc-tabbody">${rmoRenderMarkdownSections(active.body)}</div>
+    `<div class="rmo-md-viewer-head">
+      <div class="jbwc-tabs rmo-md-tabs" role="tablist">${tabBar}</div>
+      ${modeBar}
+    </div>
+    <div class="rmo-md-body jbwc-tabbody ${mdMode === "raw" ? "rmo-md-body-raw" : "rmo-md-body-summary"}">${rmoRenderMarkdownSections(body)}</div>
     <div class="settings-button-row"><button class="secondary-button" type="button" data-rmo-open-md="${escapeHtml(active.fileName)}">문서 모달로 크게 보기</button></div>
     ${extra}`)}</div>`;
+}
+
+function rmoMdSummaryBody(doc, caseRow) {
+  const summary = doc.summary || `${caseRow.caseNo} ${caseRow.theme} 산출물 요약`;
+  const assignment = rmoTable("rm_officer_agent_assignments", RMO_ROLE_KEY).find((a) => a.caseId === doc.caseId && a.agentId === doc.agentId);
+  const agentName = rmoAgentDisplayName(doc.agentId);
+  const data = assignment ? (assignment.inputData || assignment.dataChips || []).join(" · ") : (doc.sources || []).map((s) => s.label).join(" · ");
+  const audits = rmoTable("rm_officer_audit_logs", RMO_ROLE_KEY).filter((a) => a.caseId === caseRow.id).slice(0, 4);
+  return `---
+file: ${doc.fileName}
+case: ${caseRow.caseNo}
+view: 요약본 MD
+---
+
+# ${doc.fileName}
+
+## Summary
+- ${summary}
+- 연결 케이스: ${caseRow.caseNo} · ${caseRow.theme}
+- 생성 주체: ${agentName}
+
+## 권고 액션
+- ${rmoNextActionText(caseRow)}
+- 담당자는 산출물 근거와 감사 기록을 확인한 뒤 고객 영향 행동을 분리합니다.
+
+## 위험 신호
+- ${caseRow.priorityReason}
+
+## 사용 데이터
+- ${data || "케이스 요약 · 위험 신호 · SLA"}
+
+## 담당자 확인 사항
+${audits.map((a) => `- ${a.action} · ${a.createdAt}`).join("\n") || "- 감사 기록 없음"}
+`;
 }
 
 /* 문서 모달(화면 C) — 보드 딤 + md 플로팅 모달(메타 → 제목 → Summary → 근거 표) */

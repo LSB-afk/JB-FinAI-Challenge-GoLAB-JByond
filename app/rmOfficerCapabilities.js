@@ -73,7 +73,7 @@ function rmoCapabilityCard(cap) {
   const agentNames = rmoCapabilityAgentNames(cap);
   const agentsText = agentNames.length ? agentNames.join(", ") : "서비스 레이어(에이전트 비경유)";
   const risk = rmoCapabilityRisk(cap);
-  return `<article class="rmo-cap-card" data-rmo-cap-id="${escapeHtml(cap.id)}">
+  return `<article class="rmo-cap-card ${rmoState.contextItem && rmoState.contextItem.kind === "capability" && rmoState.contextItem.id === cap.id ? "is-selected" : ""}" data-rmo-cap-id="${escapeHtml(cap.id)}" data-rmo-select-context="capability:${escapeHtml(cap.id)}" role="button" tabindex="0">
     <header class="rmo-cap-card-head">
       <p class="rmo-cap-category">${escapeHtml(cap.category)}</p>
       <span class="rmo-cap-head-pills">
@@ -101,7 +101,7 @@ function rmoCapabilityFilterBar() {
 
 /* 하단 기능 목록 테이블 — 기능명/카테고리/연결 에이전트/상태를 한 줄로 스캔 가능하게 */
 function rmoCapabilityTable(rows) {
-  const body = rows.map((cap) => `<li class="jbwc-row">
+  const body = rows.map((cap) => `<li ${rmoSelectableRowAttrs("capability", cap.id, rmoState.contextItem && rmoState.contextItem.kind === "capability" ? rmoState.contextItem.id : "")}>
       <span class="jbwc-row-id">${escapeHtml(cap.name)}<br><span class="jbwc-row-note">${escapeHtml(cap.output)}</span></span>
       <span>${escapeHtml(cap.category)}</span>
       <span>${escapeHtml(rmoCapabilityAgentNames(cap).join(", ") || "서비스 레이어")}</span>
@@ -115,14 +115,14 @@ function rmoCapabilityRepositoryView() {
   const filtered = rmoCapabilityFilter === "all" ? RMO_CAPABILITIES : RMO_CAPABILITIES.filter((c) => c.category === rmoCapabilityFilter);
   const hero = `<section class="jbwc-hero rmo-banner rmo-cap-hero">
     <div>
-      <p class="eyebrow">역할 전용 하네스 · 업무 기능 저장소</p>
-      <h2>업무 기능 저장소</h2>
+      <p class="eyebrow">역할 전용 하네스 · 업무 기능 기술 저장소</p>
+      <h2>업무 기능 기술 저장소</h2>
       <p>AI 업무지원에서 직접 활용되는 금융, 리스크, 계약, 준법 업무 기능을 확인합니다.</p>
     </div>
   </section>`;
   return `${hero}
     ${rmoCapabilityFilterBar()}
-    <section class="workspace-panel jbwc-panel"><p class="eyebrow">기능 카드 (${filtered.length}/${RMO_CAPABILITIES.length})</p><div class="rmo-cap-grid">${filtered.map(rmoCapabilityCard).join("") || '<div class="jbwc-empty">해당 카테고리에 등록된 기능이 없습니다.</div>'}</div></section>
-    ${rmoPanel(`기능 목록 (${filtered.length})`, rmoCapabilityTable(filtered))}
+    <section class="workspace-panel jbwc-panel"><p class="eyebrow">업무 기능 기술 (${filtered.length}/${RMO_CAPABILITIES.length})</p><div class="rmo-cap-grid">${filtered.map(rmoCapabilityCard).join("") || '<div class="jbwc-empty">해당 카테고리에 등록된 기능이 없습니다.</div>'}</div></section>
+    ${rmoPanel(`업무 기능 기술 목록 (${filtered.length})`, rmoCapabilityTable(filtered))}
     ${rmoMockNote()}`;
 }

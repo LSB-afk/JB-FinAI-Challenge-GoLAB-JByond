@@ -21,6 +21,7 @@ let rmoState = {
   keyOverlay: null,
   contextItem: null,
   mdTab: "통합본",
+  mdViewMode: "summary",
   modal: null,
   lastRun: null,
   modelRun: { status: "idle", message: "" },
