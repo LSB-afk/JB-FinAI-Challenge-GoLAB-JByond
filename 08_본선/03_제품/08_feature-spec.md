@@ -10,7 +10,7 @@ aliases: [Feature Spec, 기능 명세, feature-spec]
 
 # Feature Spec — 기능 명세
 
-> 노멀폼: DDBM-Harness-SDD 스킬 §Phase3 `docs/08_feature-spec.md`(필수필드 Feature ID / User story / Input / Output / Logic / Edge cases / Acceptance criteria / Evidence). SSOT: `_canon.md`, [[08_본선/03_제품/01_prd/prd|PRD]](기능군 1~5·25항목), [[08_본선/03_제품/02_agent-design/agent-roster|에이전트 로스터]], [[08_본선/03_제품/00_결정-준비/키스톤-확정|키스톤]]. 코드 근거: `_vendor/JB_project2`(역할축 콘솔)·`02_제품/app/app.js`(4 함수계약).
+> 노멀폼: DDBM-Harness-SDD 스킬 §Phase3 `docs/08_feature-spec.md`(필수필드 Feature ID / User story / Input / Output / Logic / Edge cases / Acceptance criteria / Evidence). SSOT: `_canon.md`, [[08_본선/03_제품/01_prd/prd|PRD]](기능군 1~5·25항목), [[08_본선/03_제품/02_agent-design/agent-roster|에이전트 로스터]], [[08_본선/03_제품/00_결정-준비/키스톤-확정|키스톤]]. 코드 근거: `_vendor/JB_project2`(역할축 콘솔)·`02_제품/app/app.js`(4 함수계약). 전체 코드 실측 인벤토리(뷰·함수·데이터·감사체인 적용범위)는 [[08_본선/03_제품/구현현황-JB_project2|구현현황-JB_project2]] 참조(2026-07-04) — 이하 **[실측]** 표기는 이 문서 기준.
 >
 > **이 문서의 위치**: PRD는 "무엇을 왜"(기능군·수용기준 요약)를, 이 문서는 "각 기능이 어떤 입력→출력→로직→예외로 **테스트 가능**한가"를 정의한다. Feature ID는 PRD 기능군 번호(x.y.z)를 그대로 승계해 추적성을 유지한다.
 >
@@ -39,8 +39,10 @@ aliases: [Feature Spec, 기능 명세, feature-spec]
 | 1.1.2 | 케이스 기본속성·연결정보 저장 | MVP | ✅ | E4 | PRD 1.1.2 · data-model §1 |
 | 1.2.1 | 상태별 허용행동 제약(FSM) | MVP | ✅ | E4 | PRD 1.2.1 · `moveCaseToColumn` |
 | 1.2.2 | 5컬럼 칸반 렌더(리스크 배지 L0~L4) | MVP | ✅ | E4 | PRD 1.2.2 · S-03 |
-| 1.3.1 | AuditEvent 공통필드·해시체인 | MVP | ✅ | E4 | PRD 1.3.1 · `auditChainRecords` |
+| 1.3.1 | AuditEvent 공통필드·해시체인 | MVP | ✅(base app 한정)* | E4/base·E2/역할콘솔 | PRD 1.3.1 · `auditChainRecords` |
 | 1.3.2 | 이벤트타입 목록(최소 7종) | MVP | ✅ | E4 | PRD 1.3.2 · agent-roster §5 |
+
+\* **[실측 2026-07-04]** 해시체인은 base app에만 구현. CCL/FDR/JPO/JBWC 4개 역할 콘솔(히어로 CCL 포함)의 `*_audit_logs`는 해시체인 없는 평문 리스트 — 구현현황-JB_project2 §4·§8.
 
 ### 기능군 2 — 에이전트 오케스트레이션
 
@@ -131,8 +133,8 @@ aliases: [Feature Spec, 기능 명세, feature-spec]
 | **Output** | GENESIS부터 `previousHash`로 연결된 append-only 레코드. 무결성 검증 결과(pass/fail). |
 | **Logic** | 각 레코드 `hash = H(prev, payload)`. 최소 7종 이벤트타입(`case.created`·`agent.run.*`·`evidence.attached`·`risk.decision.computed`·`approval.*`·`audit.sealed`). D13: 각 claim에 `source_id·hash·policy_rule_id` 부착 = **attribution coverage** 측정 근거 [E2, D13]. |
 | **Edge cases** | (a) 레코드 중간 변조 → previousHash 불일치로 검증 실패 노출. (b) seq 누락/역전 → 무결성 fail. (c) 삭제 시도 → append-only 위반으로 차단·보안이벤트 기록. |
-| **Acceptance criteria** | ① 모든 AuditEvent가 previousHash 일치 검증을 통과한다. ② 케이스 1건당 **최소 4개** 이벤트타입이 기록된다(성공지표 연동). ③ 임의 변조 레코드 주입 시 검증이 **fail**로 검출된다. |
-| **Evidence** | `auditChainRecords` 함수계약 + 변조 주입 테스트. |
+| **Acceptance criteria** | ① 모든 AuditEvent가 previousHash 일치 검증을 통과한다. ② 케이스 1건당 **최소 4개** 이벤트타입이 기록된다(성공지표 연동). ③ 임의 변조 레코드 주입 시 검증이 **fail**로 검출된다. *(①·③은 base app 범위에서만 충족 — 아래 실측 참조)* |
+| **Evidence** | `auditChainRecords` 함수계약 + 변조 주입 테스트. **[실측 2026-07-04]** 이 함수와 해시체인은 `02_제품/app.js`/`_vendor/JB_project2/app.js`의 **base app에만** 존재한다. CCL/FDR/JPO/JBWC 4개 역할 콘솔(히어로 CCL-0001 포함)은 각자 `*_audit_logs` 테이블에 append만 하고 `previousHash` 연쇄가 없다(예: `cclConsole.app.js:193-199`) — "탬퍼-에비던트 감사체인 전 콘솔 적용"은 **미충족**, base app 시연 범위로만 주장할 것([[08_본선/03_제품/구현현황-JB_project2|구현현황-JB_project2]] §4·§8). |
 
 ### F-2.1.1 · 실행시퀀스 판단→행동초안→검증(히어로 파이프라인) — E4 결정형 / E2 라이브
 
@@ -175,7 +177,7 @@ aliases: [Feature Spec, 기능 명세, feature-spec]
 | 필드 | 내용 |
 |---|---|
 | **User story** | 담당자가 한 케이스를 사람이 읽고 버전관리·이관·감사할 수 있는 **마크다운 파일**(1건=1개 또는 여러 개)로 보관·열람하고 싶다(김주용 17:18 "하나의 케이스는 하나의 마크다운 파일이 될 수도, 여러 개가 될 수도"). |
-| **Input** | 케이스 상태객체(`ccl_cases`/`fdr_cases`/`jeonse_cases`/`ops_cases` 레코드 + 연결 노트·근거·감사). |
+| **Input** | 케이스 상태객체(`ccl_cases`/`fdr_cases`/`jeonse_cases`/`ops_cases` 레코드 + 연결 노트·근거·감사). **[실측 2026-07-04]** 실제로는 콘솔별 5개 독립 localStorage DB(`jb-finance-support-state-v4`/`ccl-ops-db-v1`/`fdr-ops-db-v1`/`jpo-ops-db-v2`/`jbwc-ops-db-v3`)에 순수 JS 객체(JSON)로 저장되며, 파일시스템 기반 케이스 문서는 존재하지 않는다([[08_본선/03_제품/구현현황-JB_project2|구현현황-JB_project2]] §5). |
 | **Output** | 케이스 1건의 md 표현(front-matter=식별자·상태·리스크, 본문=요약·근거·감사 타임라인). **저장 형태는 옵션** — 현 프로토타입의 상태객체/`localStorage`를 대체하지 않고 **읽기·export 레이어**로 얹는다. |
 | **Logic** | 상태객체 → md 직렬화(비식별 유지: `BIZ-REF`/마스킹만, PII 원문 금지). 여러 파일 분할 시 케이스 ID로 묶음. **미구현** — 표현/저장 형태 확정은 [설계]. |
 | **Edge cases** | (a) PII 원문이 md에 직렬화되지 않도록 반출스캔(F-4.3.1) 경유. (b) 파일↔상태객체 정합(동기화 방향·SSOT) 미정 [Open Question]. (c) 여러 파일 분할 시 감사 체인 연속성. |
@@ -209,6 +211,7 @@ aliases: [Feature Spec, 기능 명세, feature-spec]
 | Triage 50%·ROI 등 절대KPI | [추정] | D13 프레이밍 적용 — "N건 평가셋 0 위반 관측"으로 서술, 보편 보장 금지 |
 | 케이스=마크다운 파일(6.1.1/FR-08) | [설계] E1 | 표현/저장 형태·파일↔상태객체 SSOT 미정. 발표 로드맵 항목 |
 | 케이스 코멘트/메모/댓글(6.2.1/FR-09) | [설계/미구현] E1 | 신규 엔티티 `case_comments` 미구현. FR-11 학습루프 입력원으로만 연결 |
+| 코드 실측 인벤토리(2026-07-04) | [실측] E4 | 43파일/24,667줄, 6진입점·91뷰(§1.3.1 참고), 에이전트 40(8+8+11+13)·스킬28, CSS 커스텀프로퍼티 121·컴포넌트클래스 537, LLM 실호출 0건(fetch 2건=data.go.kr 전세API), Case=JS객체+localStorage(5개 독립 DB, 마크다운 아님). 전거: [[08_본선/03_제품/구현현황-JB_project2|구현현황-JB_project2]] |
 
 ---
 
