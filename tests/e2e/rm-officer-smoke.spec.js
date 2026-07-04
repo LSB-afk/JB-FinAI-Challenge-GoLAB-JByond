@@ -23,7 +23,7 @@ test("스모크: 진입→보드→키보드 선택→승인(개별 MD)→신규
   // 3. 전용 sidebar title + 라우트
   await expect(page).toHaveURL(/\/roles\/rm-officer\/board/);
   await expect(page.locator(".sidebar-brand")).toContainText("RM 업무지원 포털");
-  await expect(page.locator("#page-content")).toContainText("RM님 업무 급한 순으로 모아왔어요");
+  await expect(page.locator("#page-content")).toContainText("RM담당자님 업무 급한 순으로 모아왔어요");
   await expect(page.locator("#page-content")).toContainText("양식장 재해위험 대응");
   await expect(page.locator(".rmo-count-header")).toContainText("처리해야할 작업 전");
   await expect(page.locator("#page-content")).not.toContainText("전세 안심 점검");

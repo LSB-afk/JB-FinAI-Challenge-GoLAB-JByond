@@ -76,7 +76,7 @@ function rmoBoardView() {
   const banner = `<section class="jbwc-hero rmo-banner">
     <div>
       <p class="eyebrow">역할 전용 하네스 · RM 업무보드</p>
-      <h2>RM님 업무 급한 순으로 모아왔어요</h2>
+      <h2>RM담당자님 업무 급한 순으로 모아왔어요</h2>
       <p>우선순위는 단순 점수가 아니라 근거 문장과 데이터 출처로 설명됩니다. 급한 순서로 정렬했어요.</p>
     </div>
     <p class="rmo-keyboard-hint" aria-hidden="false">숫자키 Case 선택 · ←→ 케이스 이동 · ↑↓ 에이전트 이동 · Space 다음 스텝 · Enter 실행</p>
