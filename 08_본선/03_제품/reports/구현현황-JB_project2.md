@@ -9,11 +9,13 @@ aliases: [JB_project2 구현현황, implementation-inventory]
 
 > 대상: `_vendor/JB_project2/app/` (읽기 전용 벤더 클론, 이승보 프로토타입 = 제출 코드정본). 모든 수치는 `grep`/파일 직독으로 확인한 실측치이며, 확인 안 된 항목은 `[미확인]`으로 표시했다.
 >
-> **⚠ 델타 (2026-07-04 야간 pull, upstream 0226bd6)**: 아래 §0~§8 실측치는 `e57b826` 기준이다. 이후 **RM 역할 하네스 신설 3커밋(+3,650줄)** 이 들어왔다 — `rmOfficer.*` 18개 신규 파일(에이전트 레지스트리 319줄·db·서비스·보드/케이스/위저드 뷰), `AGENTS.md`(Codex 오케스트레이션 계약 333줄), e2e 2종(`rm-officer*.spec.js`), 자체 `scripts/verify_static.py`. **RM 역할 하네스 신설** — 단, E 실사(implementation-index) 결과 RM은 CCL/FDR/JPO/JBWC 같은 완전 콘솔이 아니라 **단일 페이지 대시보드**(`rmDashboardPage`, 하위 라우트 없음)다. "역할 콘솔 4종 + RM 대시보드"로 표기할 것. 파일 수·에이전트 로스터 집계는 재실측 필요 [미갱신].
+> **⚠ 델타 — 재실측 완료 2026-07-05 (0226bd6)**: 아래 §0~§8 원문은 `e57b826` 기준 실측이었다. 이후 **RM 역할 하네스 신설**이 들어와 `_vendor/JB_project2` HEAD `0226bd6` 기준으로 전 항목 재실측했다(§0/§1/§2/§5/§6/§8에 인라인 반영, 원 수치는 보존하고 갱신치를 병기). 핵심 변화: `rmOfficer.*` **15개 신규 파일(2,693줄)**, `RMO_VIEWS` **16개 뷰**(당초 가정 15개가 아님 — `audit-logs` 포함), 전용 에이전트 11개·스킬 11개, 전용 DB 13테이블, e2e 2개 파일 3개 시나리오. **가장 중요한 정정**: org-rail의 "역할=RM" 클릭은 이제 레거시 `rmDashboardPage`(app.js:1769)가 아니라 **신규 `rm-officer-harness`로 연결**된다(app.js:5546-5548 `data-role-filter="RM"` 핸들러). 레거시 `rm-dashboard`는 UI에서 도달 불가능한 고아 라우트로 남아 있고(직접 해시 이동 `#rm-dashboard` 시에만 렌더링), 아래 §1/§2의 "RM 대시보드 = 역할 RM 트리거" 서술은 이 재검증으로 갱신됐다.
 
 ## 0. 파일 구성 (실측)
 
-당초 CLAUDE.md 설명(`index.html` + `app.js` ~250KB + `modules.js` + `styles.css` ~150KB)보다 훨씬 커졌다. 실제 앱 디렉터리는 **43개 파일, 총 24,667줄**의 4-콘솔 번들 구조다.
+당초 CLAUDE.md 설명(`index.html` + `app.js` ~250KB + `modules.js` + `styles.css` ~150KB)보다 훨씬 커졌다. e57b826 기준 실제 앱 디렉터리는 **43개 파일, 총 24,667줄**의 4-콘솔 번들 구조였다.
+
+**재실측(2026-07-05, 0226bd6)**: `app/*.js *.css *.html` 전체 **55개 파일, 총 27,516줄**(`wc -l` 직접 합산). RM 역할 하네스 신설로 **`rmOfficer.*` 15개 신규 파일, 2,693줄**이 추가됐다.
 
 | 파일군 | 파일 수 | 대표 파일(줄 수) |
 |---|---|---|
@@ -23,26 +25,35 @@ aliases: [JB_project2 구현현황, implementation-inventory]
 | FDS/피싱(FDR) 콘솔 | fdrConsole.core/data/app.js(253+302+421=976줄) | — |
 | 전세보호(JPO) 콘솔 | jeonseProtection\* 14개 파일(약 3,300줄) | 가장 큰 콘솔 |
 | JB우리캐피탈(JBWC) 콘솔 | jbWooriCapital\*, wooricap\* 10개 파일(약 2,600줄) + wooricap.css(771줄) | 자체 CSS 파일 별도 보유 |
+| **RM 역할 하네스(신규)** | **`rmOfficer*.js` 15개 파일(2,693줄)** — rmOfficer-db.js(356) · rmOfficerAgents.registry.js(319) · rmOfficerServices.js(413) · rmOfficer.view.board.js(164) · rmOfficerDeliverable.service.js(225) · rmOfficerHarness.js(203) 등 | 콘솔 5종째, 자체 CSS 없음(styles.css 공용) |
 | 스타일 | styles.css(8,696줄), wooricap.css(771줄) | 디자인 토큰/컴포넌트 |
 
-`index.html`의 `<script>` 로드 순서: `modules.js → harnessCore.js → (JBWC 번들) → (JPO 번들) → cclConsole.* → fdrConsole.* → harnessRegistry.js → harnessVerification.js → app.js`(마지막, 메인 오케스트레이터).
+`index.html`의 `<script>` 로드 순서(재실측): `modules.js → harnessCore.js → (JBWC 번들) → (JPO 번들) → cclConsole.* → fdrConsole.* → **rmOfficer.config/Agents/Rules/Priority/Deliverable/db/Services/helpers/view.*/commands/sidebar → rmOfficerHarness.js** → harnessRegistry.js → harnessVerification.js → app.js`(마지막, 메인 오케스트레이터). `index.html` 주석 원문: "RM은 jbwc/jpo/ccl/fdr 콘솔보다 먼저 로드한다: 그 네 콘솔은 rmOfficer를 모르므로(ccl/fdr은 수정 금지 파일)".
 
 ---
 
 ## 1. 역할 콘솔 / 계열사·역할축
 
-`index.html`의 `org-rail`은 **계열사 전환**(전체/전북은행/JB우리캐피탈)과 **역할 전환**(RM/기업여신 담당자/전세보호 담당자/보이스피싱·FDS 담당자) 두 축을 별도로 노출한다. 실제로 구현된 진입점은 6개다.
+`index.html`의 `org-rail`은 **계열사 전환**(전체/전북은행/JB우리캐피탈)과 **역할 전환**(RM/기업여신 담당자/전세보호 담당자/보이스피싱·FDS 담당자) 두 축을 별도로 노출한다. e57b826 기준 실제로 구현된 진입점은 6개였다.
 
 | 진입점 | 트리거 | roleKey/routeBase | 비고 |
 |---|---|---|---|
 | 기본 업무 보드(원본 MVP) | 계열사=전체/전북은행 | (route-key 없음, `navigation` 배열, 15개 아이템) | app.js 고유, 예선부터 있던 케이스 대시보드 |
-| RM 대시보드 | 역할=RM | `rm-dashboard` (단일 뷰, 하위 라우트 없음) | app.js:1769 `rmDashboardPage`, 콘솔이 아니라 단일 페이지 |
+| ~~RM 대시보드~~ (레거시, 재실측으로 고아 라우트 확인) | (UI에서 도달 불가 — 직접 해시 이동만) | `rm-dashboard` (단일 뷰, 하위 라우트 없음) | app.js:1769 `rmDashboardPage`. 아래 참고 |
 | 기업여신 담당자 콘솔(CCL) | 역할=기업여신 담당자 | `corporate-credit` / `/roles/corporate-credit` | cclConsole.\* |
 | FDS/보이스피싱 담당자 콘솔(FDR) | 역할=보이스피싱/FDS 담당자 | `fds-response` / `/roles/fds-response` | fdrConsole.\* |
 | 전세보호 담당자 콘솔(JPO) | 역할=전세보호 담당자 | `jeonse-protection` / `/roles/jeonse-protection` | jeonseProtection.\* (가장 방대) |
 | JB우리캐피탈 콘솔(JBWC) | 계열사=JB우리캐피탈 | `/jb-woori-capital` | wooricap.\*, jbWooriCapital\* — **역할 전환이 아니라 계열사 전환**에 걸림 |
 
 라우팅은 `app.js:5705` `applyHashRoute()`가 4개 콘솔의 `xxxRouteFromHash()`를 순서대로 시도(jbwc → jpo → ccl → fdr)한 뒤에야 원본 `navigation` 매칭으로 폴백하는 단일 디스패처 구조.
+
+**재실측(2026-07-05, 0226bd6) — RM 콘솔 신설로 진입점 재편**: org-rail의 **"역할=RM" 버튼(`data-role-filter="RM"`) 클릭 핸들러(app.js:5546-5548)가 이제 레거시 `rm-dashboard`가 아니라 신규 `rm-officer-harness`로 이동**한다 — `activeView = "rm-officer-harness"` + `window.location.hash = rmoHashForView("board")`(기본 `#/roles/rm-officer/board`). 레거시 `rmDashboardPage`(app.js:1769-2200대)는 렌더 함수·`navigation` 폴백 목록(app.js:5770)에는 여전히 남아 있어 코드는 죽지 않았지만, **org-rail 어디에도 그리로 가는 트리거가 없다** — `#rm-dashboard` 해시를 직접 입력해야만 보이는 사실상 고아 라우트다.
+
+| 진입점(신규) | 트리거 | roleKey/routeBase | 비고 |
+|---|---|---|---|
+| RM 업무지원 포털(신규 콘솔) | 역할=RM | `rm-officer-harness` / `/roles/rm-officer` (`RMO_ROUTE_BASE`) | rmOfficer.\* 15개 파일, `harnessRegistry.js:156`에 `id: "rm-officer"`로 정식 등록 |
+
+총 진입점은 **7개**(기본 업무 보드 + 고아화된 legacy rm-dashboard + CCL + FDR + JPO + JBWC + 신규 rm-officer)로 늘었으나, 실질 UI 도달 가능 진입점은 6개(legacy rm-dashboard 제외)다.
 
 ---
 
@@ -62,10 +73,28 @@ aliases: [JB_project2 구현현황, implementation-inventory]
 ### 2-4. JB우리캐피탈(JBWC) — 24개 뷰 (`jbWooriCapitalSidebar.config.js` `JBWC_VIEWS`)
 `board · approvals · audit-logs · privacy-permissions · integrations · cases · cases-new · ai-analysis · ai-assist · capabilities · roles · inspections · consumer-protection · alerts · personal-finance · auto-finance · mortgage-secured · enterprise-finance · customer-management · documents · vehicle-lifecycle · fds · complaints · agent-harness`
 
-### 2-5. 원본 업무 보드(base app) — 15개 nav 아이템 + `rm-dashboard`
-`app.js` 최상단 `navigation` 배열(15개, dashboard/approvals 등)과 별도 단일 페이지 `rm-dashboard`. 이 계층은 콘솔이 아니라 예선 단계부터 이어진 flat 페이지 목록이다.
+### 2-5. 원본 업무 보드(base app) — 15개 nav 아이템 + `rm-dashboard`(고아 라우트)
+`app.js` 최상단 `navigation` 배열(15개, dashboard/approvals 등)과 별도 단일 페이지 `rm-dashboard`. 이 계층은 콘솔이 아니라 예선 단계부터 이어진 flat 페이지 목록이다. `rm-dashboard`는 §1 재실측대로 UI 트리거가 없는 고아 라우트.
 
-**총 라우트 실측치(소스 `*_VIEWS` 객체 전수): CCL 14 + FDR 15 + JPO 29 + JBWC 24 + base 15 + rm-dashboard 1 = 98개 뷰 키.** (기획 문서에서 언급될 "콘솔 수"는 4가 아니라 base+RM까지 포함하면 6개 진입점으로 계산해야 함.) *초판은 config 라인범위 기준 91로 집계했으나, 소스 `*_VIEWS` 오브젝트 전수 카운트 결과 98이 정확 — 2026-07-04 정정.*
+### 2-6. RM 업무지원 포털(신규) — 16개 뷰 (`rmOfficer.config.js:93-110` `RMO_VIEWS`, 재실측 2026-07-05)
+
+`board · consult-queue · approvals · policy-checklists · deliverables · cases · cases-new · disaster · repayment · daily-finance · policy-startup · agent-queue · agent-harness · data-connectors · roles · audit-logs`
+
+라우트 베이스 `RMO_ROUTE_BASE = "/roles/rm-officer"`(rmOfficer.config.js:11). 다른 4콘솔과 달리 칸반 컬럼이 아니라 `RMO_STAGES = ["todo","doing","done"]` 3단계 진행축 + 4개 상담유형(`disasterRisk·repaymentCare·dailyFinance·policyStartup`) 축을 병행 노출. `rmoNavigation`(같은 파일 112-134)이 "오늘 처리할 일 / 상담 유형 / AI·자동화 관리" 3개 섹션으로 사이드바를 구성.
+
+**총 라우트 실측치 갱신(소스 `*_VIEWS` 객체 전수): CCL 14 + FDR 15 + JPO 29 + JBWC 24 + base 15 + rm-dashboard 1 + RM 16 = 114개 뷰 키.** (2026-07-04 정정치 98에서 RM 16개 뷰 추가.) 참고: 팀 논의에서 "RMO_VIEWS 16뷰"로 언급된 적이 있으나 실측 결과 `audit-logs`를 포함해 **16개**가 정확하다.
+
+### 2-7. RM 콘솔 작동 핵심 기능 (실코드 근거, 재실측 2026-07-05)
+
+| 기능 | 위치 | 내용 |
+|---|---|---|
+| 키보드 퍼스트 | `rmoHandleKeydown` (rmOfficerHarness.js:61-91) | 보드 뷰에서 숫자키 `1`~`9`로 해당 순번 케이스 선택 → `rmoGo("board", {kind:"case", id})`. 케이스 상세에서 `↓/→/j`·`↑/←/k`로 승인 큐 이동, `Enter`로 `rmoDoApprove()` 실행, `Escape`로 모달 닫기/보드 복귀. input·textarea·select·contentEditable 포커스 중에는 비활성화. |
+| 인라인 승인 | `rmoDoApprove` (rmOfficerHarness.js:50-59) | `approveRmOfficerAssignment(assignmentId)` 호출 → 에러/중복 실행 처리 → 통합 리포트 완성 시 `rmoState.mdTab = "통합본"`으로 전환하고 알림. 클릭(`data-rmo-approve` 버튼, rmOfficerHarness.js:139)과 키보드(Enter) 양쪽에서 동일 함수 호출. |
+| 우선순위 서비스 | `rmOfficerPriority.service.js` (108줄) | `computeRmOfficerPriority` — 상담유형·위험도·SLA기한으로 점수·근거 산정, `rmoDaysUntil`·`rmoMaxRisk`·`rmoRiskRank` 보조. `rmoSortByUrgency`로 급한 순 정렬. |
+| 산출물 서비스 | `rmOfficerDeliverable.service.js` (225줄) | `rmoBuildAgentDeliverable`(개별 에이전트 MD 생성)·`rmoBuildIntegratedDeliverable`(개별 산출물을 위키링크로 엮은 통합 리포트 생성) — 둘 다 템플릿 리터럴 조립, LLM 미호출(**MOCKED**, §4/§8과 동일 패턴). |
+| e2e 2종 | `tests/e2e/rm-officer-smoke.spec.js`(1개), `tests/e2e/rm-officer.spec.js`(2개) | ① 스모크: 진입→보드→키보드 선택→승인(개별→통합 MD)→신규 접수→새로고침 완주. ② scope 격리 + 통합 MD 뷰어 탭 + 민감정보 검색 차단. ③ 보안 훅 차단(PII 접수/자동 종결) + 승인 결정. RM 전용 시나리오 총 3개. |
+
+**총 e2e 시나리오 재실측**: `grep -c "test(" tests/e2e/*.spec.js` 합산 결과 **63개**(jeonse-protection 16 · jeonse-smoke 2 · localguard 24 · role-consoles 7 · wooricap 11 · rm-officer-smoke 1 · rm-officer 2) — §8 기존치 60에서 RM 3개 추가.
 
 ---
 
@@ -106,13 +135,13 @@ aliases: [JB_project2 구현현황, implementation-inventory]
 | `harnessGuardCheckPII / CheckAssertions / CheckScope / CheckAutoClose / CheckApprovalRequired` | harnessCore.js:74-110 | **REAL** — 정규식 기반 주민번호/전화번호/11자리 이상 숫자열 탐지, scope 필드 강제, high/critical 자동종결 차단, 고객발송 승인누락 차단. 실제 동작하는 가드레일(모의 아님) |
 | `verifyHarnessIntegrity / verifyRoleHarnessScope / verifyNoForbiddenRoleResurface / verifyNoPIILeakage / verifyAgentRegistryCompleteness / verifyHookCoverage / runHarnessSelfTest` | harnessVerification.js 전체 | **REAL** 자체 검증기 — manifest 필수키·countService·PII DOM 스캔(`document.body.innerText` 정규식 검사)·agent 필드 완결성·hook 커버리지를 실제로 실행해 `window.__lastHarnessSelfTest`에 기록. mock이 아니라 런타임에 도는 self-test |
 
-**LLM 실호출 여부**: 코드 전체에서 `fetch()`는 단 2곳(app.js:705, jeonsePublicData.adapters.js:91) — 둘 다 **data.go.kr 공공데이터(전세 실거래가) 조회**용이며 `?live=1` 데모 슬라이스 전용. OpenAI/Anthropic 등 LLM API 호출은 **전무**. 모든 "AI 에이전트 산출물"은 JS 템플릿 문자열에 케이스 필드를 보간한 정적 텍스트 — 표시된 40개 에이전트 전부 출력 텍스트는 목업.
+**LLM 실호출 여부**: 코드 전체에서 `fetch()`는 단 2곳(app.js:705, jeonsePublicData.adapters.js:91) — 둘 다 **data.go.kr 공공데이터(전세 실거래가) 조회**용이며 `?live=1` 데모 슬라이스 전용. OpenAI/Anthropic 등 LLM API 호출은 **전무**. 모든 "AI 에이전트 산출물"은 JS 템플릿 문자열에 케이스 필드를 보간한 정적 텍스트 — 표시된 40개 에이전트(e57b826 기준, RM 추가 후 재실측 51개 — §6) 전부 출력 텍스트는 목업. 재실측한 RM 하네스(`rmOfficerDeliverable.service.js`)도 동일하게 `fetch()` 신규 추가 없이 템플릿 리터럴만 사용 — 목업 패턴 예외 없음.
 
 ---
 
 ## 5. 데이터 모델 / localStorage 테이블
 
-콘솔별로 완전히 분리된 5개의 localStorage DB 키(스코프 격리, alias 금지가 하네스 규칙):
+콘솔별로 완전히 분리된 5개의 localStorage DB 키(스코프 격리, alias 금지가 하네스 규칙). **재실측(2026-07-05)**: RM 하네스가 자체 로더(`rmOfficer-db.js`, 아래 참고)로 추가되어 스코프 격리 DB는 실질 6개 계열로 늘었다(RM은 별도 localStorage 키가 아니라 base app 스토리지 내 `rm_officer_*` 테이블 프리픽스로 격리).
 
 | 키 | 콘솔 | 내부 테이블(실측) |
 |---|---|---|
@@ -123,6 +152,8 @@ aliases: [JB_project2 구현현황, implementation-inventory]
 | `jbwc-ops-db-v3` | JBWC | `affiliates, approvals, audit_logs, privacy_permission_checks, external_connectors, ai_analysis_requests, ai_recommendations, inspection_schedules, customer_support_cases, consumer_protection_reviews, fds_alerts, document_cases, vehicle_lifecycle_tasks, harness_agents, agent_runs, agent_handoffs, kpi_snapshots` (17개 테이블 — wooricap-db.js:123-242; 유일하게 자체 `cases` 없이 `document_cases`/`customer_support_cases` 등 도메인별 분리 테이블 사용) |
 
 기타: `jb-localguard-nav-order-v1`(nav 순서 커스터마이즈), `skillContentStorageKey`(modules.js:757, 업무 기능 콘텐츠 편집 영속화).
+
+**재실측 추가(2026-07-05) — RM 역할 하네스 DB**: 별도 localStorage 키 없이 `rmOfficer-db.js`(356줄) 자체 로더가 관리하는 **13개 테이블**(rmOfficer-db.js 실측): `rm_officer_cases, rm_officer_consult_queue, rm_officer_policy_checklists, rm_officer_agent_assignments, rm_officer_agent_runs, rm_officer_agent_handoffs, rm_officer_approvals, rm_officer_deliverables, rm_officer_evidence_items, rm_officer_audit_logs, rm_officer_external_connectors, rm_officer_role_assignments, rm_officer_tasks`. **scope 규칙 실확인**: `rmoTable(table, roleKey)`(rmOfficer-db.js:313-318)가 `if (!roleKey) throw new Error("role scope is required")`로 강제 — CCL/FDR/JPO/JBWC와 **동일한 "scope 없으면 예외" 계약**을 그대로 따른다. `role_workspaces`(전역)와 `rm_officer_users`(roleKeys 배열 필터)만 예외 취급되는 것도 다른 콘솔 패턴과 일치.
 
 **Case는 마크다운 파일이 아니라 순수 JS 객체(localStorage에 JSON 직렬화)** — PRD의 FR류 문서가 "케이스=문서"를 전제한다면 실제 구현과 어긋난다.
 
@@ -136,7 +167,10 @@ aliases: [JB_project2 구현현황, implementation-inventory]
 | FDR | 8 (`fdrConsole.core.js`) | 6 (`fdrConsoleSkills`, :171) |
 | JPO | 11 (`jeonseProtectionAgents.registry.js`) | 10 (`jeonseProtectionSkills`, :246) |
 | JBWC | 13 (`jbWooriCapitalAgents.registry.js`) | 6 (`jbWooriCapitalSkills`, :271) |
-| **합계** | **40 에이전트** | **28 스킬** |
+| **RM(신규, 재실측 2026-07-05)** | **11 (`rmOfficerAgents`, rmOfficerAgents.registry.js:34-267)** | **11 (`rmOfficerSkills`, :269-281)** |
+| **합계(갱신)** | **51 에이전트** | **39 스킬** |
+
+RM 11개 에이전트: `rmo-triage(오케스트레이터)·rmo-marine-risk·rmo-credit-care·rmo-salary-flow·rmo-dsr-guard·rmo-youth-finance·rmo-policy-finance·rmo-action·rmo-comms·rmo-approval-router·rmo-compliance(가드레일)`. 다른 콘솔과 동일하게 `id, agentKey, name, displayName, domain, responsibilities, allowedActions, blockedActions, dbReads, dbWrites, handoffRules, guardrails, metrics` 필드를 갖춘 `rmoAgent()` 팩토리로 생성하며, 모든 에이전트에 `RMO_FORBIDDEN_OUTPUTS`(8개 금지 항목 — 실제 승인/금리/신용평가/정책자금 확정·PII 원문 저장 등)를 `blockedActions`에 공통 병합한다(rmOfficerAgents.registry.js:20).
 
 각 에이전트는 `id, agentKey, name, displayName, domain, responsibilities, allowedActions, blockedActions, dbReads, dbWrites, handoffRules, guardrails, metrics` 필드를 갖추도록 `verifyAgentRegistryCompleteness`가 강제(필드 누락 시 self-test 실패) — 스펙만 있는 게 아니라 실제로 검증기가 도는 구조.
 
@@ -154,7 +188,7 @@ aliases: [JB_project2 구현현황, implementation-inventory]
 
 | 영역 | 상태 | 근거 |
 |---|---|---|
-| 4개 역할 콘솔 라우팅/뷰 전환 | **REAL** | 각 콘솔 `*RouteFromHash` + `applyHashRoute` 디스패치, 실제 hash 기반 네비게이션 동작 |
+| 4개 역할 콘솔 라우팅/뷰 전환(재실측: RM 포함 5콘솔) | **REAL** | 각 콘솔 `*RouteFromHash` + `applyHashRoute` 디스패치, 실제 hash 기반 네비게이션 동작. RM도 `rmoRouteFromHash`로 동일 디스패치 체인에 편입(app.js:5757) |
 | 리스크 스코어링(`computeRiskDecision`) | **REAL(결정론적 로직)** | 가중합 공식 실동작, 단 signal 서술 문구는 템플릿 |
 | 감사로그 해시체인 | **부분 REAL** | base app만 해시체인(FNV-1a), 4개 역할 콘솔은 평문 리스트만 — **콘솔 전체 일관성 없음** |
 | PII/스코프/승인/자동종결 가드레일 | **REAL** | harnessCore.js 정규식·필드 검사가 실제로 실행되고 위반 시 문자열 반환 |
@@ -163,8 +197,9 @@ aliases: [JB_project2 구현현황, implementation-inventory]
 | 라이브 전세 실거래가 조회(`?live=1`) | **REAL(제한적)** | 로컬 프록시 경유 실제 data.go.kr fetch, 나머지 데이터는 seed |
 | 케이스 = 문서(마크다운) 모델 | **부재** | 순수 JS 객체 + localStorage, 파일 시스템 기반 케이스 문서 없음 |
 | 감사/컴플라이언스 리포트 내보내기 | **REAL(부분)** | `exportAuditJson`(app.js:4525) base app에만 존재, 역할 콘솔에는 미확인 |
-| 5개 독립 localStorage DB(콘솔별 스코프 격리) | **REAL** | 서로 다른 storage key, `harnessGuardCheckScope`로 교차 오염 검사 |
+| 5개 독립 localStorage DB(콘솔별 스코프 격리, 재실측: RM 포함 6번째 스코프) | **REAL** | 서로 다른 storage key, `harnessGuardCheckScope`로 교차 오염 검사. RM은 `rmoTable(table, roleKey)`가 동일한 scope 강제 계약을 따름(§5) |
 | E2E 테스트 커버리지 | **REAL** | `_vendor/JB_project2/tests/e2e/`에 5개 spec 파일, 총 60개 `test()` 시나리오(jeonse-protection 16, localguard 24, role-consoles 7, wooricap 11, jeonse-smoke 2) |
+| **RM 업무지원 콘솔(신규, 재실측 2026-07-05)** | **REAL(로직) / MOCKED(AI 출력)** | 16뷰 라우팅·13테이블 scope 격리·키보드 퍼스트(`rmoHandleKeydown`)·인라인 승인(`rmoDoApprove`)·우선순위 계산(`computeRmOfficerPriority`)은 실동작. `rmoBuildAgentDeliverable/rmoBuildIntegratedDeliverable`이 만드는 산출물 텍스트는 다른 4콘솔과 동일하게 템플릿 리터럴(LLM 미호출). e2e 3개 시나리오(총 63개로 갱신) |
 
 ---
 
@@ -177,7 +212,7 @@ wc -l *.js *.css *.html
 grep -oE '\.[a-zA-Z][a-zA-Z0-9_-]*' styles.css | sort -u | wc -l   # 484
 grep -oE '^\s*--[a-zA-Z0-9-]+:' styles.css | sort -u | wc -l       # 110
 grep -n "function <이름>" *.js                                     # 함수 위치
-grep -c "test(" ../tests/e2e/*.spec.js                              # 60
+grep -c "test(" ../tests/e2e/*.spec.js                              # 60 (e57b826) → 63 (0226bd6, RM e2e 2파일 3개 추가)
 ```
 
 ## 9. 다음 이식 후보 — 핸드오프 (사용자 승인 2026-07-04, 상태: **PR 제출됨 — `LSB-afk/JB_project2#2` OPEN**)
