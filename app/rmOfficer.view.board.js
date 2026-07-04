@@ -47,7 +47,14 @@ function rmoBoardCard(item, index) {
       <p class="rmo-case-subhead">다음 액션</p>
       <p class="rmo-case-next-action">${escapeHtml(nextAction)}</p>
     </div>
-    <footer class="rmo-case-card-foot">${rmoStagePill(rmoStageOf(item))}<span class="rmo-case-foot-hint">←→ 카드 슬라이드</span></footer>
+    <footer class="rmo-case-card-foot">
+      ${rmoStagePill(rmoStageOf(item))}
+      <span class="rmo-case-slide-controls" role="group" aria-label="케이스 카드 슬라이드">
+        <button class="rmo-case-slide-button" type="button" data-rmo-card-slide="-1" aria-label="이전 케이스 카드로 이동">‹</button>
+        <button class="rmo-case-slide-button" type="button" data-rmo-card-slide="1" aria-label="다음 케이스 카드로 이동">›</button>
+        <span class="rmo-case-foot-hint">카드 슬라이드</span>
+      </span>
+    </footer>
   </article>`;
 }
 

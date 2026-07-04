@@ -9581,6 +9581,10 @@ textarea {
 .rmo-case-next-action { margin: 0; font-size: 15px; font-weight: 700; color: #0b2a63; }
 .rmo-case-card-foot { margin-top: 12px; padding-top: 10px; border-top: 1px solid #eef1f7; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .rmo-case-foot-hint { font-size: 12.5px; color: #6b7690; }
+.rmo-case-slide-controls { display: inline-flex; align-items: center; justify-content: flex-end; gap: 4px; min-width: 0; }
+.rmo-case-slide-button { width: 24px; height: 24px; border-radius: 999px; border: 1px solid #d7deec; background: #ffffff; color: #123d82; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; line-height: 1; font-weight: 900; cursor: pointer; transition: background .16s ease, border-color .16s ease, transform .16s ease; }
+.rmo-case-slide-button:hover { background: #eef3ff; border-color: #b9ccff; transform: translateY(-1px); }
+.rmo-case-slide-button:focus-visible { outline: 2px solid #123d82; outline-offset: 2px; }
 .rmo-agent-chips, .rmo-data-chips { display: flex; flex-wrap: wrap; gap: 6px; max-width: 100%; }
 .rmo-agent-chip { font-size: 13px; font-weight: 600; background: #eef1f7; color: #2b3244; border-radius: 999px; padding: 5px 12px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rmo-data-chip { font-size: 13px; font-weight: 600; background: #eef3ff; color: #0b2a63; border: 1px solid #c8d8ff; border-radius: 8px; padding: 4px 11px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

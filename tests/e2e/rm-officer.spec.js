@@ -208,6 +208,26 @@ test("←→ 케이스 이동 · ↑↓/Space/D/Enter 노드 플로우 · 패널
   await page.waitForTimeout(150);
   await expect(page.locator(`[data-rmo-open-case="${firstCaseId}"]`)).toBeInViewport();
 
+  // 카드 하단의 실제 화살표 버튼도 페이지 재초기화 없이 rail만 자연스럽게 슬라이드해야 함
+  const buttonRailBefore = await page.locator(".rmo-case-rail").evaluate((el) => el.scrollLeft);
+  const buttonPageYBefore = await page.evaluate(() => window.scrollY);
+  await page.locator(`[data-rmo-open-case="${firstCaseId}"] [data-rmo-card-slide="1"]`).click();
+  await page.waitForFunction((before) => {
+    const rail = document.querySelector(".rmo-case-rail");
+    return rail && rail.scrollLeft > before + 20;
+  }, buttonRailBefore);
+  const buttonSlideMotion = await page.evaluate(() => ({
+    selectedId: rmoState.detail.id,
+    railLeft: document.querySelector(".rmo-case-rail").scrollLeft,
+    pageY: window.scrollY,
+  }));
+  expect(buttonSlideMotion.selectedId).not.toBe(firstCaseId);
+  expect(buttonSlideMotion.railLeft).toBeGreaterThan(buttonRailBefore);
+  expect(Math.abs(buttonSlideMotion.pageY - buttonPageYBefore)).toBeLessThan(120);
+  await page.keyboard.press("1");
+  await page.waitForTimeout(150);
+  await expect(page.locator(`[data-rmo-open-case="${firstCaseId}"]`)).toBeInViewport();
+
   // ↑↓ 노드 이동 — 현재 선택 상태가 항상 시각적으로 명확해야 함(rmo-node-focused)
   const focusBefore = await page.evaluate(() => rmoState.workMapFocusIndex);
   await page.keyboard.press("ArrowDown");

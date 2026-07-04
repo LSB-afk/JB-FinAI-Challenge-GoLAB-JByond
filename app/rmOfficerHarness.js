@@ -146,6 +146,21 @@ function rmoSelectBoardCase(caseId) {
   return true;
 }
 
+function rmoSlideBoardCaseFrom(caseId, delta) {
+  const order = rmoState.boardOrder && rmoState.boardOrder.length
+    ? rmoState.boardOrder
+    : rmoSortByUrgency(rmoTable("rm_officer_cases", RMO_ROLE_KEY)).map((c) => c.id);
+  if (!order.length) return false;
+  const fallbackId = rmoState.detail && rmoState.detail.kind === "case" ? rmoState.detail.id : order[0];
+  const sourceId = caseId || fallbackId;
+  const sourceIndex = Math.max(0, order.indexOf(sourceId));
+  const targetIndex = Math.max(0, Math.min(order.length - 1, sourceIndex + Number(delta || 0)));
+  const targetId = order[targetIndex];
+  if (!targetId || (rmoState.detail && targetId === rmoState.detail.id)) return false;
+  rmoShowKeyOverlay(delta > 0 ? "›" : "‹", delta > 0 ? "다음 케이스" : "이전 케이스");
+  return rmoSelectBoardCase(targetId);
+}
+
 function rmoElementByDataAttr(attr, value) {
   if (!value) return null;
   return Array.from(document.querySelectorAll(`[${attr}]`)).find((el) => el.getAttribute(attr) === value) || null;
@@ -220,16 +235,17 @@ function rmoFlushPendingScroll() {
   const target = rmoState.pendingScrollTarget;
   if (!target || !rmoModeActive()) return;
   rmoState.pendingScrollTarget = null;
+  const immediateCardId = target.cardId || (rmoState.detail && rmoState.detail.kind === "case" ? rmoState.detail.id : null);
+  if (target.slideOnly) {
+    rmoScrollBoardRailToCase(immediateCardId);
+    if (Number.isFinite(Number(rmoState.boardViewportY))) {
+      window.scrollTo({ top: Number(rmoState.boardViewportY), behavior: "auto" });
+    }
+    return;
+  }
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       const cardId = target.cardId || (rmoState.detail && rmoState.detail.kind === "case" ? rmoState.detail.id : null);
-      if (target.slideOnly) {
-        rmoScrollBoardRailToCase(cardId);
-        if (Number.isFinite(Number(rmoState.boardViewportY))) {
-          window.scrollTo({ top: Number(rmoState.boardViewportY), behavior: "auto" });
-        }
-        return;
-      }
       if (target.cardId && !target.sub && !target.nodeFocus && !target.nodeId && !target.md && !target.approval) {
         const card = rmoElementByDataAttr("data-rmo-open-case", cardId);
         if (card) card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
@@ -417,6 +433,14 @@ function bindRmOfficerActions() {
       }
       rmoSetPendingScroll({ cardId: row.dataset.rmoOpenCase, sub: true });
       rmoGo("board", { kind: "case", id: row.dataset.rmoOpenCase });
+    });
+  });
+  document.querySelectorAll("[data-rmo-card-slide]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const source = button.closest("[data-rmo-open-case]");
+      rmoSlideBoardCaseFrom(source ? source.dataset.rmoOpenCase : "", Number(button.dataset.rmoCardSlide || 0));
     });
   });
   document.querySelectorAll("[data-rmo-open-detail]").forEach((row) => {
