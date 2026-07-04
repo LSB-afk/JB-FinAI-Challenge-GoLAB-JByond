@@ -9,6 +9,8 @@ aliases:
   - B1-결과
   - B1-rolemodel-oss-result
 ---
+> 📄 **요약 먼저** → [[_요약-B1]] · 상세가 필요할 때만 아래 원문을 본다.
+
 > 원본 파일: `20260701_JB_LocalGuard_OS를_위한_오픈소스_롤모델_벤치마크.docx`
 > 회수 2026-07-01 · ⚠️ 대외비 · **사용 모델: ChatGPT Deep Research (GPT)** · 프롬프트: [[B1-롤모델-오픈소스-벤치마크]]
 > ✅ **결론**: 기능=**StackStorm**(승인게이트·이력, Apache-2.0, 난이도 S) + **Temporal**(append-only 이벤트·Signal 승인, MIT) / 디자인=**Carbon**(엔터프라이즈 토큰·테이블, Apache-2.0) + **Tremor**(대시보드 블록). ⚠️ TheHive·Windmill·n8n·Midday·Twenty·Grafana = **AGPL/GPL/fair-code 오염 → 화면 클린룸 재구현만**.
