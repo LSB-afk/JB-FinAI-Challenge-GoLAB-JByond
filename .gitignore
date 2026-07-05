@@ -6,3 +6,4 @@ server/data/
 .env.local
 .DS_Store
 .omc/
+scripts/llm-runs.jsonl

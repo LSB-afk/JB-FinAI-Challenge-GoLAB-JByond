@@ -80,6 +80,11 @@ app_js_files = [
     "rmOfficer.commands.js",
     "rmOfficer.sidebar.js",
     "rmOfficerHarness.js",
+    "rmoMemoryCards.js",
+    "rmoCaseOntology.js",
+    "rmoEngineSwitch.js",
+    "rmoAuditChain.js",
+    "rmoNlIntake.js",
 ]
 
 required = [
