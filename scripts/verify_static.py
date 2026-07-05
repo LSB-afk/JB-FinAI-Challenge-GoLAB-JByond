@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""JB LocalGuard OS 프로토타입 정적 검증 (standalone).
+"""JByond (구 JB LocalGuard OS) 프로토타입 정적 검증 (standalone).
 
 원본 워크스페이스의 verify_static.py에서 앱/문서 계약만 이식했다.
 - 필수 파일 존재

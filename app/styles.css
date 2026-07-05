@@ -5614,7 +5614,7 @@ body.is-resizing-properties {
 }
 
 /* =========================================================================
- * JB LocalGuard OS enterprise console pass
+ * JByond (구 JB LocalGuard OS) enterprise console pass
  * Source: localguard-jb-developer-handoff.md, 2026-07-01
  * Goal: restrained JB financial operations UI, human approval first.
  * ========================================================================= */
@@ -6589,7 +6589,7 @@ button {
 }
 
 /* ==========================================================================
- * LocalGuard OS developer handoff redesign · 2026-07-01
+ * JByond (구 LocalGuard OS) developer handoff redesign · 2026-07-01
  * ========================================================================== */
 :root {
   --color-brand-primary: #0a31a8;

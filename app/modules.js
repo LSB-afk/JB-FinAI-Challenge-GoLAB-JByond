@@ -755,7 +755,7 @@ function bindModuleActions() {
 }
 
 /* 업무 기능 콘텐츠 편집 영속화 (localStorage) — 02-skill-content-engine 스펙 */
-const skillContentStorageKey = "jb-localguard-skill-content-v1";
+const skillContentStorageKey = "jb-localguard-skill-content-v1"; // 구명칭 키 유지(호환)
 function persistSkillContent() {
   try { localStorage.setItem(skillContentStorageKey, JSON.stringify(skillContent)); }
   catch (e) { console.warn("skillContent 저장 실패", e); }
