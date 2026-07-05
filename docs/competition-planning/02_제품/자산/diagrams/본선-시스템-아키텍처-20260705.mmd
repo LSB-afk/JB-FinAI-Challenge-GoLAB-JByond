@@ -1,0 +1,36 @@
+graph TB
+  subgraph UI["① 콘솔 UI — 계열사축 × 역할축"]
+    RM["RM 업무지원 하네스"]
+    CCR["기업여신 CCR"]
+    JPO["전세보호 JPO"]
+    JBWC["JB우리캐피탈 JBWC"]
+  end
+  subgraph CORE["② 하네스 코어 (실코드)"]
+    GR["가드레일 5종<br/>PII 정규식 차단·scope 격리<br/>자동종결 금지·승인누락 검사"]
+    ST["런타임 셀프테스트<br/>runHarnessSelfTest pass"]
+  end
+  subgraph EXEC["③ 실행 계층 — LLM 폴백 사다리"]
+    OLL["로컬 Ollama :8030<br/>(PII 단계)"]
+    GW["게이트웨이 :8022<br/>claude→codex 폴백"]
+    MOCK["목업 템플릿<br/>(오프라인)"]
+    QUEUE["사람 큐"]
+  end
+  subgraph MEM["④ 기억·관계"]
+    MC["3계층 메모리 카드<br/>고객·에이전트·직원<br/>PII 게이트 통과 필수"]
+    ONT["라이브 케이스 온톨로지<br/>Case→Agent→Memory→Approval→Audit"]
+  end
+  APPR["⑤ 승인 게이트 L0~L4<br/>고객 대상 행동은 승인 전 자동실행 금지"]
+  AUD["⑥ 감사 — append-only 기록<br/>해시체인(base 앱)"]
+
+  RM --> CORE
+  CCR --> CORE
+  JPO --> CORE
+  JBWC --> CORE
+  CORE --> OLL
+  OLL -.폴백.-> GW
+  GW -.폴백.-> MOCK
+  MOCK -.최후.-> QUEUE
+  EXEC --> MC
+  MC <--> ONT
+  MEM --> APPR
+  APPR --> AUD

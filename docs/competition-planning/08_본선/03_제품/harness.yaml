@@ -1,0 +1,89 @@
+# JB LocalGuard OS — harness manifest
+# 프로젝트-대면 산출물을 하나의 계약으로 연결(harness-engineering 규약). 문서/규칙/평가/에이전트/게이트의 단일 매니페스트.
+# SSOT: 사실=_canon.md·키스톤·근거팩 / 방법=_문서생성-스킬-DDBM-Harness-SDD.md / 배치=_문서생성-마스터플랜.md
+
+project:
+  name: JB LocalGuard OS
+  competition: "JB금융그룹 Fin:AI Challenge — 본선(자유주제/JB 미래사업 AI)"
+  deadline: "2026-07-05T10:30:00+09:00"
+  product_code_ssot: "LSB-afk/JB_project2"      # 역할축 콘솔(벤더 _vendor/JB_project2)
+  doc_ssot: "monorepo vault 08_본선"
+  hero_case: "CCL-0001"                          # 전주 카페 운전자금(기업여신 콘솔)
+
+operating_contract: "Case -> AgentRun -> Agent -> Skill -> Evidence -> Approval -> Audit"
+
+axes:                                            # 콘솔 결정 축(키스톤)
+  affiliate: [전북은행, JB우리캐피탈]
+  role: [기업여신(RM), FDS, 전세보호, 사후관리, 준법]
+  domain_as_case: [여신, 전세보호, 피싱, 사후관리]   # 도메인 = 역할이 처리하는 케이스
+
+differentiation:
+  narrative: "차별성-경험레이어-서사.md"          # 왜(경험 재해석)
+  mechanism: "차별성-설정근거상향-흐름.md"        # 어떻게(담당자 설정→근거상향→판단직전 보조)
+
+docs:
+  core:
+    "00_source-log": 00_source-log.md
+    "01_business-model": 00_vision/business-model.md
+    "01_meeting-log": 00_결정-준비/회의록-정리본/
+    "02_cps": 00_vision/core-bet.md
+    "03_principles": 00_vision/principles.md
+    "04_definitions": 00_vision/definitions.md
+    "05_domain-model": 05_domain-model.md
+    "06_prd": 01_prd/prd.md
+    "07_architecture": 07_architecture.md
+    "08_feature-spec": 08_feature-spec.md
+    "09_flow": 09_flow.md
+    "10_eval-plan": evals/eval-plan.md
+    "11_change-log": 11_change-log.md
+    "12_handoff": ../HANDOFF.md                   # 볼트 정본 핸드오프에 매핑(부팅용)
+  extension:
+    "13_ssd-implementation": 06_build-roadmap/ssd-implementation.md
+    "14_demo-script": 07_발표-제출/demo-script.md
+    "15_pitch-outline": 07_발표-제출/pitch-outline.md
+    "16_judge-qna": 07_발표-제출/judge-qna.md
+    "17_business-metrics": 00_vision/business-metrics.md
+    "18_data-strategy": 00_vision/data-strategy.md
+    "19_risk-impact-register": 00_vision/risk-impact-register.md
+    "20_submission-checklist": 07_발표-제출/submission-checklist.md
+  custom_agent_design:                            # 범용팩에 없는 우리 레이어(심사축3 차별)
+    - 02_agent-design/agent-roster.md
+    - 02_agent-design/orchestrator.md
+    - 02_agent-design/skill-spec.md
+
+rules:                                            # Score3, 실 가드레일 코드 인용(E4)
+  dir: rules/
+  files: [agent-rules.md, compliance-rules.md, data-rules.md, import-export-rules.md, naming-rules.md, ui-rules.md]
+
+evals:                                            # Score3
+  dir: evals/
+  files: [eval-plan.md, rubric.md, golden-cases.md, failure-modes.md]
+
+agents:
+  display_count: 14                               # canon §2 표시명(발표용)
+  runtime: "JB_project2 = 4 역할축 콘솔 × per-console registry(기업여신8·FDS8·전세10·캐피탈13)"
+  required_elements: [judgment, action, verification]   # 심사 필수 3요소
+
+approval_gates:
+  levels: [L0, L1, L2, L3, L4]                    # L0 내부기록 / L1 RM검토 / L2 RM편집 / L3 RM+준법 / L4 보류·차단
+  compliance_from: L3
+
+pii_policy:
+  raw_pii_to_external_llm: forbidden
+  routing: "로컬(EXAONE, PII 포함) / 외부 API(비민감)"
+  defense: [데이터등급제, 토큰화, 모델라우팅, 반출스캔, 감사원장]
+
+demo:
+  product: "_vendor/JB_project2 (npm run dev → :8000)"
+  hero: "전북은행 → 기업여신 → CCL-0001"
+  live_agent: "?live=1 (ccl-financial 실 LLM, CCL-0001·PR#1). 모델 선택 게이트웨이 — 어드민이 로컬모델(exaone3.5:7.8b 등)/claude/codex 중 선택, 로컬 우선·codex 폴백. 오프라인=목업 폴백"
+  pr: "LSB-afk/JB_project2#1"
+
+release_bar:
+  docs: Score2
+  rules_evals: Score3
+
+status:
+  docs_written: 35            # 계약 22 + rules6 + evals3 + custom3 + 차별성2 (business-model·meeting-log·handoff 매핑 포함)
+  meta_pending: [validation-report.md(작성됨), jb-finai-scorecard.md(작성됨)]
+  open_decisions: [MCP 채택(팀), 49% 수치 발표(사용자), 담당자 설정범위(팀), 데모케이스②(팀)]

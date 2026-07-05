@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>body{margin:24px;background:#ffffff;font-family:Pretendard,sans-serif}</style></head>
+<body><pre class="mermaid">flowchart LR
+  Draft[&quot;AI Draft Action&quot;] --&gt; Gate{&quot;Approval Gate&quot;}
+  Gate --&gt;|L0 observe/log| AuditOnly[&quot;Audit only&quot;]
+  Gate --&gt;|L1-L2 RM review| RM[&quot;RM Approval&quot;]
+  Gate --&gt;|L3 regulated impact| Compliance[&quot;Compliance / Legal Review&quot;]
+  Gate --&gt;|L4 fraud or adverse risk| Block[&quot;Do-not-contact Block&quot;]
+
+  RM --&gt; Send[&quot;Customer-facing or branch action&quot;]
+  Compliance --&gt; Send
+  Block --&gt; Audit[&quot;Audit Ledger&quot;]
+  AuditOnly --&gt; Audit
+  Send --&gt; Audit
+</pre>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+mermaid.initialize({
+  startOnLoad: true,
+  theme: "base",
+  themeVariables: {
+    fontFamily: "Pretendard, sans-serif",
+    fontSize: "18px",
+    primaryColor: "#edf7ff",
+    primaryTextColor: "#0f1f3a",
+    primaryBorderColor: "#0b6fb3",
+    lineColor: "#637797",
+    secondaryColor: "#f6f9fd",
+    tertiaryColor: "#ffffff",
+    clusterBkg: "#f6f9fd",
+    clusterBorder: "#d6e3f1",
+    edgeLabelBackground: "#ffffff",
+    nodeTextColor: "#0f1f3a"
+  },
+  flowchart: { useMaxWidth: false, htmlLabels: true, curve: "linear" },
+  er: { useMaxWidth: false }
+});
+</script></body></html>

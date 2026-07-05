@@ -1,0 +1,51 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>body{margin:24px;background:#ffffff;font-family:Pretendard,sans-serif}</style></head>
+<body><pre class="mermaid">flowchart TB
+  RMLead[&quot;Human RM Lead&quot;] --&gt; Orchestrator[&quot;LocalGuard Orchestrator&quot;]
+  ComplianceLead[&quot;Human Compliance Lead&quot;] --&gt; Compliance[&quot;Compliance Guard Agent&quot;]
+
+  Orchestrator --&gt; Pain[&quot;Pain Radar Agent&quot;]
+  Orchestrator --&gt; Cashflow[&quot;Cashflow Triage Agent&quot;]
+  Orchestrator --&gt; Policy[&quot;Policy Match Agent&quot;]
+  Orchestrator --&gt; Fraud[&quot;Fraud Shield Agent&quot;]
+  Orchestrator --&gt; RMCopilot[&quot;RM Copilot Agent&quot;]
+  Orchestrator --&gt; Analytics[&quot;Analytics Agent&quot;]
+  Orchestrator --&gt; JeonseLead[&quot;Jeonse Shield Lead&quot;]
+
+  Compliance --&gt; Fraud
+  Compliance --&gt; Contract[&quot;Contract Checklist Agent&quot;]
+
+  JeonseLead --&gt; Deposit[&quot;Deposit Ratio Agent&quot;]
+  JeonseLead --&gt; Registry[&quot;Registry Rights Agent&quot;]
+  JeonseLead --&gt; Tenant[&quot;Tenant Asset Risk Agent&quot;]
+  JeonseLead --&gt; Bank[&quot;Bank Linkage Agent&quot;]
+
+  Deposit --&gt; PriceSkills[&quot;전세가율 / 주변 시세 비교&quot;]
+  Registry --&gt; RightsSkills[&quot;근저당 / 압류 / 신탁 / 소유권 이전&quot;]
+  Tenant --&gt; AssetSkills[&quot;총자산 대비 보증금 / 소득 대비 주거비 / 대출 상환 가능성&quot;]
+  Contract --&gt; ContractSkills[&quot;서류 확인 / 임대인 검증 / 특약 문구 / 보증보험 체크&quot;]
+  Bank --&gt; BankSkills[&quot;전세대출 상담 / 보증보험 안내 / 위험 매물 경고&quot;]
+</pre>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+mermaid.initialize({
+  startOnLoad: true,
+  theme: "base",
+  themeVariables: {
+    fontFamily: "Pretendard, sans-serif",
+    fontSize: "15px",
+    primaryColor: "#edf7ff",
+    primaryTextColor: "#0f1f3a",
+    primaryBorderColor: "#0b6fb3",
+    lineColor: "#637797",
+    secondaryColor: "#f6f9fd",
+    tertiaryColor: "#ffffff",
+    clusterBkg: "#f6f9fd",
+    clusterBorder: "#d6e3f1",
+    edgeLabelBackground: "#ffffff",
+    nodeTextColor: "#0f1f3a"
+  },
+  flowchart: { useMaxWidth: false, htmlLabels: true, curve: "linear" },
+  er: { useMaxWidth: false }
+});
+</script></body></html>

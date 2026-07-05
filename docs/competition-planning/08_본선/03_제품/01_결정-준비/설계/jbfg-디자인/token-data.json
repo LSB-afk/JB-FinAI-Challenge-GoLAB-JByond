@@ -1,0 +1,3911 @@
+{
+  "colors": [
+    [
+      "rgb(255, 255, 255)",
+      1211
+    ],
+    [
+      "rgb(51, 51, 51)",
+      873
+    ],
+    [
+      "rgb(0, 0, 0)",
+      314
+    ],
+    [
+      "rgb(102, 102, 102)",
+      192
+    ],
+    [
+      "rgba(255, 255, 255, 0.8)",
+      54
+    ],
+    [
+      "rgb(243, 243, 243)",
+      20
+    ],
+    [
+      "rgb(10, 49, 168)",
+      17
+    ],
+    [
+      "rgba(255, 255, 255, 0.3)",
+      17
+    ],
+    [
+      "rgba(255, 255, 255, 0.2)",
+      16
+    ],
+    [
+      "rgb(128, 128, 128)",
+      14
+    ],
+    [
+      "rgba(255, 255, 255, 0.6)",
+      6
+    ],
+    [
+      "rgba(255, 255, 255, 0.16)",
+      5
+    ],
+    [
+      "rgba(255, 255, 255, 0.1)",
+      5
+    ],
+    [
+      "rgb(229, 229, 229)",
+      4
+    ],
+    [
+      "rgba(255, 255, 255, 0.24)",
+      4
+    ],
+    [
+      "rgb(24, 80, 255)",
+      4
+    ],
+    [
+      "rgb(11, 35, 91)",
+      4
+    ],
+    [
+      "rgba(10, 49, 168, 0.9)",
+      4
+    ],
+    [
+      "rgb(178, 178, 178)",
+      3
+    ],
+    [
+      "rgba(0, 19, 74, 0.48)",
+      3
+    ],
+    [
+      "rgb(255, 0, 0)",
+      2
+    ],
+    [
+      "rgb(13, 45, 119)",
+      2
+    ],
+    [
+      "rgba(22, 75, 232, 0.8)",
+      1
+    ],
+    [
+      "rgba(25, 228, 238, 0.4)",
+      1
+    ],
+    [
+      "rgba(255, 255, 255, 0.75)",
+      1
+    ],
+    [
+      "rgba(0, 0, 0, 0.15)",
+      1
+    ],
+    [
+      "rgb(28, 86, 255)",
+      1
+    ],
+    [
+      "rgb(252, 252, 252)",
+      1
+    ]
+  ],
+  "controls": [
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "800",
+      "href": "https://www.jbfg.com/ko/about/group.do",
+      "lh": "22.4px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 98,
+        "w": 137,
+        "x": 209,
+        "y": 0
+      },
+      "tag": "A",
+      "text": "그룹소개"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/group.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 91,
+        "x": 232,
+        "y": 133
+      },
+      "tag": "A",
+      "text": "JB금융그룹 소개"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/ceo.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 69,
+        "x": 243,
+        "y": 171
+      },
+      "tag": "A",
+      "text": "CEO 인사말"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/vision.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 254,
+        "y": 209
+      },
+      "tag": "A",
+      "text": "그룹비전"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/network.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 63,
+        "x": 246,
+        "y": 284
+      },
+      "tag": "A",
+      "text": "계열사 소개"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/ethics.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 254,
+        "y": 322
+      },
+      "tag": "A",
+      "text": "윤리경영"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/ci.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 40,
+        "x": 257,
+        "y": 359
+      },
+      "tag": "A",
+      "text": "CI 소개"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/campus.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 63,
+        "x": 246,
+        "y": 397
+      },
+      "tag": "A",
+      "text": "연수원 소개"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "800",
+      "href": "https://www.jbfg.com/ko/governance/director/member.do",
+      "lh": "22.4px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 98,
+        "w": 137,
+        "x": 367,
+        "y": 0
+      },
+      "tag": "A",
+      "text": "기업지배구조"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/governance/director/member.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 36,
+        "x": 418,
+        "y": 133
+      },
+      "tag": "A",
+      "text": "이사회"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/governance/organization.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 36,
+        "x": 418,
+        "y": 171
+      },
+      "tag": "A",
+      "text": "조직도"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/governance/shareholder/structure.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 412,
+        "y": 209
+      },
+      "tag": "A",
+      "text": "주주총회"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/governance/regulations/articles.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 51,
+        "x": 411,
+        "y": 246
+      },
+      "tag": "A",
+      "text": "관련 규정"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/governance/disclosure.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 72,
+        "x": 400,
+        "y": 284
+      },
+      "tag": "A",
+      "text": "지배구조공시"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/governance/diversity.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 87,
+        "x": 393,
+        "y": 322
+      },
+      "tag": "A",
+      "text": "외부감사인 현황"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "800",
+      "href": "https://www.jbfg.com/ko/ir/overview.do",
+      "lh": "22.4px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 98,
+        "w": 137,
+        "x": 526,
+        "y": 0
+      },
+      "tag": "A",
+      "text": "투자정보"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/overview.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 111,
+        "x": 539,
+        "y": 133
+      },
+      "tag": "A",
+      "text": "Investor Relations"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/value.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 101,
+        "x": 544,
+        "y": 171
+      },
+      "tag": "A",
+      "text": "기업가치 제고 계획"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/disclosure/dart.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 570,
+        "y": 209
+      },
+      "tag": "A",
+      "text": "공시정보"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/performance/investorPresentations.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 570,
+        "y": 246
+      },
+      "tag": "A",
+      "text": "경영실적"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/finance/balance.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 570,
+        "y": 284
+      },
+      "tag": "A",
+      "text": "재무정보"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/activity.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 37,
+        "x": 576,
+        "y": 322
+      },
+      "tag": "A",
+      "text": "IR활동"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/stock/realtimeQuotes.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 570,
+        "y": 359
+      },
+      "tag": "A",
+      "text": "주가정보"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/shareholderReturn.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 570,
+        "y": 397
+      },
+      "tag": "A",
+      "text": "주주환원"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/rating.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 570,
+        "y": 435
+      },
+      "tag": "A",
+      "text": "신용등급"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "800",
+      "href": "https://www.jbfg.com/ko/prcenter/press.do",
+      "lh": "22.4px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 98,
+        "w": 137,
+        "x": 684,
+        "y": 0
+      },
+      "tag": "A",
+      "text": "PR센터"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/prcenter/press.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 729,
+        "y": 133
+      },
+      "tag": "A",
+      "text": "보도자료"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/prcenter/media.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 729,
+        "y": 171
+      },
+      "tag": "A",
+      "text": "홍보영상"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/prcenter/notice/financialNews.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 729,
+        "y": 209
+      },
+      "tag": "A",
+      "text": "공지사항"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "800",
+      "href": "https://www.jbfg.com/ko/esg/strategy.do",
+      "lh": "22.4px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 98,
+        "w": 137,
+        "x": 843,
+        "y": 0
+      },
+      "tag": "A",
+      "text": "ESG"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/esg/strategy.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 80,
+        "x": 872,
+        "y": 133
+      },
+      "tag": "A",
+      "text": "ESG 전략체계"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/esg/governance.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 80,
+        "x": 872,
+        "y": 171
+      },
+      "tag": "A",
+      "text": "ESG 지배구조"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/esg/guideline.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 133,
+        "x": 845,
+        "y": 209
+      },
+      "tag": "A",
+      "text": "ESG 정책 및 가이드라인"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/esg/achievements/evaluation.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 56,
+        "x": 884,
+        "y": 246
+      },
+      "tag": "A",
+      "text": "ESG 성과"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/esg/report.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 68,
+        "x": 878,
+        "y": 284
+      },
+      "tag": "A",
+      "text": "ESG 보고서"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/esg/responsibility.do",
+      "lh": "19.9111px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 48,
+        "x": 887,
+        "y": 322
+      },
+      "tag": "A",
+      "text": "사회공헌"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "800",
+      "href": "https://www.jbfg.com/ko/career/main.do",
+      "lh": "14.2222px",
+      "padding": "0px 12.4444px",
+      "radius": "12.4444px",
+      "rect": {
+        "h": 25,
+        "w": 68,
+        "x": 991,
+        "y": 36
+      },
+      "tag": "A",
+      "text": "채용"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "800",
+      "href": "https://www.jbfg.com/ko/main.do#",
+      "lh": "14.2222px",
+      "padding": "0px 12.4444px",
+      "radius": "12.4444px",
+      "rect": {
+        "h": 25,
+        "w": 69,
+        "x": 1072,
+        "y": 36
+      },
+      "tag": "A",
+      "text": "Family"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/group.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 117,
+        "x": 57,
+        "y": 244
+      },
+      "tag": "A",
+      "text": "JB금융그룹 소개"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/ceo.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 89,
+        "x": 291,
+        "y": 244
+      },
+      "tag": "A",
+      "text": "CEO 인사말"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/vision.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 525,
+        "y": 244
+      },
+      "tag": "A",
+      "text": "그룹비전"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/history.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 31,
+        "x": 758,
+        "y": 244
+      },
+      "tag": "A",
+      "text": "연혁"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/network.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 81,
+        "x": 992,
+        "y": 244
+      },
+      "tag": "A",
+      "text": "계열사 소개"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/ethics.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 57,
+        "y": 308
+      },
+      "tag": "A",
+      "text": "윤리경영"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/ci.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 52,
+        "x": 291,
+        "y": 308
+      },
+      "tag": "A",
+      "text": "CI 소개"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/about/campus.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 81,
+        "x": 525,
+        "y": 308
+      },
+      "tag": "A",
+      "text": "연수원 소개"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/governance/director/member.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 46,
+        "x": 57,
+        "y": 513
+      },
+      "tag": "A",
+      "text": "이사회"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/governance/director/member.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 52,
+        "x": 57,
+        "y": 557
+      },
+      "tag": "A",
+      "text": "구성 현황"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/governance/director/committee.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 91,
+        "x": 57,
+        "y": 589
+      },
+      "tag": "A",
+      "text": "이사회 내 위원회"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/governance/director/activity.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 79,
+        "x": 57,
+        "y": 622
+      },
+      "tag": "A",
+      "text": "주요 활동 내역"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/governance/organization.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 46,
+        "x": 291,
+        "y": 513
+      },
+      "tag": "A",
+      "text": "조직도"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/governance/shareholder/structure.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 525,
+        "y": 513
+      },
+      "tag": "A",
+      "text": "주주총회"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/governance/shareholder/structure.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 49,
+        "x": 525,
+        "y": 557
+      },
+      "tag": "A",
+      "text": "주주현황"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/governance/shareholder/result.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 76,
+        "x": 525,
+        "y": 589
+      },
+      "tag": "A",
+      "text": "주주총회 결과"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/governance/shareholder/notice.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 104,
+        "x": 525,
+        "y": 622
+      },
+      "tag": "A",
+      "text": "주주총회 관련 자료"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/governance/regulations/articles.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 65,
+        "x": 758,
+        "y": 513
+      },
+      "tag": "A",
+      "text": "관련 규정"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/governance/regulations/articles.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 24,
+        "x": 758,
+        "y": 557
+      },
+      "tag": "A",
+      "text": "정관"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/governance/regulations/norm.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 98,
+        "x": 758,
+        "y": 589
+      },
+      "tag": "A",
+      "text": "지배구조내부규범"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/governance/regulations/regulation.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 61,
+        "x": 758,
+        "y": 622
+      },
+      "tag": "A",
+      "text": "이사회규정"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/governance/disclosure.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 92,
+        "x": 992,
+        "y": 513
+      },
+      "tag": "A",
+      "text": "지배구조공시"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/governance/diversity.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 111,
+        "x": 57,
+        "y": 681
+      },
+      "tag": "A",
+      "text": "외부감사인 현황"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/overview.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 145,
+        "x": 57,
+        "y": 886
+      },
+      "tag": "A",
+      "text": "Investor Relations"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/value.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 131,
+        "x": 291,
+        "y": 886
+      },
+      "tag": "A",
+      "text": "기업가치 제고 계획"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/disclosure/dart.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 525,
+        "y": 886
+      },
+      "tag": "A",
+      "text": "공시정보"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/disclosure/dart.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 49,
+        "x": 525,
+        "y": 931
+      },
+      "tag": "A",
+      "text": "공시자료"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/disclosure/pillarDisclosure.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 49,
+        "x": 525,
+        "y": 963
+      },
+      "tag": "A",
+      "text": "경영공시"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/disclosure/businessReport.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 61,
+        "x": 525,
+        "y": 995
+      },
+      "tag": "A",
+      "text": "사업보고서"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/disclosure/audit.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 61,
+        "x": 525,
+        "y": 1028
+      },
+      "tag": "A",
+      "text": "감사보고서"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/disclosure/salesReport.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 61,
+        "x": 525,
+        "y": 1060
+      },
+      "tag": "A",
+      "text": "영업보고서"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/disclosure/announcements.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 24,
+        "x": 525,
+        "y": 1092
+      },
+      "tag": "A",
+      "text": "공고"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/disclosure/regulation.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 49,
+        "x": 525,
+        "y": 1125
+      },
+      "tag": "A",
+      "text": "공시규정"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/performance/investorPresentations.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 758,
+        "y": 886
+      },
+      "tag": "A",
+      "text": "경영실적"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/performance/investorPresentations.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 49,
+        "x": 758,
+        "y": 931
+      },
+      "tag": "A",
+      "text": "실적발표"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/performance/annualReport.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 91,
+        "x": 758,
+        "y": 963
+      },
+      "tag": "A",
+      "text": "Annual Report"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/finance/balance.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 992,
+        "y": 886
+      },
+      "tag": "A",
+      "text": "재무정보"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/finance/balance.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 61,
+        "x": 992,
+        "y": 931
+      },
+      "tag": "A",
+      "text": "재무상태표"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/finance/income.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 61,
+        "x": 992,
+        "y": 963
+      },
+      "tag": "A",
+      "text": "손익계산서"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/finance/invest.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 73,
+        "x": 992,
+        "y": 995
+      },
+      "tag": "A",
+      "text": "주요재무지표"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/activity.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 47,
+        "x": 57,
+        "y": 1184
+      },
+      "tag": "A",
+      "text": "IR활동"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/stock/realtimeQuotes.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 291,
+        "y": 1184
+      },
+      "tag": "A",
+      "text": "주가정보"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/stock/realtimeQuotes.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 61,
+        "x": 291,
+        "y": 1228
+      },
+      "tag": "A",
+      "text": "현재가시세"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/stock/intradayQuotes.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 61,
+        "x": 291,
+        "y": 1261
+      },
+      "tag": "A",
+      "text": "분단위시세"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/stock/dailyQuotes.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 61,
+        "x": 291,
+        "y": 1293
+      },
+      "tag": "A",
+      "text": "일자별시세"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/stock/foreignersTrade.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 61,
+        "x": 291,
+        "y": 1326
+      },
+      "tag": "A",
+      "text": "외국인매매"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/stock/chartAnalysis.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 49,
+        "x": 291,
+        "y": 1358
+      },
+      "tag": "A",
+      "text": "차트분석"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/stock/marketView.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 49,
+        "x": 291,
+        "y": 1390
+      },
+      "tag": "A",
+      "text": "시장동향"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/stock/peerComparison.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 61,
+        "x": 291,
+        "y": 1423
+      },
+      "tag": "A",
+      "text": "동업종비교"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/shareholderReturn.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 525,
+        "y": 1184
+      },
+      "tag": "A",
+      "text": "주주환원"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/ir/rating.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 758,
+        "y": 1184
+      },
+      "tag": "A",
+      "text": "신용등급"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/prcenter/press.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 57,
+        "y": 1623
+      },
+      "tag": "A",
+      "text": "보도자료"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/prcenter/media.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 291,
+        "y": 1623
+      },
+      "tag": "A",
+      "text": "홍보영상"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/prcenter/notice/financialNews.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 525,
+        "y": 1623
+      },
+      "tag": "A",
+      "text": "공지사항"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/esg/strategy.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 102,
+        "x": 57,
+        "y": 1829
+      },
+      "tag": "A",
+      "text": "ESG 전략체계"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/esg/governance.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 102,
+        "x": 291,
+        "y": 1829
+      },
+      "tag": "A",
+      "text": "ESG 지배구조"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/esg/guideline.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 172,
+        "x": 525,
+        "y": 1829
+      },
+      "tag": "A",
+      "text": "ESG 정책 및 가이드라인"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/esg/achievements/evaluation.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 72,
+        "x": 758,
+        "y": 1829
+      },
+      "tag": "A",
+      "text": "ESG 성과"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/esg/achievements/evaluation.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 81,
+        "x": 758,
+        "y": 1873
+      },
+      "tag": "A",
+      "text": "ESG 대외평가"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(102, 102, 102)",
+      "fs": "14.4px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/esg/achievements/initiatives.do",
+      "lh": "18px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 94,
+        "x": 758,
+        "y": 1905
+      },
+      "tag": "A",
+      "text": "ESG 이니셔티브"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/esg/report.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 87,
+        "x": 992,
+        "y": 1829
+      },
+      "tag": "A",
+      "text": "ESG 보고서"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "18px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/esg/responsibility.do",
+      "lh": "22.5px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 23,
+        "w": 61,
+        "x": 57,
+        "y": 1965
+      },
+      "tag": "A",
+      "text": "사회공헌"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/activity.do",
+      "lh": "16px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 42,
+        "w": 276,
+        "x": 657,
+        "y": 369
+      },
+      "tag": "A",
+      "text": "2026년 Global Investor Day 2026. 5. 20."
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/activity.do",
+      "lh": "16px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 42,
+        "w": 276,
+        "x": 657,
+        "y": 436
+      },
+      "tag": "A",
+      "text": "2026년 1분기 경영실적 발표 2026. 4. 16."
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/ir/activity.do",
+      "lh": "16px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 42,
+        "w": 276,
+        "x": 657,
+        "y": 504
+      },
+      "tag": "A",
+      "text": "2025년도 경영실적 발표 2026. 1. 29."
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__actions download-link",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/file/download.do?id=c769609c-1553-401d-a757-18374ad75e2c",
+      "lh": "16px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 32,
+        "w": 186,
+        "x": 997,
+        "y": 244
+      },
+      "tag": "A",
+      "text": "실적자료"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__actions download-link",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/file/download.do?id=ed9258f4-c5eb-4eda-ac2e-5ada3910fa03",
+      "lh": "16px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 32,
+        "w": 186,
+        "x": 997,
+        "y": 289
+      },
+      "tag": "A",
+      "text": "재무제표"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__actions download-link",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/file/download.do?id=d6fab119-b151-40ca-8be2-1e9eade19a8a",
+      "lh": "16px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 32,
+        "w": 186,
+        "x": 997,
+        "y": 334
+      },
+      "tag": "A",
+      "text": "Factbook"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__actions external-link",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "700",
+      "href": "https://irsvc.teletogether.com/jbfg/jbfg2026Q1_kor.php",
+      "lh": "16px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 32,
+        "w": 186,
+        "x": 997,
+        "y": 380
+      },
+      "tag": "A",
+      "text": "Conference Call"
+    },
+    {
+      "bg": "rgba(255, 255, 255, 0.16)",
+      "cls": "btn __capsule download-link",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/file/download.do?id=e4126b52-791b-4c69-9c4c-035c44ae8587",
+      "lh": "16px",
+      "padding": "10.6667px 14.2222px",
+      "radius": "48px",
+      "rect": {
+        "h": 45,
+        "w": 76,
+        "x": 645,
+        "y": 1069
+      },
+      "tag": "A",
+      "text": "국문"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box ",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbbank.co.kr/",
+      "lh": "16px",
+      "padding": "21.3333px 28.4444px",
+      "radius": "21.3333px",
+      "rect": {
+        "h": 425,
+        "w": 341,
+        "x": 28,
+        "y": 2233
+      },
+      "tag": "A",
+      "text": "DOMESTIC 전북은행 누구에게나 따뜻한 금융, 탄탄한 경쟁력을 가진 강한 은행"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box ",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://pib.kjbank.com/ib20/mnu/BPB0000000001",
+      "lh": "16px",
+      "padding": "21.3333px 28.4444px",
+      "radius": "21.3333px",
+      "rect": {
+        "h": 425,
+        "w": 341,
+        "x": 370,
+        "y": 2233
+      },
+      "tag": "A",
+      "text": "DOMESTIC 광주은행 나와 지역을 잘 아는 우리 모두의 은행"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box ",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.wooricap.com/",
+      "lh": "16px",
+      "padding": "21.3333px 28.4444px",
+      "radius": "21.3333px",
+      "rect": {
+        "h": 425,
+        "w": 341,
+        "x": 711,
+        "y": 2233
+      },
+      "tag": "A",
+      "text": "DOMESTIC JB우리캐피탈 21C 초우량 여신 전문 금융회사"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box ",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "http://www.jbam.co.kr/",
+      "lh": "16px",
+      "padding": "21.3333px 28.4444px",
+      "radius": "21.3333px",
+      "rect": {
+        "h": 425,
+        "w": 341,
+        "x": 1052,
+        "y": 2233
+      },
+      "tag": "A",
+      "text": "DOMESTIC JB자산운용 국내 해외자원 펀드 업계 1위"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box ",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbinvest.co.kr/",
+      "lh": "16px",
+      "padding": "21.3333px 28.4444px",
+      "radius": "21.3333px",
+      "rect": {
+        "h": 425,
+        "w": 341,
+        "x": 1394,
+        "y": 2233
+      },
+      "tag": "A",
+      "text": "DOMESTIC JB인베스트먼트 신기술 및 신성장 사업 발굴로 업계를 주도하는 벤처투자회사"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box ",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.ppcbank.com.kh/",
+      "lh": "16px",
+      "padding": "21.3333px 28.4444px",
+      "radius": "21.3333px",
+      "rect": {
+        "h": 425,
+        "w": 341,
+        "x": 1735,
+        "y": 2233
+      },
+      "tag": "A",
+      "text": "GLOBAL 프놈펜 상업은행 동남 아시아의 리딩뱅크를 꿈꾸는 프놈펜 대표 은행"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box no-link",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/main.do",
+      "lh": "16px",
+      "padding": "21.3333px 28.4444px",
+      "radius": "21.3333px",
+      "rect": {
+        "h": 425,
+        "w": 341,
+        "x": 2076,
+        "y": 2233
+      },
+      "tag": "A",
+      "text": "GLOBAL JB프놈펜자산운용 그룹사 최고 해외자산 운용사를 목표로 설립된 자산운용사"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box no-link",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/main.do",
+      "lh": "16px",
+      "padding": "21.3333px 28.4444px",
+      "radius": "21.3333px",
+      "rect": {
+        "h": 425,
+        "w": 341,
+        "x": 2418,
+        "y": 2233
+      },
+      "tag": "A",
+      "text": "GLOBAL JB캐피탈 미얀마 지역 대표 소액 대출 회사를 목표로현지 맞춤 캐피탈"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box ",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://jbsv.com.vn/",
+      "lh": "16px",
+      "padding": "21.3333px 28.4444px",
+      "radius": "21.3333px",
+      "rect": {
+        "h": 425,
+        "w": 341,
+        "x": 2759,
+        "y": 2233
+      },
+      "tag": "A",
+      "text": "GLOBAL JB증권 베트남 종합 증권사로 발돋움할 베트남 증권사"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/prcenter/press/detail/33.do",
+      "lh": "16px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 363,
+        "w": 316,
+        "x": 562,
+        "y": 3974
+      },
+      "tag": "A",
+      "text": "JB금융그룹, 다우존스 지속가능경영지수(DJBIC) Korea Index 2년 연속 편입 2026-05-12"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/prcenter/press/detail/32.do",
+      "lh": "16px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 392,
+        "w": 316,
+        "x": 892,
+        "y": 3974
+      },
+      "tag": "A",
+      "text": "“아동복지 증진 공로, 민간 기업 유일 수상” JB금융지주, 어린이날 기념 유공 ‘국무총리’ 표창 수상 2026-05-04"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/prcenter/press/detail/31.do",
+      "lh": "16px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 349,
+        "w": 316,
+        "x": 562,
+        "y": 4422
+      },
+      "tag": "A",
+      "text": "”유니세프 공동 추진 '프로젝트 169' 사업 전개” JB금융그룹 ‘씨앗봉사단’, 미등록 이주아동 위한 키트 제작 2026-04-29"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "__box",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/prcenter/press/detail/30.do",
+      "lh": "16px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 322,
+        "w": 316,
+        "x": 892,
+        "y": 4422
+      },
+      "tag": "A",
+      "text": "“이주민과 지역사회의 소통의 장 마련” JB금융그룹, 이주민 상생 바자회 ‘JB 헬로 투게더 마켓’ 성료 2026-04-27"
+    },
+    {
+      "bg": "rgb(255, 255, 255)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/career/main.do",
+      "lh": "16px",
+      "padding": "35.5556px 28.4444px",
+      "radius": "39.1111px",
+      "rect": {
+        "h": 267,
+        "w": 316,
+        "x": 562,
+        "y": 5002
+      },
+      "tag": "A",
+      "text": "채용정보 JB금융그룹과 함께할 인재를 찾습니다."
+    },
+    {
+      "bg": "rgb(255, 255, 255)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/prcenter/notice/bidding.do",
+      "lh": "16px",
+      "padding": "35.5556px 28.4444px",
+      "radius": "39.1111px",
+      "rect": {
+        "h": 267,
+        "w": 316,
+        "x": 892,
+        "y": 5002
+      },
+      "tag": "A",
+      "text": "입찰정보 JB금융그룹과 함께할 사업체를 찾습니다."
+    },
+    {
+      "bg": "rgba(255, 255, 255, 0.1)",
+      "cls": "family-sites-toggle",
+      "color": "rgb(255, 255, 255)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/main.do#",
+      "lh": "14.2222px",
+      "padding": "0px 21.3333px",
+      "radius": "24px",
+      "rect": {
+        "h": 48,
+        "w": 249,
+        "x": 959,
+        "y": 5368
+      },
+      "tag": "A",
+      "text": "Family site"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "13.3333px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/main.do#",
+      "lh": "13.3333px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 36,
+        "w": 137,
+        "x": 1071,
+        "y": 5498
+      },
+      "tag": "A",
+      "text": "BACK TO TOP"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgba(255, 255, 255, 0.8)",
+      "fs": "13.3333px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/main/policy/privacy.do",
+      "lh": "19.5556px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 20,
+        "w": 91,
+        "x": 207,
+        "y": 5507
+      },
+      "tag": "A",
+      "text": "개인정보처리방침"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgba(255, 255, 255, 0.8)",
+      "fs": "13.3333px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/main/policy/customer.do",
+      "lh": "19.5556px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 20,
+        "w": 91,
+        "x": 331,
+        "y": 5507
+      },
+      "tag": "A",
+      "text": "고객정보취급방침"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgba(255, 255, 255, 0.8)",
+      "fs": "13.3333px",
+      "fw": "600",
+      "href": "https://www.jbfg.com/ko/main/policy/credit.do",
+      "lh": "19.5556px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 20,
+        "w": 91,
+        "x": 454,
+        "y": 5507
+      },
+      "tag": "A",
+      "text": "신용정보활용체제"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbbank.co.kr/",
+      "lh": "17.7778px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 1233,
+        "x": 21,
+        "y": -263
+      },
+      "tag": "A",
+      "text": "전북은행"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://pib.kjbank.com/ib20/mnu/BPB0000000001",
+      "lh": "17.7778px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 1233,
+        "x": 21,
+        "y": -231
+      },
+      "tag": "A",
+      "text": "광주은행"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.wooricap.com/",
+      "lh": "17.7778px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 1233,
+        "x": 21,
+        "y": -199
+      },
+      "tag": "A",
+      "text": "JB우리캐피탈"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "http://www.jbam.co.kr/",
+      "lh": "17.7778px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 1233,
+        "x": 21,
+        "y": -167
+      },
+      "tag": "A",
+      "text": "JB자산운용"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbinvest.co.kr/",
+      "lh": "17.7778px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 1233,
+        "x": 21,
+        "y": -135
+      },
+      "tag": "A",
+      "text": "JB인베스트먼트"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.ppcbank.com.kh/",
+      "lh": "17.7778px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 1233,
+        "x": 21,
+        "y": -103
+      },
+      "tag": "A",
+      "text": "PPCBank"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://jbsv.com.vn/",
+      "lh": "17.7778px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 1233,
+        "x": 21,
+        "y": -71
+      },
+      "tag": "A",
+      "text": "JB Securities Vietnam"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "",
+      "color": "rgb(0, 0, 0)",
+      "fs": "14.2222px",
+      "fw": "700",
+      "href": "https://www.jbfg.com/ko/career/main.do",
+      "lh": "17.7778px",
+      "padding": "0px",
+      "radius": "0px",
+      "rect": {
+        "h": 18,
+        "w": 1233,
+        "x": 21,
+        "y": -39
+      },
+      "tag": "A",
+      "text": "JBFG Careers"
+    }
+  ],
+  "exact": [
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "cls": "",
+      "color": "rgb(51, 51, 51)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "gap": "normal",
+      "letterSpacing": "-0.32px",
+      "lineHeight": "16px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 98,
+        "w": 1265,
+        "x": 0,
+        "y": 0
+      },
+      "selector": "#header",
+      "tag": "HEADER",
+      "text": "그룹소개 JB금융그룹 소개 CEO 인사말 그룹비전 연혁 계열사 소개 윤리경영 CI 소개 연수원 소개 기업지배구조 이사회 조직도 주주총회 관련 규정 지배구조공시 외부감사인 현황 투자정보 Investor Relations 기업가치 제고 계획 공시정보 경영"
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "cls": "gnb",
+      "color": "rgb(255, 255, 255)",
+      "display": "flex",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "800",
+      "gap": "normal",
+      "letterSpacing": "-0.32px",
+      "lineHeight": "22.4px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 98,
+        "w": 792,
+        "x": 198,
+        "y": 0
+      },
+      "selector": "#header .gnb",
+      "tag": "UL",
+      "text": "그룹소개 JB금융그룹 소개 CEO 인사말 그룹비전 연혁 계열사 소개 윤리경영 CI 소개 연수원 소개 기업지배구조 이사회 조직도 주주총회 관련 규정 지배구조공시 외부감사인 현황 투자정보 Investor Relations 기업가치 제고 계획 공시정보 경영"
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "display": "flex",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "800",
+      "gap": "normal",
+      "letterSpacing": "-0.32px",
+      "lineHeight": "22.4px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 98,
+        "w": 137,
+        "x": 209,
+        "y": 0
+      },
+      "selector": "#header .gnb > li > a",
+      "tag": "A",
+      "text": "그룹소개"
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "cls": "utils",
+      "color": "rgb(255, 255, 255)",
+      "display": "flex",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "gap": "28.4444px",
+      "letterSpacing": "-0.32px",
+      "lineHeight": "16px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 25,
+        "w": 284,
+        "x": 991,
+        "y": 36
+      },
+      "selector": "#header .utils",
+      "tag": "DIV",
+      "text": "채용 Family KO EN 사이트맵"
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "cls": "family",
+      "color": "rgb(255, 255, 255)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "gap": "normal",
+      "letterSpacing": "-0.32px",
+      "lineHeight": "16px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 25,
+        "w": 69,
+        "x": 1072,
+        "y": 36
+      },
+      "selector": "#header .family",
+      "tag": "DIV",
+      "text": "Family"
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "cls": "main-section",
+      "color": "rgb(255, 255, 255)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "gap": "normal",
+      "letterSpacing": "-0.32px",
+      "lineHeight": "16px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 877,
+        "w": 1265,
+        "x": 0,
+        "y": 0
+      },
+      "selector": "#mainKV",
+      "tag": "SECTION",
+      "text": "젊고 강한 강소 금융그룹 신용등급 NICE 신용평가 한국기업평가 한국신용평가 IR활동 2026년 Global Investor Day 2026. 5. 20. 2026년 1분기 경영실적 발표 2026. 4. 16. 2025년도 경영실적 발표 2026. 1"
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "display": "flex",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "17.7778px",
+      "fontWeight": "800",
+      "gap": "5.33333px",
+      "letterSpacing": "-0.355556px",
+      "lineHeight": "17.7778px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 18,
+        "w": 276,
+        "x": 657,
+        "y": 123
+      },
+      "selector": "#mainKV h2",
+      "tag": "H2",
+      "text": "신용등급"
+    },
+    {
+      "background": "rgb(13, 45, 119)",
+      "borderRadius": "0px",
+      "cls": "main-section",
+      "color": "rgb(255, 255, 255)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "gap": "normal",
+      "letterSpacing": "-0.32px",
+      "lineHeight": "16px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 818,
+        "w": 1265,
+        "x": 0,
+        "y": 877
+      },
+      "selector": "#mainEsg",
+      "tag": "SECTION",
+      "text": "ESG 더 나은 미래로, 함께가는 JB금융 ESG 보고서 국문 ESG 대외평가 투명한 성과 공개를 통한 국내외 ESG 평가결과 ESG 이니셔티브 JB금융그룹이 협력하고 있는 다양한 ESG 이니셔티브 사회공헌 함께하는 여정, 사회변화를 위해 한 걸음 더"
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "cls": "__title ",
+      "color": "rgb(255, 255, 255)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "35.5556px",
+      "fontWeight": "700",
+      "gap": "normal",
+      "letterSpacing": "-0.711111px",
+      "lineHeight": "42.6667px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 54,
+        "w": 473,
+        "x": 57,
+        "y": 966
+      },
+      "selector": "#mainEsg h2",
+      "tag": "H2",
+      "text": "ESG"
+    },
+    {
+      "background": "rgb(255, 255, 255)",
+      "borderRadius": "0px",
+      "cls": "main-section overflow-hidden",
+      "color": "rgb(51, 51, 51)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "gap": "normal",
+      "letterSpacing": "-0.32px",
+      "lineHeight": "16px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 1020,
+        "w": 1265,
+        "x": 0,
+        "y": 1695
+      },
+      "selector": "#mainFamily",
+      "tag": "SECTION",
+      "text": "JB Financial Group Family 글로벌 금융그룹으로서 가치를 높여갑니다 DOMESTIC 전북은행 누구에게나 따뜻한 금융, 탄탄한 경쟁력을 가진 강한 은행 DOMESTIC 광주은행 나와 지역을 잘 아는 우리 모두의 은행 DOMESTIC J"
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "35.5556px",
+      "fontWeight": "700",
+      "gap": "normal",
+      "letterSpacing": "-0.711111px",
+      "lineHeight": "42.6667px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 54,
+        "w": 473,
+        "x": 57,
+        "y": 1837
+      },
+      "selector": "#mainFamily h2",
+      "tag": "H2",
+      "text": "JB Financial Group Family"
+    },
+    {
+      "background": "rgb(28, 86, 255)",
+      "borderRadius": "0px",
+      "cls": "main-section",
+      "color": "rgb(255, 255, 255)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "gap": "normal",
+      "letterSpacing": "-0.32px",
+      "lineHeight": "16px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 1085,
+        "w": 1265,
+        "x": 0,
+        "y": 2714
+      },
+      "selector": "#mainGlobal",
+      "tag": "SECTION",
+      "text": "Global 두려움 없는 도전으로 세계를 선도합니다 캄보디아 (Cambodia) 영업점 현황 25 프놈펜상업은행 1 JB프놈펜자산운용 미얀마 (Myanmar) 영업점 현황 23 JB캐피탈 미얀마 1 JB우리캐피탈 베트남 (Vietnam) 영업점 현황 "
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "cls": "__title",
+      "color": "rgb(255, 255, 255)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "35.5556px",
+      "fontWeight": "700",
+      "gap": "normal",
+      "letterSpacing": "-0.711111px",
+      "lineHeight": "42.6667px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 54,
+        "w": 473,
+        "x": 57,
+        "y": 2857
+      },
+      "selector": "#mainGlobal h2",
+      "tag": "H2",
+      "text": "Global"
+    },
+    {
+      "background": "rgb(252, 252, 252)",
+      "borderRadius": "0px 0px 60.8px 60.8px",
+      "cls": "main-section",
+      "color": "rgb(51, 51, 51)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "gap": "normal",
+      "letterSpacing": "-0.32px",
+      "lineHeight": "16px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 1029,
+        "w": 1265,
+        "x": 0,
+        "y": 3799
+      },
+      "selector": "#mainNews",
+      "tag": "SECTION",
+      "text": "NEWS JB금융그룹의 소식을 전달합니다 JB금융그룹, 다우존스 지속가능경영지수(DJBIC) Korea Index 2년 연속 편입 2026-05-12 “아동복지 증진 공로, 민간 기업 유일 수상” JB금융지주, 어린이날 기념 유공 ‘국무총리’ 표창 수"
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "35.5556px",
+      "fontWeight": "700",
+      "gap": "normal",
+      "letterSpacing": "-0.711111px",
+      "lineHeight": "42.6667px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 54,
+        "w": 473,
+        "x": 57,
+        "y": 3942
+      },
+      "selector": "#mainNews h2",
+      "tag": "H2",
+      "text": "NEWS"
+    },
+    {
+      "background": "rgb(51, 51, 51)",
+      "borderRadius": "0px",
+      "cls": "main-section",
+      "color": "rgb(255, 255, 255)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "gap": "normal",
+      "letterSpacing": "-0.32px",
+      "lineHeight": "16px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 498,
+        "w": 1265,
+        "x": 0,
+        "y": 4828
+      },
+      "selector": "#mainNotice",
+      "tag": "SECTION",
+      "text": "NOTICE 미래를 향한 희망찬 소식을 안내합니다 채용정보 JB금융그룹과 함께할 인재를 찾습니다. 입찰정보 JB금융그룹과 함께할 사업체를 찾습니다."
+    },
+    {
+      "background": "rgb(10, 49, 168)",
+      "borderRadius": "0px",
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "display": "block",
+      "fontFamily": "\"SUIT Variable\", -apple-system, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "gap": "normal",
+      "letterSpacing": "-0.32px",
+      "lineHeight": "16px",
+      "margin": "0px",
+      "padding": "0px",
+      "rect": {
+        "h": 251,
+        "w": 1265,
+        "x": 0,
+        "y": 5326
+      },
+      "selector": "#footer",
+      "tag": "FOOTER",
+      "text": "Family site BACK TO TOP 02-2128-2714 COPYRIGHTⓒ JB FINANCIAL GROUP 2026. ALL RIGHTS RESERVED. 개인정보처리방침 고객정보취급방침 신용정보활용체제"
+    }
+  ],
+  "headings": [
+    {
+      "cls": "brand",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "600",
+      "h": 22,
+      "lh": "19.2px",
+      "margin": "0px",
+      "tag": "H1",
+      "text": "",
+      "w": 141,
+      "y": 38
+    },
+    {
+      "cls": "brand",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "h": 22,
+      "lh": "19.2px",
+      "margin": "0px",
+      "tag": "H1",
+      "text": "",
+      "w": 141,
+      "y": 38
+    },
+    {
+      "cls": "",
+      "color": "rgb(10, 49, 168)",
+      "fs": "33.2308px",
+      "fw": "900",
+      "h": 33,
+      "lh": "33.2308px",
+      "margin": "0px 0px 16.6154px",
+      "tag": "H2",
+      "text": "JB Family",
+      "w": 1151,
+      "y": 169
+    },
+    {
+      "cls": "__name",
+      "color": "rgb(51, 51, 51)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 28,
+      "lh": "28.4444px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "JB금융그룹",
+      "w": 277,
+      "y": 457
+    },
+    {
+      "cls": "__name",
+      "color": "rgb(51, 51, 51)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 28,
+      "lh": "28.4444px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "전북은행",
+      "w": 277,
+      "y": 457
+    },
+    {
+      "cls": "__name",
+      "color": "rgb(51, 51, 51)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 28,
+      "lh": "28.4444px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "광주은행",
+      "w": 277,
+      "y": 457
+    },
+    {
+      "cls": "__name",
+      "color": "rgb(51, 51, 51)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 28,
+      "lh": "28.4444px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "JB우리캐피탈",
+      "w": 277,
+      "y": 457
+    },
+    {
+      "cls": "__name",
+      "color": "rgb(51, 51, 51)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 28,
+      "lh": "28.4444px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "JB자산운용",
+      "w": 277,
+      "y": 787
+    },
+    {
+      "cls": "__name",
+      "color": "rgb(51, 51, 51)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 28,
+      "lh": "28.4444px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "JB인베스트먼트",
+      "w": 277,
+      "y": 787
+    },
+    {
+      "cls": "__name",
+      "color": "rgb(51, 51, 51)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 28,
+      "lh": "28.4444px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "프놈펜 상업은행",
+      "w": 277,
+      "y": 787
+    },
+    {
+      "cls": "__name",
+      "color": "rgb(51, 51, 51)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 28,
+      "lh": "28.4444px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "JB프놈펜자산운용",
+      "w": 277,
+      "y": 787
+    },
+    {
+      "cls": "__name",
+      "color": "rgb(51, 51, 51)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 28,
+      "lh": "28.4444px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "JB캐피탈 미얀마",
+      "w": 277,
+      "y": 1068
+    },
+    {
+      "cls": "__name",
+      "color": "rgb(51, 51, 51)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 28,
+      "lh": "28.4444px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "JB증권 베트남",
+      "w": 277,
+      "y": 1068
+    },
+    {
+      "cls": "brand",
+      "color": "rgb(51, 51, 51)",
+      "fs": "16px",
+      "fw": "600",
+      "h": 22,
+      "lh": "19.2px",
+      "margin": "0px",
+      "tag": "H1",
+      "text": "",
+      "w": 141,
+      "y": 38
+    },
+    {
+      "cls": "__menu-name",
+      "color": "rgb(10, 49, 168)",
+      "fs": "32.4px",
+      "fw": "800",
+      "h": 39,
+      "lh": "38.88px",
+      "margin": "0px 0px 36px",
+      "tag": "H3",
+      "text": "그룹소개",
+      "w": 1151,
+      "y": 169
+    },
+    {
+      "cls": "__menu-name",
+      "color": "rgb(10, 49, 168)",
+      "fs": "32.4px",
+      "fw": "800",
+      "h": 39,
+      "lh": "38.88px",
+      "margin": "0px 0px 36px",
+      "tag": "H3",
+      "text": "기업지배구조",
+      "w": 1151,
+      "y": 438
+    },
+    {
+      "cls": "__menu-name",
+      "color": "rgb(10, 49, 168)",
+      "fs": "32.4px",
+      "fw": "800",
+      "h": 39,
+      "lh": "38.88px",
+      "margin": "0px 0px 36px",
+      "tag": "H3",
+      "text": "투자정보",
+      "w": 1151,
+      "y": 812
+    },
+    {
+      "cls": "__menu-name",
+      "color": "rgb(10, 49, 168)",
+      "fs": "32.4px",
+      "fw": "800",
+      "h": 39,
+      "lh": "38.88px",
+      "margin": "0px 0px 36px",
+      "tag": "H3",
+      "text": "PR센터",
+      "w": 1151,
+      "y": 1549
+    },
+    {
+      "cls": "__menu-name",
+      "color": "rgb(10, 49, 168)",
+      "fs": "32.4px",
+      "fw": "800",
+      "h": 39,
+      "lh": "38.88px",
+      "margin": "0px 0px 36px",
+      "tag": "H3",
+      "text": "ESG",
+      "w": 1151,
+      "y": 1754
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "85.3333px",
+      "fw": "800",
+      "h": 282,
+      "lh": "93.8667px",
+      "margin": "0px",
+      "tag": "H1",
+      "text": "젊고 강한 강소 금융그룹",
+      "w": 312,
+      "y": 176
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 18,
+      "lh": "17.7778px",
+      "margin": "0px",
+      "tag": "H2",
+      "text": "신용등급",
+      "w": 276,
+      "y": 123
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 18,
+      "lh": "17.7778px",
+      "margin": "0px",
+      "tag": "H2",
+      "text": "IR활동",
+      "w": 276,
+      "y": 329
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "700",
+      "h": 22,
+      "lh": "22.4px",
+      "margin": "0px",
+      "tag": "H4",
+      "text": "2026년 Global Investor Day",
+      "w": 276,
+      "y": 369
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "700",
+      "h": 22,
+      "lh": "22.4px",
+      "margin": "0px",
+      "tag": "H4",
+      "text": "2026년 1분기 경영실적 발표",
+      "w": 276,
+      "y": 436
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "700",
+      "h": 22,
+      "lh": "22.4px",
+      "margin": "0px",
+      "tag": "H4",
+      "text": "2025년도 경영실적 발표",
+      "w": 276,
+      "y": 504
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 18,
+      "lh": "17.7778px",
+      "margin": "0px",
+      "tag": "H2",
+      "text": "통합연차보고서",
+      "w": 276,
+      "y": 610
+    },
+    {
+      "cls": "__report-name",
+      "color": "rgb(255, 255, 255)",
+      "fs": "21.3333px",
+      "fw": "800",
+      "h": 60,
+      "lh": "29.8667px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "2025 JB금융그룹 통합연차보고서",
+      "w": 276,
+      "y": 649
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 18,
+      "lh": "17.7778px",
+      "margin": "0px",
+      "tag": "H2",
+      "text": "경영실적",
+      "w": 186,
+      "y": 123
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "21.3333px",
+      "fw": "800",
+      "h": 60,
+      "lh": "29.8667px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "2026년 1분기 경영실적 발표",
+      "w": 186,
+      "y": 162
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "700",
+      "h": 19,
+      "lh": "19.2px",
+      "margin": "0px",
+      "tag": "H4",
+      "text": "실적자료",
+      "w": 55,
+      "y": 250
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "700",
+      "h": 19,
+      "lh": "19.2px",
+      "margin": "0px",
+      "tag": "H4",
+      "text": "재무제표",
+      "w": 55,
+      "y": 296
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "700",
+      "h": 19,
+      "lh": "19.2px",
+      "margin": "0px",
+      "tag": "H4",
+      "text": "Factbook",
+      "w": 67,
+      "y": 341
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "700",
+      "h": 19,
+      "lh": "19.2px",
+      "margin": "0px",
+      "tag": "H4",
+      "text": "Conference Call",
+      "w": 114,
+      "y": 386
+    },
+    {
+      "cls": "",
+      "color": "rgb(51, 51, 51)",
+      "fs": "17.7778px",
+      "fw": "800",
+      "h": 18,
+      "lh": "17.7778px",
+      "margin": "0px",
+      "tag": "H2",
+      "text": "주가정보",
+      "w": 186,
+      "y": 486
+    },
+    {
+      "cls": "__title ",
+      "color": "rgb(255, 255, 255)",
+      "fs": "35.5556px",
+      "fw": "700",
+      "h": 54,
+      "lh": "42.6667px",
+      "margin": "0px",
+      "tag": "H2",
+      "text": "ESG",
+      "w": 473,
+      "y": 966
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(255, 255, 255)",
+      "fs": "28.4444px",
+      "fw": "800",
+      "h": 34,
+      "lh": "34.1333px",
+      "margin": "0px 0px 10.6667px",
+      "tag": "H3",
+      "text": "ESG 보고서",
+      "w": 235,
+      "y": 1025
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(255, 255, 255)",
+      "fs": "28.4444px",
+      "fw": "800",
+      "h": 34,
+      "lh": "34.1333px",
+      "margin": "0px 0px 10.6667px",
+      "tag": "H3",
+      "text": "ESG 대외평가",
+      "w": 235,
+      "y": 1349
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(255, 255, 255)",
+      "fs": "28.4444px",
+      "fw": "800",
+      "h": 34,
+      "lh": "34.1333px",
+      "margin": "0px 0px 10.6667px",
+      "tag": "H3",
+      "text": "ESG 이니셔티브",
+      "w": 235,
+      "y": 1025
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(255, 255, 255)",
+      "fs": "28.4444px",
+      "fw": "800",
+      "h": 34,
+      "lh": "34.1333px",
+      "margin": "0px 0px 10.6667px",
+      "tag": "H3",
+      "text": "사회공헌",
+      "w": 235,
+      "y": 1349
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "35.5556px",
+      "fw": "700",
+      "h": 54,
+      "lh": "42.6667px",
+      "margin": "0px",
+      "tag": "H2",
+      "text": "JB Financial Group Family",
+      "w": 473,
+      "y": 1837
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 27,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "전북은행",
+      "w": 284,
+      "y": 2494
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 27,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "광주은행",
+      "w": 284,
+      "y": 2494
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 27,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "JB우리캐피탈",
+      "w": 284,
+      "y": 2494
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 27,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "JB자산운용",
+      "w": 284,
+      "y": 2494
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 27,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "JB인베스트먼트",
+      "w": 284,
+      "y": 2494
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 27,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "프놈펜 상업은행",
+      "w": 284,
+      "y": 2494
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 27,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "JB프놈펜자산운용",
+      "w": 284,
+      "y": 2494
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 27,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "JB캐피탈 미얀마",
+      "w": 284,
+      "y": 2494
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 27,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "JB증권 베트남",
+      "w": 284,
+      "y": 2494
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(255, 255, 255)",
+      "fs": "35.5556px",
+      "fw": "700",
+      "h": 54,
+      "lh": "42.6667px",
+      "margin": "0px",
+      "tag": "H2",
+      "text": "Global",
+      "w": 473,
+      "y": 2857
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "19.5556px",
+      "fw": "800",
+      "h": 23,
+      "lh": "23.4667px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "캄보디아 (Cambodia)",
+      "w": 221,
+      "y": 3111
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "19.5556px",
+      "fw": "800",
+      "h": 23,
+      "lh": "23.4667px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "미얀마 (Myanmar)",
+      "w": 221,
+      "y": 3405
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "19.5556px",
+      "fw": "800",
+      "h": 23,
+      "lh": "23.4667px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "베트남 (Vietnam)",
+      "w": 221,
+      "y": 2971
+    },
+    {
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fs": "19.5556px",
+      "fw": "800",
+      "h": 23,
+      "lh": "23.4667px",
+      "margin": "0px",
+      "tag": "H3",
+      "text": "대한민국 (Korea)",
+      "w": 221,
+      "y": 3358
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "35.5556px",
+      "fw": "700",
+      "h": 54,
+      "lh": "42.6667px",
+      "margin": "0px",
+      "tag": "H2",
+      "text": "NEWS",
+      "w": 473,
+      "y": 3942
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 53,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "JB금융그룹, 다우존스 지속가능경영지수(DJBIC) Korea Index 2년 연속 편입",
+      "w": 316,
+      "y": 4247
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 53,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "“아동복지 증진 공로, 민간 기업 유일 수상” JB금융지주, 어린이날 기념 유공 ‘국무총리’ 표창 수상",
+      "w": 316,
+      "y": 4275
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 53,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "”유니세프 공동 추진 '프로젝트 169' 사업 전개” JB금융그룹 ‘씨앗봉사단’, 미등록 이주아동 위한 키트 제작",
+      "w": 316,
+      "y": 4681
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(51, 51, 51)",
+      "fs": "19.5556px",
+      "fw": "700",
+      "h": 53,
+      "lh": "26.6667px",
+      "margin": "0px 0px 14.2222px",
+      "tag": "H3",
+      "text": "“이주민과 지역사회의 소통의 장 마련” JB금융그룹, 이주민 상생 바자회 ‘JB 헬로 투게더 마켓’ 성료",
+      "w": 316,
+      "y": 4655
+    },
+    {
+      "cls": "__title",
+      "color": "rgb(255, 255, 255)",
+      "fs": "35.5556px",
+      "fw": "700",
+      "h": 54,
+      "lh": "42.6667px",
+      "margin": "0px",
+      "tag": "H2",
+      "text": "NOTICE",
+      "w": 473,
+      "y": 4970
+    },
+    {
+      "cls": "brand",
+      "color": "rgb(255, 255, 255)",
+      "fs": "16px",
+      "fw": "600",
+      "h": 48,
+      "lh": "19.2px",
+      "margin": "0px",
+      "tag": "H1",
+      "text": "",
+      "w": 188,
+      "y": 5368
+    }
+  ],
+  "stylesheets": [
+    "https://use.typekit.net/erl8udp.css",
+    "https://www.jbfg.com/assets/css/app.css"
+  ]
+}

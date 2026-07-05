@@ -1,0 +1,44 @@
+flowchart LR
+  subgraph P1["① 접수"]
+    direction TB
+    A["케이스 선택<br/>· 자연어 지시"] --> B["AgentRun 생성"]
+  end
+  subgraph P2["② 판단"]
+    direction TB
+    C["위험 분해<br/>· 근거 · confidence"]
+  end
+  subgraph P3["③ 행동 · 거버넌스 ★"]
+    direction TB
+    D["행동 초안<br/>콜백·체크리스트"] --> E{"외부 LLM<br/>필요?"}
+    E -->|예| G["PII 토큰화<br/>→ 반출 스캔"]
+  end
+  subgraph P4["④ 검증 · 승인"]
+    direction TB
+    F["준법 검토<br/>과장·PII·표현"] --> H{"Approval<br/>Gate"}
+    H -->|반려·차단| J["Escalation /<br/>외부 접촉 차단"]
+  end
+  subgraph P5["⑤ 기록 · 후속"]
+    direction TB
+    K["Audit Ledger<br/>무결성 해시"] --> L["Properties 갱신<br/>+ 사후관리 큐"]
+  end
+
+  B --> C --> D
+  E -->|아니오| F
+  G --> F
+  H -->|승인| K
+  J --> K
+
+  classDef recv fill:#cfe8fb,stroke:#3a7bd6,color:#0e2740;
+  classDef judge fill:#f1c6f1,stroke:#b13ab1,color:#3a0e3a;
+  classDef gov fill:#ffd9a8,stroke:#e8590c,color:#3a1c00;
+  classDef appr fill:#bff0c6,stroke:#2f9e44,color:#0c2e15;
+  classDef rec fill:#f5e79a,stroke:#caa800,color:#332a00;
+  classDef dec fill:#fff3bf,stroke:#f08c00,color:#332200;
+
+  class A,B recv;
+  class C judge;
+  class D,G gov;
+  class F appr;
+  class J appr;
+  class K,L rec;
+  class E,H dec;

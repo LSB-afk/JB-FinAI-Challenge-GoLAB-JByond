@@ -1,0 +1,25 @@
+flowchart TB
+  RMLead["Human RM Lead"] --> Orchestrator["LocalGuard Orchestrator"]
+  ComplianceLead["Human Compliance Lead"] --> Compliance["Compliance Guard Agent"]
+
+  Orchestrator --> Pain["Pain Radar Agent"]
+  Orchestrator --> Cashflow["Cashflow Triage Agent"]
+  Orchestrator --> Policy["Policy Match Agent"]
+  Orchestrator --> Fraud["Fraud Shield Agent"]
+  Orchestrator --> RMCopilot["RM Copilot Agent"]
+  Orchestrator --> Analytics["Analytics Agent"]
+  Orchestrator --> JeonseLead["Jeonse Shield Lead"]
+
+  Compliance --> Fraud
+  Compliance --> Contract["Contract Checklist Agent"]
+
+  JeonseLead --> Deposit["Deposit Ratio Agent"]
+  JeonseLead --> Registry["Registry Rights Agent"]
+  JeonseLead --> Tenant["Tenant Asset Risk Agent"]
+  JeonseLead --> Bank["Bank Linkage Agent"]
+
+  Deposit --> PriceSkills["전세가율 / 주변 시세 비교"]
+  Registry --> RightsSkills["근저당 / 압류 / 신탁 / 소유권 이전"]
+  Tenant --> AssetSkills["총자산 대비 보증금 / 소득 대비 주거비 / 대출 상환 가능성"]
+  Contract --> ContractSkills["서류 확인 / 임대인 검증 / 특약 문구 / 보증보험 체크"]
+  Bank --> BankSkills["전세대출 상담 / 보증보험 안내 / 위험 매물 경고"]

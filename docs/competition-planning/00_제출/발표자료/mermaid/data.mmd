@@ -1,0 +1,66 @@
+erDiagram
+  CASE ||--o{ AGENT_RUN : creates
+  CASE ||--o{ APPROVAL : requires
+  CASE ||--o{ AUDIT_EVENT : records
+  CASE }o--o{ EVIDENCE : cites
+  CASE }o--o{ AGENT : assigned_to
+  AGENT ||--o{ AGENT_RUN : executes
+  AGENT }o--o{ SKILL : mounts
+  AGENT_RUN ||--o{ AUDIT_EVENT : emits
+  APPROVAL ||--o{ AUDIT_EVENT : changes
+  EVIDENCE ||--o{ AUDIT_EVENT : supports
+
+  CASE {
+    string id
+    string code
+    string title
+    string affiliate
+    string region
+    number riskScore
+    string status
+    string owner
+  }
+  AGENT_RUN {
+    string id
+    string caseId
+    string caseCode
+    string agentName
+    string command
+    string status
+    string log
+  }
+  AGENT {
+    string id
+    string name
+    string role
+    string status
+    string reportsTo
+  }
+  SKILL {
+    string slug
+    string category
+    string purpose
+    string approvalLevel
+    boolean enabled
+  }
+  APPROVAL {
+    string caseId
+    string requestedAction
+    string reviewer
+    string decision
+    string decidedAt
+  }
+  EVIDENCE {
+    string id
+    string sourceType
+    string title
+    string url
+    number confidence
+  }
+  AUDIT_EVENT {
+    string id
+    string caseId
+    string actor
+    string action
+    string createdAt
+  }

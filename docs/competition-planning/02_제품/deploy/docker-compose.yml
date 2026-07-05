@@ -1,0 +1,52 @@
+# JB LocalGuard OS — "물리적 분리" 시연용 Docker 구성.
+# 목적: 원본 PII가 오가는 pii-zone 컨테이너는 외부 인터넷에 물리적으로 나갈 수 없음을
+#       네트워크 토폴로지(internal: true)로 증명한다. 실행: docker compose up -d
+#       (이 파일 위치 기준, 02_제품/deploy 안에서 실행)
+
+services:
+  # 콘솔 + API 프록시. 정적 UI(8000)와 LLM/실거래가 게이트웨이(8020)를 함께 띄운다.
+  # edge(외부 인터넷 가능) + pii-net(내부 전용) 양쪽에 걸쳐 있어 "안전지대" 역할.
+  console:
+    image: node:22-slim
+    working_dir: /repo
+    volumes:
+      - ../:/repo # 02_제품 전체를 마운트(스크립트가 llm-runs.jsonl에 쓰기 때문에 rw 필요)
+    ports:
+      - "8000:8000" # 정적 콘솔 UI
+      - "8020:8020" # api-proxy.mjs (/jeonse, /llm, /llm/usage)
+    environment:
+      - OLLAMA_BASE=http://pii-zone:11434 # PII존 안의 로컬 모델 엔드포인트(콘솔 코드가 참조할 값)
+      - DATA_GO_KR_KEY=${DATA_GO_KR_KEY:-} # ?live=1 실거래가 데모용(없으면 앱이 폴백)
+    networks:
+      - edge
+      - pii-net
+    command:
+      - sh
+      - -c
+      - "node scripts/api-proxy.mjs & npx --yes http-server app -p 8000 -c-1 --cors -a 0.0.0.0 & wait"
+
+  # 원본 PII 처리 존. pii-net(internal: true) 에만 연결되어 있어 아웃바운드 인터넷이 물리적으로 차단됨.
+  # 호스트 포트 노출 없음 — console 컨테이너를 거치지 않으면 접근 자체가 불가능.
+  pii-zone:
+    image: ollama/ollama
+    volumes:
+      - ollama-models:/root/.ollama
+    networks:
+      - pii-net
+    # ponytail: Mac Docker Desktop은 GPU 패스스루 미지원 → CPU로 도는 소형 모델만 권장
+    # (qwen2.5:0.5b 또는 gemma3:1b). 대형 모델은 응답이 시연 템포를 못 따라감.
+
+networks:
+  edge: {} # 일반 인터넷 접근 가능(예: 국토부 실거래가 API)
+  pii-net:
+    internal: true # 핵심 통제: 이 네트워크는 외부로 라우팅되지 않는다(docker network inspect로 증명 가능)
+
+volumes:
+  ollama-models: {} # 모델 가중치 영속화 — 컨테이너 재기동마다 재다운로드하지 않도록
+
+# 모델 주입 방법 (pii-net이 internal이라 컨테이너 안에서 직접 pull 불가):
+#   1) docker compose up -d 로 두 서비스 기동
+#   2) 임시로 pii-zone을 edge에도 연결: docker network connect <프로젝트명>_edge <프로젝트명>_pii-zone_1
+#   3) docker compose exec pii-zone ollama pull qwen2.5:0.5b
+#   4) 받은 뒤 다시 분리: docker network disconnect <프로젝트명>_edge <프로젝트명>_pii-zone_1
+#   (컨테이너/네트워크 실제 이름은 `docker compose ps`, `docker network ls`로 확인)

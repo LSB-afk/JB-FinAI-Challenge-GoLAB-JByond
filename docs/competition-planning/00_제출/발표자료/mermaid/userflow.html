@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>body{margin:24px;background:#ffffff;font-family:Pretendard,sans-serif}</style></head>
+<body><pre class="mermaid">flowchart TD
+  A[&quot;대시보드 진입&quot;] --&gt; B{&quot;작업 선택&quot;}
+  B --&gt; C[&quot;자연어 지시 Dispatch&quot;]
+  B --&gt; D[&quot;Case List / Board 확인&quot;]
+  B --&gt; E[&quot;전세 Shield 확인&quot;]
+  B --&gt; F[&quot;Agent 조직도 / Skill Registry 확인&quot;]
+
+  C --&gt; G[&quot;AgentRun 생성&quot;]
+  D --&gt; H[&quot;Case 선택 또는 Kanban 상태 이동&quot;]
+  E --&gt; I[&quot;전세사기 위험 신호와 담당 Agent 확인&quot;]
+  F --&gt; J[&quot;Agent별 업무 / Skill / 승인 레벨 확인&quot;]
+
+  H --&gt; G
+  I --&gt; G
+  G --&gt; K{&quot;실행 결과 상태&quot;}
+  K --&gt;|Approval Pending| L[&quot;승인 큐 진입&quot;]
+  K --&gt;|Escalated| M[&quot;Fraud / Compliance 차단 검토&quot;]
+  K --&gt;|Agent Running| N[&quot;실시간 실행 패널 갱신&quot;]
+
+  L --&gt; O{&quot;사람 승인&quot;}
+  O --&gt;|Approve| P[&quot;Done + 고객/내부 조치 준비&quot;]
+  O --&gt;|Reject| Q[&quot;Blocked 또는 추가 검토&quot;]
+  M --&gt; Q
+  N --&gt; L
+
+  P --&gt; R[&quot;Audit 기록&quot;]
+  Q --&gt; R
+  R --&gt; S[&quot;Properties Panel / Activity Feed 갱신&quot;]
+</pre>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+mermaid.initialize({
+  startOnLoad: true,
+  theme: "base",
+  themeVariables: {
+    fontFamily: "Pretendard, sans-serif",
+    fontSize: "15px",
+    primaryColor: "#edf7ff",
+    primaryTextColor: "#0f1f3a",
+    primaryBorderColor: "#0b6fb3",
+    lineColor: "#637797",
+    secondaryColor: "#f6f9fd",
+    tertiaryColor: "#ffffff",
+    clusterBkg: "#f6f9fd",
+    clusterBorder: "#d6e3f1",
+    edgeLabelBackground: "#ffffff",
+    nodeTextColor: "#0f1f3a"
+  },
+  flowchart: { useMaxWidth: false, htmlLabels: true, curve: "linear" },
+  er: { useMaxWidth: false }
+});
+</script></body></html>

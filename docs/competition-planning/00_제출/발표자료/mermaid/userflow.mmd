@@ -1,0 +1,28 @@
+flowchart TD
+  A["대시보드 진입"] --> B{"작업 선택"}
+  B --> C["자연어 지시 Dispatch"]
+  B --> D["Case List / Board 확인"]
+  B --> E["전세 Shield 확인"]
+  B --> F["Agent 조직도 / Skill Registry 확인"]
+
+  C --> G["AgentRun 생성"]
+  D --> H["Case 선택 또는 Kanban 상태 이동"]
+  E --> I["전세사기 위험 신호와 담당 Agent 확인"]
+  F --> J["Agent별 업무 / Skill / 승인 레벨 확인"]
+
+  H --> G
+  I --> G
+  G --> K{"실행 결과 상태"}
+  K -->|Approval Pending| L["승인 큐 진입"]
+  K -->|Escalated| M["Fraud / Compliance 차단 검토"]
+  K -->|Agent Running| N["실시간 실행 패널 갱신"]
+
+  L --> O{"사람 승인"}
+  O -->|Approve| P["Done + 고객/내부 조치 준비"]
+  O -->|Reject| Q["Blocked 또는 추가 검토"]
+  M --> Q
+  N --> L
+
+  P --> R["Audit 기록"]
+  Q --> R
+  R --> S["Properties Panel / Activity Feed 갱신"]

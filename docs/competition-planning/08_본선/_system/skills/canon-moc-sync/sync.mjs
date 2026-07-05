@@ -1,0 +1,472 @@
+#!/usr/bin/env node
+/**
+ * canon-moc-sync v2 — 섹션 인지 MOC 동기화 + frontmatter 보정
+ *
+ * 버그픽스: 기본 MOC 경로를 실제 위치(_MOC/_MOC_HOME.md)로 자동 탐색.
+ * 맵-인지 라우팅: 파일 경로에 따라 해당 섹션 MOC에 위키링크를 추가.
+ * 모드:
+ *   --dry-run (기본) — 리포트만 출력, 파일 수정 없음
+ *   --apply          — 섹션 MOC에 위키링크 1행 추가 + frontmatter 보정
+ *
+ * 표준 라이브러리만 사용.
+ */
+
+import fs from "node:fs";
+import path from "node:path";
+
+// ── 설정 ──────────────────────────────────────────────────────────────────
+
+// 실행 위치에 무관하게 08_본선 루트를 안정적으로 탐색
+function findVaultRoot() {
+  const candidates = [
+    // node 로 직접 호출: cwd = project root
+    path.join(process.cwd(), "08_본선"),
+    // cwd 가 이미 08_본선 인 경우
+    process.cwd(),
+    // cwd 가 _system/skills/canon-moc-sync 인 경우
+    path.resolve(path.dirname(new URL(import.meta.url).pathname), "..", "..", ".."),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(path.join(p, "_MOC"))) return p;
+  }
+  // 최후 폴백: cwd 기준 08_본선
+  return path.join(process.cwd(), "08_본선");
+}
+
+const VAULT_ROOT = findVaultRoot();
+const SYSTEM_DIR = path.join(VAULT_ROOT, "_system");
+const MOC_DIR    = path.join(VAULT_ROOT, "_MOC");
+
+// 섹션 → MOC 파일 매핑 (경로 접두사 기준)
+const SECTION_ROUTES = [
+  { prefix: path.join(VAULT_ROOT, "01_대회정보"), moc: path.join(MOC_DIR, "_01_대회정보_MOC.md") },
+  { prefix: path.join(VAULT_ROOT, "02_전략"),     moc: path.join(MOC_DIR, "_02_전략_MOC.md") },
+  { prefix: path.join(VAULT_ROOT, "03_제품"),     moc: path.join(MOC_DIR, "_03_제품_MOC.md") },
+  { prefix: path.join(VAULT_ROOT, "04_증빙"),     moc: path.join(MOC_DIR, "_04_증빙_MOC.md") },
+  { prefix: path.join(VAULT_ROOT, "05_제출"),     moc: path.join(MOC_DIR, "_05_제출_MOC.md") },
+  // _system, _분석, _MOC, 루트 파일은 시스템 MOC로
+  { prefix: path.join(VAULT_ROOT, "_system"),     moc: path.join(MOC_DIR, "_system_tools_MOC.md") },
+  { prefix: path.join(VAULT_ROOT, "_분석"),       moc: path.join(MOC_DIR, "_system_tools_MOC.md") },
+];
+
+// 루트 허브 파일들 — up 누락이 정상(에러 아님)
+const HUB_FILES = new Set([
+  path.join(MOC_DIR, "_MOC_HOME.md"),
+  path.join(VAULT_ROOT, "HOME.md"),
+  path.join(VAULT_ROOT, "PLAN.md"),
+  path.join(VAULT_ROOT, "PROGRESS.md"),
+  path.join(VAULT_ROOT, "AGENTS.md"),
+  path.join(VAULT_ROOT, "SHARE-PACKAGE.md"),
+]);
+
+const args    = process.argv.slice(2);
+const APPLY   = args.includes("--apply");
+const DRY_RUN = !APPLY; // 기본이 dry-run
+
+// ── 헬퍼 ─────────────────────────────────────────────────────────────────
+
+function collectMd(dir, results = []) {
+  let entries;
+  try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return results; }
+  for (const e of entries) {
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) collectMd(full, results);
+    else if (e.isFile() && e.name.endsWith(".md")) results.push(full);
+  }
+  return results;
+}
+
+function parseFrontmatter(text) {
+  if (!text.startsWith("---")) return { fields: {}, endIdx: -1 };
+  const end = text.indexOf("\n---", 4);
+  if (end === -1) return { fields: {}, endIdx: -1 };
+  const fm = text.slice(4, end);
+  const fields = {};
+  for (const line of fm.split("\n")) {
+    const m = line.match(/^(\w[\w-]*):/);
+    if (m) fields[m[1]] = true;
+  }
+  return { fields, endIdx: end + 4 }; // endIdx: 닫는 "---" 다음 위치
+}
+
+function extractWikilinks(text) {
+  const set = new Set();
+  for (const m of text.matchAll(/\[\[([^\]|#]+?)(?:\|[^\]]*)?\]\]/g)) {
+    // basename 추출 (경로 포함 링크도 basename으로 정규화)
+    const raw = m[1].trim();
+    const base = path.basename(raw);
+    set.add(base);
+    set.add(raw); // 경로 포함 형태도 저장
+  }
+  return set;
+}
+
+/** 파일의 섹션 MOC 경로를 반환. 해당 없으면 null */
+function resolveSectionMoc(filePath) {
+  for (const { prefix, moc } of SECTION_ROUTES) {
+    if (filePath.startsWith(prefix + path.sep) || filePath.startsWith(prefix + "/")) {
+      return moc;
+    }
+  }
+  // 루트 수준 파일 (HOME, PLAN 등) → _MOC_HOME
+  const rel = path.relative(VAULT_ROOT, filePath);
+  if (!rel.includes(path.sep)) {
+    return null; // 루트 허브, 별도 처리 안 함
+  }
+  return null;
+}
+
+/** MOC에 위키링크 1행 추가 (멱등: 이미 있으면 스킵) */
+function addWikilinkToMoc(mocPath, wikilink, existingLinks) {
+  if (!fs.existsSync(mocPath)) return false;
+  if (existingLinks.has(wikilink) || existingLinks.has(path.basename(wikilink))) return false;
+
+  const text = fs.readFileSync(mocPath, "utf8");
+  const recheck = extractWikilinks(text);
+  if (recheck.has(wikilink) || recheck.has(path.basename(wikilink))) return false;
+
+  const MARKER = "<!-- AUTO-LINKS -->";
+  const linkLine = `- [[${wikilink}]]`;
+  let newText;
+  if (text.includes(MARKER)) {
+    newText = text.replace(MARKER, `${MARKER}\n${linkLine}`);
+  } else {
+    newText = text.trimEnd() + `\n\n${MARKER}\n${linkLine}\n`;
+  }
+  fs.writeFileSync(mocPath, newText, "utf8");
+  return true;
+}
+
+/** frontmatter up 필드 보정 — 파일 앞부분에 up 삽입 */
+function addFrontmatterUp(filePath, upValue) {
+  const text = fs.readFileSync(filePath, "utf8");
+  if (!text.startsWith("---")) return false;
+  const end = text.indexOf("\n---", 4);
+  if (end === -1) return false;
+  // 이미 up 존재하면 스킵
+  const fmBlock = text.slice(4, end);
+  if (/^up:/m.test(fmBlock)) return false;
+  // date: 줄 뒤에 삽입
+  const upLine = `up: "${upValue}"`;
+  let newFm;
+  if (/^date:/m.test(fmBlock)) {
+    newFm = fmBlock.replace(/^(date:.*)/m, `$1\n${upLine}`);
+  } else {
+    newFm = fmBlock.trimEnd() + `\n${upLine}`;
+  }
+  const newText = "---" + newFm + text.slice(end);
+  fs.writeFileSync(filePath, newText, "utf8");
+  return true;
+}
+
+/** tags + date 빠진 파일에 최소 frontmatter 추가 */
+function ensureFrontmatter(filePath, missingFields, sectionMocPath) {
+  let text = fs.readFileSync(filePath, "utf8");
+  const today = new Date().toISOString().slice(0, 10);
+
+  if (!text.startsWith("---")) {
+    // frontmatter 자체가 없으면 삽입
+    const mocBase = sectionMocPath ? path.basename(sectionMocPath, ".md") : "_MOC_HOME";
+    const upVal   = `[[08_본선/_MOC/${mocBase}|${mocBase.replace(/^_/, "")}]]`;
+    const header = `---\ntags:\n  - area/general\n  - status/draft\ndate: ${today}\nup: "${upVal}"\n---\n\n`;
+    fs.writeFileSync(filePath, header + text, "utf8");
+    return true;
+  }
+
+  const end = text.indexOf("\n---", 4);
+  if (end === -1) return false;
+  let fmBlock = text.slice(4, end);
+  let changed = false;
+
+  if (missingFields.includes("tags")) {
+    fmBlock = "tags:\n  - area/general\n  - status/draft\n" + fmBlock;
+    changed = true;
+  }
+  if (missingFields.includes("date")) {
+    fmBlock = fmBlock.trimEnd() + `\ndate: ${today}`;
+    changed = true;
+  }
+  if (missingFields.includes("up") && sectionMocPath) {
+    const mocBase = path.basename(sectionMocPath, ".md");
+    const upVal = `[[08_본선/_MOC/${mocBase}|${mocBase.replace(/^_/, "")}]]`;
+    fmBlock = fmBlock.trimEnd() + `\nup: "${upVal}"`;
+    changed = true;
+  }
+
+  if (!changed) return false;
+  const newText = "---" + fmBlock + text.slice(end);
+  fs.writeFileSync(filePath, newText, "utf8");
+  return true;
+}
+
+// ── 메인 ─────────────────────────────────────────────────────────────────
+
+function main() {
+  const mode = APPLY ? "--apply" : "--dry-run";
+  process.stdout.write(`[canon-moc-sync] 모드: ${mode} | 볼트: ${path.relative(process.cwd(), VAULT_ROOT)}\n\n`);
+
+  const allFiles = collectMd(VAULT_ROOT);
+  let exitCode = 0;
+
+  // ── 1. 중복 basename 검사 ──────────────────────────────────────────────
+  const nameMap = {};
+  for (const f of allFiles) {
+    const base = path.basename(f, ".md");
+    if (!nameMap[base]) nameMap[base] = [];
+    nameMap[base].push(f);
+  }
+  const duplicates = Object.entries(nameMap).filter(([, arr]) => arr.length > 1);
+
+  // _system 내부 파일(SKILL, README 등)끼리의 중복은 경고로만
+  const contentDuplicates = duplicates.filter(([, arr]) => {
+    const nonSystem = arr.filter(p => !p.startsWith(SYSTEM_DIR));
+    return nonSystem.length > 1;
+  });
+  const systemOnlyDuplicates = duplicates.filter(([, arr]) => {
+    const nonSystem = arr.filter(p => !p.startsWith(SYSTEM_DIR));
+    return nonSystem.length <= 1;
+  });
+
+  if (contentDuplicates.length) {
+    process.stdout.write(`[1/5] ⚠ 중복 파일명(콘텐츠): ${contentDuplicates.length}건 — 경로지정 위키링크 권장\n`);
+    for (const [name, paths] of contentDuplicates) {
+      process.stdout.write(`  ⚠ "${name}"\n`);
+      for (const p of paths) process.stdout.write(`      ${path.relative(process.cwd(), p)}\n`);
+    }
+    exitCode = 0; // 에러가 아닌 경고
+  } else {
+    process.stdout.write(`[1/5] ✓ 중복 파일명(콘텐츠): 없음\n`);
+  }
+  if (systemOnlyDuplicates.length) {
+    process.stdout.write(`       (시스템 내부 중복 ${systemOnlyDuplicates.length}건은 정상 — 무시)\n`);
+  }
+
+  // ── 2. frontmatter 필수 필드 검증 ─────────────────────────────────────
+  const REQUIRED = ["tags", "date", "up"];
+  const fmIssues = [];
+
+  for (const f of allFiles) {
+    // _system/ 내부 SKILL.md, README.md 파일은 제외
+    const isSkillFile = f.startsWith(SYSTEM_DIR) && (
+      path.basename(f) === "SKILL.md" || path.basename(f) === "README.md"
+    );
+    if (isSkillFile) continue;
+
+    let text;
+    try { text = fs.readFileSync(f, "utf8"); } catch { continue; }
+    const { fields } = parseFrontmatter(text);
+    const missing = REQUIRED.filter(k => !fields[k]);
+
+    if (missing.length) {
+      // 허브 파일은 up 누락을 정상으로 처리
+      const effectiveMissing = HUB_FILES.has(f)
+        ? missing.filter(k => k !== "up")
+        : missing;
+      if (effectiveMissing.length) fmIssues.push({ file: f, missing: effectiveMissing });
+    }
+  }
+
+  if (fmIssues.length) {
+    process.stdout.write(`[2/5] frontmatter 누락: ${fmIssues.length}건\n`);
+    for (const { file, missing } of fmIssues) {
+      process.stdout.write(`  - ${path.relative(process.cwd(), file)} (누락: ${missing.join(", ")})\n`);
+    }
+  } else {
+    process.stdout.write(`[2/5] ✓ frontmatter: 전체 정합\n`);
+  }
+
+  // ── 3. 섹션 MOC 누락 위키링크 감지 ───────────────────────────────────
+  // 각 섹션 MOC별 existing 링크 캐시
+  const mocLinksCache = {};
+  function getMocLinks(mocPath) {
+    if (!mocLinksCache[mocPath]) {
+      if (!fs.existsSync(mocPath)) {
+        mocLinksCache[mocPath] = new Set();
+      } else {
+        mocLinksCache[mocPath] = extractWikilinks(fs.readFileSync(mocPath, "utf8"));
+      }
+    }
+    return mocLinksCache[mocPath];
+  }
+
+  // 대상 파일 필터: MOC 자체, _시스템 내 SKILL/README, _ 접두어 파일, 루트 허브 제외
+  const CANDIDATES = allFiles.filter(f => {
+    const base = path.basename(f, ".md");
+    if (base.startsWith("_")) return false;
+    if (f.startsWith(MOC_DIR)) return false; // MOC 파일들 자체
+    if (f.startsWith(SYSTEM_DIR)) return false; // 시스템 파일 → _system_tools_MOC 자동화 범위 아님
+    if (HUB_FILES.has(f)) return false;
+    return true;
+  });
+
+  const mocGaps = {}; // mocPath → [{ file, wikilink }]
+
+  for (const f of CANDIDATES) {
+    const mocPath = resolveSectionMoc(f);
+    if (!mocPath) continue;
+
+    const existing = getMocLinks(mocPath);
+    const base = path.basename(f, ".md");
+    const relPath = path.relative(VAULT_ROOT, f).replace(/\.md$/, "").replace(/\\/g, "/");
+    const fullWikilink = `08_본선/${relPath}`;
+
+    // 이미 링크됐으면 스킵
+    if (existing.has(base) || existing.has(fullWikilink) || existing.has(relPath)) continue;
+
+    if (!mocGaps[mocPath]) mocGaps[mocPath] = [];
+    mocGaps[mocPath].push({ file: f, base, fullWikilink });
+  }
+
+  const totalGaps = Object.values(mocGaps).reduce((s, arr) => s + arr.length, 0);
+  if (totalGaps > 0) {
+    process.stdout.write(`[3/5] MOC 누락 링크: ${totalGaps}건\n`);
+    for (const [mocPath, items] of Object.entries(mocGaps)) {
+      const mocName = path.basename(mocPath);
+      process.stdout.write(`  ${mocName}:\n`);
+      for (const { file, fullWikilink } of items) {
+        process.stdout.write(`    + [[${fullWikilink}]]\n`);
+      }
+    }
+  } else {
+    process.stdout.write(`[3/5] ✓ MOC 누락 링크: 없음\n`);
+  }
+
+  // ── 4. 죽은 링크(dead link) 감지 — 삭제·이름변경된 파일을 가리키는 링크 ──
+  // `08_본선/<path>` 형태의 경로지정 위키링크만 검사한다(고정밀: 외부·bare 링크 오탐 방지).
+  // 파일이 삭제되거나 이름이 바뀌면 이 링크가 깨지므로 "없어져도 반영"의 핵심 검출.
+  // 비-md 타깃(.excalidraw·.canvas·.base)·확장자 명시 링크도 살아있음으로 인정(오탐 방지)
+  const LINK_EXTS = [".md", ".excalidraw", ".canvas", ".base", ""];
+  // Obsidian 은 basename 으로도 링크를 해석하므로, 정확 경로 OR basename 이
+  // 볼트 어디에도 없을 때만 dead(=진짜 삭제·이름변경)로 판정한다.
+  // ⚠️ macOS readdir=NFD vs 링크 텍스트=NFC → 반드시 NFC 정규화 후 비교
+  const existingBases = new Set(allFiles.map(f => path.basename(f, ".md").normalize("NFC")));
+  const deadLinks = []; // { src, target }
+  for (const f of allFiles) {
+    const bn = path.basename(f);
+    // SKILL.md·README.md 는 예시 링크가 들어있어 소스 스캔에서 제외
+    if (f.startsWith(SYSTEM_DIR) && (bn === "SKILL.md" || bn === "README.md")) continue;
+    let text;
+    try { text = fs.readFileSync(f, "utf8"); } catch { continue; }
+    for (const m of text.matchAll(/\[\[(08_본선\/[^\]|#]+?)(?:\|[^\]]*)?\]\]/g)) {
+      const target = m[1].trim().replace(/\\+$/, ""); // 표 이스케이프 파이프(\|) 잔재 백슬래시 제거
+      const base = path.join(VAULT_ROOT, target.replace(/^08_본선\//, ""));
+      const aliveExact = LINK_EXTS.some(ext => fs.existsSync(base + ext));
+      const aliveBase  = existingBases.has(path.basename(target).normalize("NFC"));
+      if (!aliveExact && !aliveBase) deadLinks.push({ src: f, target });
+    }
+  }
+  if (deadLinks.length) {
+    process.stdout.write(`[4/5] ⚠ 죽은 링크(삭제·이름변경 대상): ${deadLinks.length}건\n`);
+    for (const { src, target } of deadLinks) {
+      process.stdout.write(`  ✗ [[${target}]]  ← ${path.relative(process.cwd(), src)}\n`);
+    }
+    process.stdout.write(`       (자동 삭제 안 함 — 링크 갱신 또는 수동 정리 필요)\n`);
+    exitCode = 0; // 경고만, 블로킹 없음
+  } else {
+    process.stdout.write(`[4/5] ✓ 죽은 링크: 없음\n`);
+  }
+
+  // ── 5. 도달성·사이클 검증 — "조상에서 자식으로 타고 들어갈 수 있는가" (네비게이션 정합) ──
+  // 루트(본선 HOME·_MOC_HOME)에서 위키링크 BFS → 도달 불가 .md = 부모-자식 단절(고아·유령부모).
+  // up: 체인 사이클도 검출. NFC·이스케이프파이프(\|)·경로/basename·마크다운링크 모두 처리.
+  {
+    const nfc = s => s.normalize("NFC");
+    const NAV_EXCLUDE = new Set(["SKILL", "README", "_pii-scan-report", "ai-usage-stats"]);
+    // basename → 경로 배열 (중복 basename: README·SKILL 등을 모두 보존해야 링크 누락 없음)
+    const byBase = new Map();
+    for (const f of allFiles) { const b = nfc(path.basename(f, ".md")); if (!byBase.has(b)) byBase.set(b, []); byBase.get(b).push(f); }
+    const normT = t => { t = nfc(t).trim().replace(/\\+$/, "").split("/").pop(); return t.endsWith(".md") ? t.slice(0, -3) : t; };
+    const linksOf = f => {
+      let t; try { t = nfc(fs.readFileSync(f, "utf8")); } catch { return []; }
+      const out = [];
+      for (const m of t.matchAll(/\[\[([^\]|#]+)/g)) out.push(normT(m[1]));
+      for (const m of t.matchAll(/\]\(([^)#]+)\)/g)) if (!m[1].includes("://")) out.push(normT(m[1]));
+      return out;
+    };
+    const upOf = f => {
+      let t; try { t = nfc(fs.readFileSync(f, "utf8")); } catch { return null; }
+      const fm = t.match(/^---\n([\s\S]*?)\n---/);
+      const um = fm && fm[1].match(/^up:\s*"?\[\[([^\]|#]+)/m);
+      return um ? normT(um[1]) : null;
+    };
+    const roots = ["본선 HOME", "_MOC_HOME"].map(nfc).filter(b => byBase.has(b));
+    const reached = new Set(roots);
+    const queue = [...roots];
+    while (queue.length) {
+      const b = queue.shift();
+      for (const f of (byBase.get(b) || []))           // 중복 basename: 모든 동명 파일의 링크를 따라간다
+        for (const tgt of linksOf(f)) if (byBase.has(tgt) && !reached.has(tgt)) { reached.add(tgt); queue.push(tgt); }
+    }
+    const unreachable = [...byBase.keys()].filter(b => !reached.has(b) && !NAV_EXCLUDE.has(b));
+    const cycles = [];
+    for (const b of byBase.keys()) {
+      const seen = new Set(); let cur = b;
+      while (cur && byBase.has(cur)) { if (seen.has(cur)) { cycles.push(b); break; } seen.add(cur); cur = nfc(upOf(byBase.get(cur)[0]) || ""); }
+    }
+    if (unreachable.length || cycles.length) {
+      process.stdout.write(`[5/5] ⚠ 도달성: 루트에서 못 타고 가는 노트 ${unreachable.length}건${cycles.length ? `, up 사이클 ${cycles.length}건` : ""}\n`);
+      for (const b of unreachable.slice(0, 20)) process.stdout.write(`  ✗ ${b} (조상→자식 경로 없음 — 부모 MOC/인덱스에 링크 또는 up 추가)\n`);
+      if (unreachable.length > 20) process.stdout.write(`       … 외 ${unreachable.length - 20}건\n`);
+      for (const b of cycles.slice(0, 10)) process.stdout.write(`  ↻ up 사이클: ${b}\n`);
+      exitCode = 0; // 경고만, 블로킹 없음
+    } else {
+      process.stdout.write(`[5/5] ✓ 도달성: 루트에서 모든 노트 도달 (사이클 0)\n`);
+    }
+  }
+
+  // ── 6. APPLY 모드 실행 ─────────────────────────────────────────────────
+  if (!APPLY) {
+    process.stdout.write(`\n[canon-moc-sync] dry-run 완료 — 수정 없음. --apply 로 실제 적용.\n`);
+    process.exit(exitCode);
+  }
+
+  let appliedLinks = 0;
+  let appliedFm    = 0;
+
+  // 4a. 섹션 MOC 위키링크 추가
+  // 캐시를 무효화하고 실시간으로 중복 체크해야 하므로 mocLinksCache 를 참조
+  for (const [mocPath, items] of Object.entries(mocGaps)) {
+    for (const { file, fullWikilink, base } of items) {
+      const existing = getMocLinks(mocPath);
+      if (existing.has(base) || existing.has(fullWikilink)) continue;
+
+      if (!fs.existsSync(mocPath)) continue;
+      const text = fs.readFileSync(mocPath, "utf8");
+      const recheck = extractWikilinks(text);
+      if (recheck.has(base) || recheck.has(fullWikilink)) {
+        // 캐시 갱신
+        mocLinksCache[mocPath] = recheck;
+        continue;
+      }
+
+      const MARKER = "<!-- AUTO-LINKS -->";
+      const linkLine = `- [[${fullWikilink}]]`;
+      let newText;
+      if (text.includes(MARKER)) {
+        newText = text.replace(MARKER, `${MARKER}\n${linkLine}`);
+      } else {
+        newText = text.trimEnd() + `\n\n${MARKER}\n${linkLine}\n`;
+      }
+      fs.writeFileSync(mocPath, newText, "utf8");
+      // 캐시 갱신
+      mocLinksCache[mocPath] = extractWikilinks(newText);
+      appliedLinks++;
+      process.stdout.write(`  [link+] ${path.basename(mocPath)} ← [[${fullWikilink}]]\n`);
+    }
+  }
+
+  // 4b. frontmatter 보정
+  for (const { file, missing } of fmIssues) {
+    const mocPath = resolveSectionMoc(file) ?? path.join(MOC_DIR, "_system_tools_MOC.md");
+    const changed = ensureFrontmatter(file, missing, mocPath);
+    if (changed) {
+      appliedFm++;
+      process.stdout.write(`  [fm+]   ${path.relative(process.cwd(), file)} (보정: ${missing.join(", ")})\n`);
+    }
+  }
+
+  process.stdout.write(`\n[canon-moc-sync] apply 완료 — 링크추가: ${appliedLinks}건, frontmatter보정: ${appliedFm}건\n`);
+  process.exit(exitCode);
+}
+
+main();

@@ -1,0 +1,47 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>body{margin:24px;background:#ffffff;font-family:Pretendard,sans-serif}</style></head>
+<body><pre class="mermaid">flowchart LR
+  User[&quot;RM / 준법 / 보안 / 운영 담당자&quot;] --&gt; UI[&quot;JB LocalGuard OS Web Console&quot;]
+  UI --&gt; Shell[&quot;4-zone layout&lt;br/&gt;Sidebar / Topbar / Workbench / Properties&quot;]
+  Shell --&gt; Router[&quot;Workspace Router&lt;br/&gt;Dashboard / Cases / Approvals / AgentRun / Jeonse Shield&quot;]
+  Router --&gt; Runtime[&quot;Local Case Runtime&lt;br/&gt;browser state in app.js&quot;]
+
+  Runtime --&gt; CaseBoard[&quot;Case Board &amp; List&quot;]
+  Runtime --&gt; Dashboard[&quot;Dashboard Metrics&quot;]
+  Runtime --&gt; Properties[&quot;Properties Panel&quot;]
+  Runtime --&gt; Orchestrator[&quot;LocalGuard Orchestrator&quot;]
+
+  Orchestrator --&gt; AgentMesh[&quot;Specialized AI Agent Mesh&quot;]
+  AgentMesh --&gt; SkillRegistry[&quot;Skill Registry&quot;]
+  AgentMesh --&gt; Evidence[&quot;Evidence Store&lt;br/&gt;articles / official pages / policy / memo&quot;]
+  AgentMesh --&gt; Approval[&quot;Approval Gate&quot;]
+  Approval --&gt; Audit[&quot;Audit Ledger&quot;]
+  Audit --&gt; Properties
+
+  SkillRegistry --&gt; JeonseSkills[&quot;Jeonse Shield Skills&lt;br/&gt;price ratio / registry rights / contract checklist / bank linkage&quot;]
+  Evidence --&gt; CaseBoard
+  Dashboard --&gt; UI
+</pre>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+mermaid.initialize({
+  startOnLoad: true,
+  theme: "base",
+  themeVariables: {
+    fontFamily: "Pretendard, sans-serif",
+    fontSize: "18px",
+    primaryColor: "#edf7ff",
+    primaryTextColor: "#0f1f3a",
+    primaryBorderColor: "#0b6fb3",
+    lineColor: "#637797",
+    secondaryColor: "#f6f9fd",
+    tertiaryColor: "#ffffff",
+    clusterBkg: "#f6f9fd",
+    clusterBorder: "#d6e3f1",
+    edgeLabelBackground: "#ffffff",
+    nodeTextColor: "#0f1f3a"
+  },
+  flowchart: { useMaxWidth: false, htmlLabels: true, curve: "linear" },
+  er: { useMaxWidth: false }
+});
+</script></body></html>

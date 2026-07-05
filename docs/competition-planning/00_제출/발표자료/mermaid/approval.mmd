@@ -1,0 +1,12 @@
+flowchart LR
+  Draft["AI Draft Action"] --> Gate{"Approval Gate"}
+  Gate -->|L0 observe/log| AuditOnly["Audit only"]
+  Gate -->|L1-L2 RM review| RM["RM Approval"]
+  Gate -->|L3 regulated impact| Compliance["Compliance / Legal Review"]
+  Gate -->|L4 fraud or adverse risk| Block["Do-not-contact Block"]
+
+  RM --> Send["Customer-facing or branch action"]
+  Compliance --> Send
+  Block --> Audit["Audit Ledger"]
+  AuditOnly --> Audit
+  Send --> Audit

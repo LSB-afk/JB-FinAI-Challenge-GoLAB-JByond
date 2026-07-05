@@ -1,0 +1,136 @@
+{
+  "$schema": "JB LocalGuard OS console design tokens — structured mirror of jb-console-tokens.css",
+  "meta": {
+    "source": "08_본선/03_제품/03_ux/design-system.md (개정 2026-07-04)",
+    "designDoc": "08_본선/03_제품/00_결정-준비/설계/디자인-토큰-업그레이드-설계안.md",
+    "openIssues": [
+      "font: SUIT Variable(현재값) vs Noto Sans KR — 김민주 확인 대기(design-system.md §6-1)"
+    ]
+  },
+  "jb": {
+    "color": {
+      "brandPrimary": "#0A31A8",
+      "brandAccent": "#1C56FF",
+      "brandDeep": "#0D2D77",
+      "brandNavy": "#0B235B",
+      "esgGreen": "#9ECFA9",
+      "focusGreen": "#51E3A4",
+      "techCyan": "#19E4EE",
+      "bgDefault": "#FFFFFF",
+      "bgSubtle": "#F8F8F8",
+      "bgMuted": "#F3F3F3",
+      "bgNews": "#FCFCFC",
+      "textPrimary": "#333333",
+      "textSecondary": "#666666",
+      "textTertiary": "#767676",
+      "textInverse": "#FFFFFF",
+      "borderDefault": "#E5E5E5",
+      "statusRise": "#D00000",
+      "statusFall": "#1850FF",
+      "glassDark": "rgba(0,19,74,0.48)",
+      "glassLight": "rgba(255,255,255,0.75)",
+      "overlayImage": "rgba(0,0,0,0.4)"
+    },
+    "typography": {
+      "fontFamilyBase": "SUIT Variable, -apple-system, system-ui, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif",
+      "weightRegular": 500,
+      "weightBody": 600,
+      "weightBold": 700,
+      "weightExtrabold": 800,
+      "letterSpacingTight": "-0.02em",
+      "letterSpacingNumber": "-0.06em",
+      "scale": {
+        "display1": "clamp(56px,6.67vw,96px)",
+        "headline1": "clamp(44px,4.89vw,88px)",
+        "headline2": "clamp(32px,3.56vw,64px)",
+        "title1": "clamp(28px,2.22vw,40px)",
+        "title2": "clamp(24px,1.78vw,32px)",
+        "title3": "clamp(20px,1.33vw,24px)",
+        "body1": "clamp(17px,1.11vw,20px)",
+        "body2": "16px",
+        "caption": "14px"
+      }
+    },
+    "layout": {
+      "pageMargin": "clamp(21px,5.6vw,57px)",
+      "contentMaxLg": "1564px",
+      "contentMaxMd": "1328px",
+      "contentMaxSm": "1000px",
+      "headerHeightDesktop": "96px",
+      "headerHeightMobile": "62px"
+    },
+    "spacing": {
+      "scale": [4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 64, 80, 100, 144],
+      "cardGap": "clamp(14px,1.1vw,24px)",
+      "gridGap": "clamp(20px,3.125vw,32px)",
+      "sectionY": "clamp(64px,7.4vw,144px)"
+    },
+    "radius": { "xs": 4, "sm": 8, "md": 16, "lg": 24, "xl": 32, "2xl": 40, "pill": 999, "circle": "50%" },
+    "shadow": {
+      "dropdown": "4px 4px 24px rgba(0,0,0,0.1)",
+      "overlay": "0 8px 32px rgba(0,0,0,0.16)"
+    },
+    "motion": {
+      "fast": "120ms", "base": "200ms", "menu": "280ms", "card": "600ms",
+      "easeStandard": "cubic-bezier(.2,0,0,1)",
+      "easeOut": "cubic-bezier(.16,1,.3,1)"
+    },
+    "focus": { "ring": "2px solid focusGreen", "ringOffset": "3px" }
+  },
+  "console": {
+    "fontFamily": "inherit(jb.typography.fontFamilyBase) — 미확정, design-system.md §6-1",
+    "density": {
+      "cardGap": "clamp(8px,0.6vw,14px)",
+      "gridGap": "clamp(10px,1vw,18px)",
+      "sectionY": "clamp(24px,3vw,56px)",
+      "heroHeightMax": "180px",
+      "cardRadius": 24
+    },
+    "shell": {
+      "orgRailWidth": 64,
+      "navListWidth": 240,
+      "contextPanelWidth": 360,
+      "defaultPageContentView": "kanban-or-table"
+    },
+    "caseStatus": {
+      "new": "#1C56FF",
+      "inProgress": "#06A5FF",
+      "review": "#F59E0B",
+      "done": "#10B981",
+      "blocked": "#DC2626"
+    },
+    "approvalLevel": {
+      "note": "승인 단계 축(누가 승인하는가) — riskSeverity와 별개 축",
+      "l0": "textTertiary(#767676)",
+      "l1": "#1C56FF",
+      "l2": "#1C56FF",
+      "l3": "#6D28D9",
+      "l3Status": "proposed — pending 김민주 확인",
+      "l4": "#D00000"
+    },
+    "riskSeverity": {
+      "note": "케이스 위험 심각도(무엇이 얼마나 위험한가) — approvalLevel과 별개 축, Figma 망상궤도 LocalGuard OS Console Foundations 출처",
+      "critical": "#B91C1C",
+      "high": "#EA580C",
+      "medium": "#D97706",
+      "low": "#15803D"
+    },
+    "approvalOutcome": {
+      "pending": "#F59E0B",
+      "approved": "#10B981",
+      "rejected": "#DC2626",
+      "modified": "#1C56FF"
+    },
+    "agentRun": {
+      "running": "#1C56FF",
+      "succeeded": "#10B981",
+      "failed": "#DC2626",
+      "queued": "#64748B"
+    },
+    "pii": {
+      "exportBlocked": "#DC2626",
+      "masked": "#0F766E",
+      "maskingPattern": ["홍*동", "010-****-1234"]
+    }
+  }
+}
