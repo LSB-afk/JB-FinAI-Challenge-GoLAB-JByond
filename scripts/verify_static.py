@@ -83,6 +83,7 @@ app_js_files = [
     "rmoMemoryCards.js",
     "rmoCaseOntology.js",
     "rmoEngineSwitch.js",
+    "rmoAuditChain.js",
 ]
 
 required = [
