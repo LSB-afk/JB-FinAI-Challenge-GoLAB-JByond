@@ -312,3 +312,14 @@ aliases:
 ### 2026-07-05 · 이사 준비+PR#5 + PR#4 리베이스 (Fable)
 - **PR#5 생성**(LSB-afk/JB_project2#5): 본선(08_본선)+시스템(_체계) 692파일/21MB를 `docs/competition-planning/`으로 스냅샷 이관(@e3604fc, 추적분만·gitignore 대외비 자동 제외·PII 실스캔 0건·MIGRATION 대장 포함). MERGEABLE/CLEAN.
 - **PR#4 리베이스**: 승보 main 신규 커밋(cbac900, RM 데모 안정화·배포) 위로 재정렬 — 충돌 3건 해소, harnessRegistry 픽스는 승보 자체 정리로 구식화되어 드랍(9커밋). 재검증 verify 99·E2E 3/3 그린 → **MERGEABLE/CLEAN, 머지 사인 발신**.
+
+### 2026-07-05 · 기능명세서 클로즈 + FDS 미로드 근본원인 규명 (Fable 총괄 + spec-writer2/impl-checker/spec-align)
+- **기능명세서 최종**: 예선 최종 양식 보존 + JB 시그니처 블루 다이어그램 2종(그림1 레이아웃·솔리드 강조, MD5 임베드 검증) + 구현여부 실측 정직 표기 + 부록 예선⅔·본선⅓ 병합(검증 링크 20개). 제출 파일명 사본 byte-identical.
+- **🚨 FDS 근본원인**: 병합 커밋 b80459c(7/5 04:53)가 0226bd6의 fdrConsole 스크립트 태그 3줄을 유실 + 최신 app.js에서 FDR 라우팅 코드(pages 맵·컨텍스트·fdrRouteFromHash 디스패치) 전부 소멸 — "훅만 무력화"였던 §12 판단을 §13에서 정정(전용 콘솔 화면 자체가 미로드, base 구형 대시보드 폴백). 최신 cbac900에도 미복원. 복원 레시피: index.html 태그 3줄 + app.js 4개 블록을 0226bd6에서 이식(승보 몫).
+- 본선 기능명세 관련 4파일 정합(feature-spec §0·구판 배너·implementation-index 4/5 정정·구현현황 §13 append). 벼락치기·스크립트에 발표 수위 반영 완료.
+
+### 2026-07-05 · JByond 리브랜딩 README·이력 병합 PR#5 v2·자연어 접수 (Fable + P1/P2/builder)
+- **자연어 접수 착지**: `n`키 커맨드 팔레트 — 프롬프트+파일첨부→로컬모델 triage→케이스·서브케이스(≤3) 실생성→부족데이터 요청(감사 체인 기록)·오프라인 폴백 완주. 신규 E2E 포함 4/4 그린.
+- **README 전면 개정(JB_project2)**: JByond 리브랜딩(태그라인 "다음 세대를 잇는 JB금융의 AX Operating System"·구명칭 병기, 제출본 팀 7/5 리브랜딩과 정합) + paperclip 패턴(퀵스타트 3단·트러블슈팅·갤러리) + 설치·사용 가이드 + **90% 줌 최신 스크린샷 7장 레포 내장**(docs/images). 죽은 코드 표기(cclConsole/fdrConsole) 정정.
+- **PR#5 v2 격상**: 스냅샷→`git subtree` **모노레포 231커밋 이력 통째 병합**(862파일/87MB, 예선+본선 전체) — 개발 연속성 커밋 단위 증빙. 민감 삭제-이력 스캔 0건.
+- **리베이스 2회**(승보 main cbac900→3c25eef 연속 전진 흡수), 전 사이클 verify 100·E2E 그린. **PR#4 11커밋·PR#5 232커밋 모두 MERGEABLE/CLEAN** — 머지 사인(레포명 `JBFinAI-GoLAB-JByond` 제안 포함) 발신. 병합 후 main ≈274커밋 전망.
