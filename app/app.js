@@ -982,10 +982,18 @@ function activateRoleTarget(config) {
   notify(config.notifyText);
 }
 
-function startRoleActivation(roleKey) {
+function startRoleActivation(roleKey, options = {}) {
   const config = roleActivationConfig(roleKey);
   if (!config) return false;
   clearRoleActivationTimers();
+  if (options.immediate) {
+    selectedRailRole = roleKey;
+    document.querySelectorAll("[data-role-filter]").forEach((entry) => {
+      entry.classList.toggle("is-active", entry.dataset.roleFilter === selectedRailRole);
+    });
+    activateRoleTarget(config);
+    return true;
+  }
   selectedRailRole = roleKey;
   propertiesOpen = true;
   activeDetailType = "view";
@@ -5933,7 +5941,7 @@ function bindActions() {
         entry.classList.toggle("is-active", entry.dataset.roleFilter === selectedRailRole);
       });
       closeRailGroups();
-      if (startRoleActivation(selectedRailRole)) return;
+      if (startRoleActivation(selectedRailRole, { immediate: true })) return;
       notify(`${selectedRailRole} 유형을 선택했습니다.`);
     });
   });
