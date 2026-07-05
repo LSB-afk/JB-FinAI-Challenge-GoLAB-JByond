@@ -32,6 +32,7 @@ const navigation = [
   },
 ];
 
+// 구명칭 키 유지(호환) — 리네임 시 기존 사용자 상태 초기화 방지
 const NAV_ORDER_STORAGE_KEY = "jb-localguard-nav-order-v1";
 
 const evidence = [
@@ -4890,7 +4891,7 @@ function auditChainRecords(item) {
 function inferAuditActor(text) {
   const value = String(text || "");
   if (/RM|담당자|reviewer|검토 담당자/.test(value)) return "사람";
-  if (/사용자 입력|콘솔|보드|오케스트레이터|LocalGuard/.test(value)) return "오케스트레이터";
+  if (/사용자 입력|콘솔|보드|오케스트레이터|JByond|LocalGuard/.test(value)) return "오케스트레이터";
   return "AI 업무지원";
 }
 
@@ -4937,7 +4938,7 @@ function persistState() {
       }),
     );
   } catch (error) {
-    console.warn("LocalGuard state could not be saved", error);
+    console.warn("JByond state could not be saved", error);
   }
 }
 
@@ -4956,7 +4957,7 @@ function loadPersistedState() {
     if (state.lastSavedAt) lastSavedAt = state.lastSavedAt;
     if (!cases.some((item) => item.id === selectedCaseId) && cases[0]) selectedCaseId = cases[0].id;
   } catch (error) {
-    console.warn("LocalGuard state could not be loaded", error);
+    console.warn("JByond state could not be loaded", error);
   }
 }
 

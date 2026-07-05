@@ -38,8 +38,8 @@ JB금융그룹 Fin:AI Challenge · 자유주제(JB 미래사업 AI) · **본선(
 ### 설치 · 실행 (3단)
 
 ```bash
-git clone https://github.com/River-181/JB_project2.git   # 또는 upstream LSB-afk/JB_project2
-cd JB_project2
+git clone https://github.com/River-181/JBFinAI-GoLAB-JByond.git   # 또는 upstream LSB-afk/JBFinAI-GoLAB-JByond
+cd JBFinAI-GoLAB-JByond
 npm install                     # Playwright 등 (검증용, 시연 자체엔 불필요)
 
 npm run dev                     # → http://127.0.0.1:8000/index.html
@@ -136,7 +136,7 @@ npm run backend:test   # 로컬 백엔드 API/DB/fallback 검증
 ## 저장소 구성
 
 ```
-JB_project2/
+JBFinAI-GoLAB-JByond/
 ├── README.md · JUDGE_DEMO.md · AGENTS.md · DESIGN.md
 ├── LICENSE(MIT) · THIRD-PARTY-NOTICES.md · .env.example
 ├── app/                     멀티 콘솔 정적 SPA (프레임워크·빌드 없음)
